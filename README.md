@@ -2,14 +2,14 @@
 # Zekaric: Doccer
 
 ## Table Of Contents
-**1 - About Z:Doccer**
- 1.1 - Description
- 1.2 - Why?
- 1.3 - Goals
-**2 - Usage**
-**3 - Format**
- 3.1 - File level markup.
- 3.2 - Inline level markup
+**1 - About Z:Doccer**<br />
+ 1.1 - Description<br />
+ 1.2 - Why?<br />
+ 1.3 - Goals<br />
+**2 - Usage**<br />
+**3 - Format**<br />
+ 3.1 - File level markup.<br />
+ 3.2 - Inline level markup<br />
 
 # 1 - About Z:Doccer
 

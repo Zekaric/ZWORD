@@ -1829,7 +1829,7 @@ static Gb _WriteMDTOC(Gfile * const file, ParaArray const * const paraList)
       case paraTypeTITLE_TOC_1: gfileSetA(file, gcTypeU1, "**",  NULL); break;
       }
 
-      gfileSetA(file, gcTypeU1, "\n",  NULL);
+      gfileSetA(file, gcTypeU1, "<br />\n",  NULL);
    }
 
    // Clean up
