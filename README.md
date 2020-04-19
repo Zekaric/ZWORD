@@ -72,6 +72,7 @@ A blank line is meaningless but it can be used for making the file more readable
 Note, not all markup may have a meaning in the target format that you will ask the converter to target.
 
 | Markup | Description |
+| --- | --- |
 | *, **, ***, ... ********* | Title lines.  "*" is the most significant title. "**" less significant.  etc.  There title lines will be included in a table of contents if "toc" markup is used.  Single line of text only. |
 | ~, ~~, ~~~, ... ~~~~~~~~~ | Title lines.  Exactly like "*" except these titles will not be included in the table of contents. |
 | toc | Insert a table of contents.  Nothing follows this tag. |
@@ -103,6 +104,7 @@ Note, not all markup may have a meaning in the target format that you will ask t
 [Currently not implemented.]
 
 | Markup | Descrption |
+| --- | --- |
 | [chapter] | Chapter number.  "3.1.4.1.5.9" |
 | [img ...] | Insert an image inline.  Path must be relative to the zdoc file. |
 | [b ...] | Bold the contents. |

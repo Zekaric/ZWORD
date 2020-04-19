@@ -1038,23 +1038,28 @@ static Gb _WriteMD(Gpath const * const path, ParaArray const * const paraList)
 {
    Gpath *pathHtml;
    Gfile *file;
-   Gindex index;
+   Gindex index,
+          hindex;
    Para  *para;
+   Gcount tableHeaderCount;
    Gb     isInsideListBullet,
           isInsideListNumber,
           isTableRowActive,
           isTableColHActive,
           isTableColActive,
+          isTableHeaderLineWritten,
           isListItemActive;
 
    genter;
 
-   isInsideListBullet = gbFALSE;
-   isInsideListNumber = gbFALSE;
-   isTableRowActive   = gbFALSE;
-   isTableColHActive  = gbFALSE;
-   isTableColActive   = gbFALSE;
-   isListItemActive   = gbFALSE;
+   tableHeaderCount         = 0;
+   isTableHeaderLineWritten = gbFALSE;
+   isInsideListBullet       = gbFALSE;
+   isInsideListNumber       = gbFALSE;
+   isTableRowActive         = gbFALSE;
+   isTableColHActive        = gbFALSE;
+   isTableColActive         = gbFALSE;
+   isListItemActive         = gbFALSE;
       
    // Make the destination file path.
    pathHtml = gpathCreateFrom(path);
@@ -1161,6 +1166,8 @@ static Gb _WriteMD(Gpath const * const path, ParaArray const * const paraList)
 
       case paraTypeTABLE_START:
          gfileSetA(file, gcTypeU1, "\n", NULL);
+         tableHeaderCount         = 0;
+         isTableHeaderLineWritten = gbFALSE;
          break;
 
       case paraTypeTABLE_STOP:
@@ -1196,11 +1203,23 @@ static Gb _WriteMD(Gpath const * const path, ParaArray const * const paraList)
          }
          gfileSetS(file, gcTypeU1, para->str, NULL);
          isTableColHActive = gbTRUE;
+
+         tableHeaderCount++;
          break;
 
       case paraTypeTABLE_COL:
       case paraTypeTABLE_COL_NO_BREAK:
       case paraTypeTABLE_COL_FILL:
+         if (!isTableHeaderLineWritten)
+         {
+            forCount (hindex, tableHeaderCount)
+            {
+               gfileSetA(file, gcTypeU1, "| --- ", NULL);
+            }
+            gfileSetA(file, gcTypeU1, "|\n", NULL);
+         }
+         isTableHeaderLineWritten = gbTRUE;
+
          if (isTableColActive)
          {
             gfileSetA(file, gcTypeU1, " | ", NULL);
