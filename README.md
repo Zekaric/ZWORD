@@ -53,6 +53,7 @@ zdoc [cmd] [path to file name].doc
 [cmd] will be one of...
 
 | [cmd] | Description |
+| --- | --- |
 | all | Convert the zdoc file to all supported formats. |
 | html | Convert the zdoc file to an html file. |
 | md | Convert the zdoc file to a markdown file. |
