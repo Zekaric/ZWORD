@@ -677,6 +677,8 @@ static Gs *_ProcessInlineHTML(Gs * const inStr, Para const * const para)
    // Styling
    gsFindAndReplaceU2(str, L"[img=]",                      L"<img src=\"",         NULL);
    gsFindAndReplaceU2(str, L"[=img]",                      L"\" />",               NULL);
+   gsFindAndReplaceU2(str, L"[.=]",                        L"<code>",              NULL);
+   gsFindAndReplaceU2(str, L"[=.]",                        L"</code>",             NULL);
    gsFindAndReplaceU2(str, L"[b=]",                        L"<strong>",            NULL);
    gsFindAndReplaceU2(str, L"[=b]",                        L"</strong>",           NULL);
    gsFindAndReplaceU2(str, L"[i=]",                        L"<em>",                NULL);
@@ -926,6 +928,8 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    // Styling
    gsFindAndReplaceU2(str, L"[img=]",                      L"![image](",           NULL);
    gsFindAndReplaceU2(str, L"[=img]",                      L")",                   NULL);
+   gsFindAndReplaceU2(str, L"[.=]",                        L"`",                   NULL);
+   gsFindAndReplaceU2(str, L"[=.]",                        L"`",                   NULL);
    gsFindAndReplaceU2(str, L"[b=]",                        L"**",                  NULL);
    gsFindAndReplaceU2(str, L"[=b]",                        L"**",                  NULL);
    gsFindAndReplaceU2(str, L"[=i]",                        L"*",                   NULL);
