@@ -1163,7 +1163,14 @@ static Gb _WriteMD(Gpath const * const path, ParaArray const * const paraList)
          break;
 
       case paraTypeTABLE_STOP:
+         if (isTableColActive || isTableColHActive)
+         {
+            gfileSetA(file, gcTypeU1, " |\n", NULL);
+         }
+
          gfileSetA(file, gcTypeU1, "\n", NULL);
+         isTableColActive  = gbFALSE;
+         isTableColHActive = gbFALSE;
          break;
 
       case paraTypeTABLE_ROW:
