@@ -54,7 +54,8 @@ zdoc [cmd] [path to file name].doc
 | [cmd] | Description |
 | all | Convert the zdoc file to all supported formats. |
 | html | Convert the zdoc file to an html file. |
-| md | Convert the zdoc file to a markdown file.
+| md | Convert the zdoc file to a markdown file. |
+
 
 # Format
 
@@ -67,7 +68,6 @@ A blank line is meaningless but it can be used for making the file more readable
 ## File level markup.
 
 Note, not all markup may have a meaning in the target format that you will ask the converter to target.
- |
 | Markup | Description |
 | *, **, ***, ... ********* | Title lines.  "*" is the most significant title. "**" less significant.  etc.  There title lines will be included in a table of contents if "toc" markup is used.  Single line of text only. |
 | ~, ~~, ~~~, ... ~~~~~~~~~ | Title lines.  Exactly like "*" except these titles will not be included in the table of contents. |
@@ -92,12 +92,12 @@ Note, not all markup may have a meaning in the target format that you will ask t
 | [ | A simple formated text string on one line. |
 | [[ | Start of a formated text block. |
 | ]] | End of a bullet point list. |
-| === | Insert a page break.
+| === | Insert a page break. |
+
 
 ## Inline level markup
 
 [Currently not implemented.]
- |
 | Markup | Descrption |
 | [chapter] | Chapter number.  "3.1.4.1.5.9" |
 | [img ...] | Insert an image inline.  Path must be relative to the zdoc file. |
@@ -119,4 +119,5 @@ Note, not all markup may have a meaning in the target format that you will ask t
 |  | "cent" - US/CDN/AUS/etc. Cent currency |
 |  | "amp" - ampersand |
 |  | "hash" - hash tag, pount sign, number significant |
-|  | "at" - at sign
+|  | "at" - at sign |
+
