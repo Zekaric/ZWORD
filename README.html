@@ -48,7 +48,6 @@
 
 
 <h1 class="zdoc"><a name="2">2 - Usage</a></h1>
-<li class="zdoc"></li>
 <pre class="zdoc">
 zdoc [cmd] [path to file name].doc
 </pre>
@@ -192,12 +191,12 @@ zdoc [cmd] [path to file name].doc
 </tr>
 <tr class="zdoc">
 <td class="zdoc"><nobr>[</nobr></td>
-<td class="zdoc_fill">A simple formated text string on one line.</td>
+<td class="zdoc_fill">A simple formated text string on one line.  No inline markup processing performed on the contents.</td>
 
 </tr>
 <tr class="zdoc">
 <td class="zdoc"><nobr>[[</nobr></td>
-<td class="zdoc_fill">Start of a formated text block.</td>
+<td class="zdoc_fill">Start of a formated text block.  No inline markup processing performed on the contents.</td>
 
 </tr>
 <tr class="zdoc">
@@ -241,7 +240,7 @@ zdoc [cmd] [path to file name].doc
 
 </tr>
 <tr class="zdoc">
-<td class="zdoc"><nobr>[_=]...[=_]</nobr></td>
+<td class="zdoc"><nobr><u>...</u></nobr></td>
 <td class="zdoc_fill"><u>Underline</u> the contents.</td>
 
 </tr>
@@ -267,22 +266,22 @@ zdoc [cmd] [path to file name].doc
 </tr>
 <tr class="zdoc">
 <td class="zdoc"><nobr>[line]</nobr></td>
-<td class="zdoc_fill">Break the line.<br />Start on the next line.</td>
+<td class="zdoc_fill">Break the line.  Start on the next line.</td>
 
 </tr>
 <tr class="zdoc">
 <td class="zdoc"><nobr>[line s]</nobr></td>
-<td class="zdoc_fill">Break the line.  Leave a space.<br /><br />Start on the next line.</td>
+<td class="zdoc_fill">Break the line.  Leave a space.  Start on the next line.</td>
 
 </tr>
 <tr class="zdoc">
 <td class="zdoc"><nobr>[line d]</nobr></td>
-<td class="zdoc_fill">Break the line.  Leave a space.<br /><br /><br />Start on the next line.</td>
+<td class="zdoc_fill">Break the line.  Leave two spaces.  Start on the next line.</td>
 
 </tr>
 <tr class="zdoc">
 <td class="zdoc"><nobr>[ ]]</nobr></td>
-<td class="zdoc_fill">Escape for a ].  No space.</td>
+<td class="zdoc_fill">Escape for a ].  No space inside the brackets.</td>
 
 </tr>
 <tr class="zdoc">

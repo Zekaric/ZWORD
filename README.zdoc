@@ -30,7 +30,7 @@ toc
 ]=
 
 *	[chapter] - Usage
--
+
 [	zdoc [cmd] [path to file name].doc
 
 	[cmd] will be one of...
@@ -153,12 +153,10 @@ tc*	New column marker.  Contents follow the tag on one line.  The column will fi
 
 t-
 tcx	[
-tc*	A simple formated text string on one line.
-
+tc*	A simple formated text string on one line.  No inline markup processing performed on the contents.
 t-
 tcx	[[
-tc*	Start of a formated text block.
-
+tc*	Start of a formated text block.  No inline markup processing performed on the contents.
 t-
 tcx	]]
 tc*	End of a bullet point list.
@@ -197,7 +195,7 @@ tcx	[i=[]]...[=i[]]
 tc*	[i=]Italicize[=i] the contents.
 
 t-
-tcx	[_=[]]...[=_[]]
+tcx	[_=]...[=_]
 tc*	[_=]Underline[=_] the contents.
 
 t-
@@ -218,19 +216,19 @@ tc*	Create a [link=]http://www.zekaric.com/[=link=]web link[=link].  First ... i
 
 t-
 tcx	[line[]]
-tc*	Break the line.[line]Start on the next line.
+tc*	Break the line.  Start on the next line.
 
 t-
 tcx	[line s[]]
-tc*	Break the line.  Leave a space.[line s]Start on the next line.
+tc*	Break the line.  Leave a space.  Start on the next line.
 
 t-
 tcx	[line d[]]
-tc*	Break the line.  Leave a space.[line d]Start on the next line.
+tc*	Break the line.  Leave two spaces.  Start on the next line.
 
 t-
-tcx	[ []][]]
-tc*	Escape for a ].  No space.
+tcx	[ ]]
+tc*	Escape for a ].  No space inside the brackets.
 
 t-
 tcx	[sym ...[]]

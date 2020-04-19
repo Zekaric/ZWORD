@@ -941,9 +941,9 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"[link=]",                     L"[LINK](",             NULL);
    gsFindAndReplaceU2(str, L"[=link=]",                    L") ",                  NULL);
    gsFindAndReplaceU2(str, L"[=link]",                     L"",                    NULL);
-   gsFindAndReplaceU2(str, L"[line]",                      L"\n",                  NULL);
-   gsFindAndReplaceU2(str, L"[line s]",                    L"\n\n",                NULL);
-   gsFindAndReplaceU2(str, L"[line d]",                    L"\n\n\n",              NULL);
+   gsFindAndReplaceU2(str, L"[line]",                      L" ",                   NULL);
+   gsFindAndReplaceU2(str, L"[line s]",                    L" ",                   NULL);
+   gsFindAndReplaceU2(str, L"[line d]",                    L" ",                   NULL);
 
    // Legal
    gsFindAndReplaceU2(str, L"[sym copyright]",             L"&copy;",              NULL);
@@ -1146,7 +1146,7 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"[sym psi]",                   L"&psi;",               NULL);
    gsFindAndReplaceU2(str, L"[sym omega]",                 L"&omega;",             NULL);
 
-   gsFindAndReplaceU2(str, L"[]]",                         L"]",                   NULL);
+   gsFindAndReplaceU2(str, L"[]]",                         L"\\]",                 NULL);
 
    greturn str;
 }
