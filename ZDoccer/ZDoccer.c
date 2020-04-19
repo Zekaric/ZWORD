@@ -726,7 +726,7 @@ static Gs *_ProcessInlineHTML(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"[sym at]",                    L"@",                   NULL);
    gsFindAndReplaceU2(str, L"[sym bullet]",                L"&bull;",              NULL);
    gsFindAndReplaceU2(str, L"[sym dagger s]",              L"&dagger;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dagger s]",              L"&Dagger;",            NULL);
+   gsFindAndReplaceU2(str, L"[sym dagger d]",              L"&Dagger;",            NULL);
    gsFindAndReplaceU2(str, L"[sym hash]",                  L"#",                   NULL);
    gsFindAndReplaceU2(str, L"[sym inv!]",                  L"&iexcl;",             NULL);
    gsFindAndReplaceU2(str, L"[sym inv?]",                  L"&iquest;",            NULL);
@@ -975,7 +975,7 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"[sym at]",                    L"@",                   NULL);
    gsFindAndReplaceU2(str, L"[sym bullet]",                L"&bull;",              NULL);
    gsFindAndReplaceU2(str, L"[sym dagger s]",              L"&dagger;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dagger s]",              L"&Dagger;",            NULL);
+   gsFindAndReplaceU2(str, L"[sym dagger d]",              L"&Dagger;",            NULL);
    gsFindAndReplaceU2(str, L"[sym hash]",                  L"#",                   NULL);
    gsFindAndReplaceU2(str, L"[sym inv!]",                  L"&iexcl;",             NULL);
    gsFindAndReplaceU2(str, L"[sym inv?]",                  L"&iquest;",            NULL);
