@@ -48,15 +48,21 @@ typedef enum
    
    paraTypeLIST_START_BULLET,
    paraTypeLIST_START_NUMBER,
-   paraTypeLIST_ITEM,
    paraTypeLIST_STOP_BULLET,
    paraTypeLIST_STOP_NUMBER,
+   paraTypeLIST_ITEM,
+   paraTypeLIST_ITEM_START,
+   paraTypeLIST_ITEM_STOP,
 
    paraTypeTABLE_START,
    paraTypeTABLE_STOP,
    paraTypeTABLE_ROW,
    paraTypeTABLE_COL_HEADER,
+   paraTypeTABLE_COL_HEADER_NO_BREAK,
+   paraTypeTABLE_COL_HEADER_FILL,
    paraTypeTABLE_COL,
+   paraTypeTABLE_COL_NO_BREAK,
+   paraTypeTABLE_COL_FILL,
 
    paraTypeFORMATED_START,
    paraTypeFORMATED_STOP,
@@ -203,6 +209,17 @@ int main(int acount, char **alist)
 
    // Perform the conversion.
    result = _Process(command, path);
+
+   if (result == 0)
+   {
+      gconSetA("File \"");
+      gconSetS(file);
+      gconSetA("\" was converted.\n");
+   }
+   else
+   {
+      gconSetA("ERROR: Problem occurred when attempting to process the file.\n");
+   }
 
    // Clean up.
    gsDestroy(command);
@@ -388,8 +405,48 @@ static int _Process(Gs const * const command, Gpath const * const path)
          for (index++; index < strListCount; index++)
          {
             stemp = gsArrayGetAt(strList, index);
+
+            // Blank line or new tag at 
             breakIf(gsIsBlank(stemp));
 
+            position = gsFindFirstOfU2(stemp, 0, WHITESPACE_U2);
+            
+            // Regular paragraph.
+            if (position == 0)
+            {
+               index--;
+               break;
+            }
+
+            // Do we markup that isn't blank.
+            markup = gsCreateFromSub(stemp, 0, position);
+            if (*gsGetAt(markup, 0) == L'*' ||
+                *gsGetAt(markup, 0) == L'~' ||
+                gsIsEqualU2(markup, L"=[") ||
+                gsIsEqualU2(markup, L"]=") ||
+                gsIsEqualU2(markup, L"#[") ||
+                gsIsEqualU2(markup, L"]#") ||
+                gsIsEqualU2(markup, L"-")  ||
+                gsIsEqualU2(markup, L"-[") ||
+                gsIsEqualU2(markup, L"]-") ||
+                gsIsEqualU2(markup, L"t[") ||
+                gsIsEqualU2(markup, L"]t") ||
+                gsIsEqualU2(markup, L"t-") ||
+                gsIsEqualU2(markup, L"th") ||
+                gsIsEqualU2(markup, L"t|") ||
+                gsIsEqualU2(markup, L"[") ||
+                gsIsEqualU2(markup, L"[[") ||
+                gsIsEqualU2(markup, L"]]") ||
+                gsIsEqualU2(markup, L"toc") ||
+                gsIsEqualU2(markup, L"==="))
+            {
+               gsDestroy(markup);
+               index--;
+               break;
+            }
+            gsDestroy(markup);
+
+            // Just a continuation of the paragraph.
             gsAppendA(para->str, " ");
             gsAppend(para->str, gsStrip(stemp, gcStripWHITE_SPACE_LEADING | gcStripWHITE_SPACE_TRAILING));
          }
@@ -422,11 +479,11 @@ static int _Process(Gs const * const command, Gpath const * const path)
             para->str     = stemp;
          }
          // List Lines.
-         else if (gsIsEqualU2(markup, L":["))
+         else if (gsIsEqualU2(markup, L"=["))
          {
             para->type     = paraTypeLIST_START_BULLET;
          }
-         else if (gsIsEqualU2(markup, L"]:"))
+         else if (gsIsEqualU2(markup, L"]="))
          {
             para->type     = paraTypeLIST_STOP_BULLET;
          }
@@ -441,6 +498,16 @@ static int _Process(Gs const * const command, Gpath const * const path)
          else if (gsIsEqualU2(markup, L"-"))
          {
             para->type     = paraTypeLIST_ITEM;
+            para->str      = stemp;
+         }
+         else if (gsIsEqualU2(markup, L"-["))
+         {
+            para->type     = paraTypeLIST_ITEM_START;
+            para->str      = stemp;
+         }
+         else if (gsIsEqualU2(markup, L"]-"))
+         {
+            para->type     = paraTypeLIST_ITEM_STOP;
             para->str      = stemp;
          }
          // Table Lines.
@@ -459,12 +526,39 @@ static int _Process(Gs const * const command, Gpath const * const path)
          else if (gsIsEqualU2(markup, L"th"))
          {
             para->type     = paraTypeTABLE_COL_HEADER;
+            para->str      = stemp;
+         }
+         else if (gsIsEqualU2(markup, L"thx"))
+         {
+            para->type     = paraTypeTABLE_COL_HEADER_NO_BREAK;
+            para->str      = stemp;
+         }
+         else if (gsIsEqualU2(markup, L"th*"))
+         {
+            para->type     = paraTypeTABLE_COL_HEADER_FILL;
+            para->str      = stemp;
          }
          else if (gsIsEqualU2(markup, L"t|"))
          {
             para->type     = paraTypeTABLE_COL;
+            para->str      = stemp;
+         }
+         else if (gsIsEqualU2(markup, L"t|x"))
+         {
+            para->type     = paraTypeTABLE_COL_NO_BREAK;
+            para->str      = stemp;
+         }
+         else if (gsIsEqualU2(markup, L"t|*"))
+         {
+            para->type     = paraTypeTABLE_COL_FILL;
+            para->str      = stemp;
          }
          // Formated Lines.
+         else if (gsIsEqualU2(markup, L"["))
+         {
+            para->type     = paraTypeFORMATED_START;
+            para->str      = gsStrip(stemp, gcStripWHITE_SPACE_LEADING | gcStripWHITE_SPACE_TRAILING);
+         }
          else if (gsIsEqualU2(markup, L"[["))
          {
             para->type     = paraTypeFORMATED_START;
@@ -491,11 +585,6 @@ static int _Process(Gs const * const command, Gpath const * const path)
                   para->str = gsStrip(stemp, gcStripWHITE_SPACE_TRAILING);
                }
             }
-         }
-         else if (gsIsEqualU2(markup, L"[[]]"))
-         {
-            para->type     = paraTypeFORMATED_START;
-            para->str      = gsStrip(stemp, gcStripWHITE_SPACE_LEADING | gcStripWHITE_SPACE_TRAILING);
          }
          else if (gsIsEqualU2(markup, L"]]"))
          {
@@ -633,9 +722,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
       {
       case paraTypeREGULAR:
          gfileSetA(file, gcTypeU1, "<p class=\"zdoc\">", NULL);
-
          gfileSetS(file, gcTypeU1, para->str, NULL);
-
          gfileSetA(file, gcTypeU1, "</p>\n", NULL);
          break;
 
@@ -755,9 +842,24 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          }
 
          gfileSetA(file, gcTypeU1, "<li class=\"zdoc\">", NULL);
-
          gfileSetS(file, gcTypeU1, para->str, NULL);
+         gfileSetA(file, gcTypeU1, "</li>\n", NULL);
+         isListItemActive = gbFALSE;
+         break;
+
+      case paraTypeLIST_ITEM_START:
+         if (isListItemActive)
+         {
+            gfileSetA(file, gcTypeU1, "</li>\n", NULL);
+         }
+
+         gfileSetA(file, gcTypeU1, "<li class=\"zdoc\">", NULL);
          isListItemActive = gbTRUE;
+         break;
+
+      case paraTypeLIST_ITEM_STOP:
+         gfileSetA(file, gcTypeU1, "</li>\n", NULL);
+         isListItemActive = gbFALSE;
          break;
 
       case paraTypeTABLE_START:
@@ -807,30 +909,48 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          break;
 
       case paraTypeTABLE_COL_HEADER:
+      case paraTypeTABLE_COL_HEADER_NO_BREAK:
+      case paraTypeTABLE_COL_HEADER_FILL:
+      case paraTypeTABLE_COL:
+      case paraTypeTABLE_COL_NO_BREAK:
+      case paraTypeTABLE_COL_FILL:
          if (isTableColHActive)
          {
             gfileSetA(file, gcTypeU1, "</th>\n", NULL);
          }
-
-         gfileSetA(file, gcTypeU1, "<th class=\"zdoc\">\n", NULL);
-         isTableColHActive = gbTRUE;
-         break;
-
-      case paraTypeTABLE_COL:
          if (isTableColActive)
          {
             gfileSetA(file, gcTypeU1, "</td>\n", NULL);
          }
 
-         gfileSetA(file, gcTypeU1, "<td class=\"zdoc\">\n", NULL);
-         isTableColActive = gbTRUE;
+
+         switch (para->type)
+         {
+         case paraTypeTABLE_COL_HEADER:            gfileSetA(file, gcTypeU1, "<th class=\"zdoc\">",       NULL); break;
+         case paraTypeTABLE_COL_HEADER_NO_BREAK:   gfileSetA(file, gcTypeU1, "<th class=\"zdoc\"><nobr>", NULL); break;
+         case paraTypeTABLE_COL_HEADER_FILL:       gfileSetA(file, gcTypeU1, "<th class=\"zdoc_fill\">",  NULL); break;
+         case paraTypeTABLE_COL:                   gfileSetA(file, gcTypeU1, "<td class=\"zdoc\">",       NULL); break;
+         case paraTypeTABLE_COL_NO_BREAK:          gfileSetA(file, gcTypeU1, "<td class=\"zdoc\"><nobr>", NULL); break;
+         case paraTypeTABLE_COL_FILL:              gfileSetA(file, gcTypeU1, "<td class=\"zdoc_fill\">",  NULL); break;
+         }
+         gfileSetS(file, gcTypeU1, para->str, NULL);
+
+         switch (para->type)
+         {
+         case paraTypeTABLE_COL_HEADER:            
+         case paraTypeTABLE_COL_HEADER_FILL:       gfileSetA(file, gcTypeU1, "</th>\n",        NULL); break;
+         case paraTypeTABLE_COL_HEADER_NO_BREAK:   gfileSetA(file, gcTypeU1, "</nobr></th>\n", NULL); break;
+         case paraTypeTABLE_COL:            
+         case paraTypeTABLE_COL_FILL:              gfileSetA(file, gcTypeU1, "</td>\n",        NULL); break;
+         case paraTypeTABLE_COL_NO_BREAK:          gfileSetA(file, gcTypeU1, "</nobr></td>\n", NULL); break;
+         }
+         
+         isTableColHActive = gbFALSE;
          break;
 
       case paraTypeFORMATED_START:
          gfileSetA(file, gcTypeU1, "<pre class=\"zdoc\">\n", NULL);
-
          gfileSetS(file, gcTypeU1, para->str, NULL);
-
          gfileSetA(file, gcTypeU1, "\n</pre>\n", NULL);
          break;
 

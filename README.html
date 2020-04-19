@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+ <head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" type="text/css" href="style_reset.css">
+  <link rel="stylesheet" type="text/css" href="style_zdoc.css">
+  <title>Zekaric: Doccer</title>
+ </head>
+
+ <body class="zdoc">
+
+
+<h1 class="zdoc">Zekaric: Doccer</h1>
+
+<h2 class="zdoc">Table Of Contents</h2>
+<p class="zdoc_toc1"><a href="#2">About Z:Doccer</a></p>
+<p class="zdoc_toc2"><a href="#2_1">Description</a></p>
+<p class="zdoc_toc2"><a href="#2_2">Why?</a></p>
+<p class="zdoc_toc2"><a href="#2_3">Goals</a></p>
+<p class="zdoc_toc1"><a href="#3">Usage</a></p>
+<p class="zdoc_toc1"><a href="#4">Format</a></p>
+<p class="zdoc_toc2"><a href="#4_1">File level markup.</a></p>
+<p class="zdoc_toc2"><a href="#4_2">Inline level markup</a></p>
+
+
+<h1 class="zdoc"><a name="2">About Z:Doccer</a></h1>
+
+<h2 class="zdoc"><a name="2_1">Description</a></h2>
+<p class="zdoc">This program converts zdoc files to different targets.  The the goals for speed of writing, modification, and generation of target formats.</p>
+<p class="zdoc">The format is a simple text file using simple markup for styling.</p>
+
+<h2 class="zdoc"><a name="2_2">Why?</a></h2>
+<p class="zdoc">I have been doing a lot of documentation lately.  And All options for writing doc are getting to be very annoying and there are too many options...  So I made yet another option.  Go figure.</p>
+<p class="zdoc">Why not use MS Word?  I was using word for a while.  I had a template with hot keys all set up and the doc created was consistent in display and worked realy well.  Problem is that in order to view it you had to down load the file and open it in MS Word.  It wasn't online viewable easily.  Old Word files suffer from neglect.</p>
+<p class="zdoc">Why not use HTML?  There isn't an HTML editor that I enjoy using.  They all frustrate at some point.  I even tried to write doc manually in a simple text editor but that ended up being more annoying than anything else.</p>
+<p class="zdoc">Why not use a Wiki?  Markup languages on wiki's are not consistent.  Sometimes hard to get what you want.  At work the wiki's and software we used changed over time so old stuff was not easy to port over or left where they were but no one goes there anymore so no one knows the doc exists.</p>
+<p class="zdoc">Why not MD?  GitHub uses MD...  And as far as I know, only GitHub.  Nothing at my work uses GitHub.</p>
+<p class="zdoc">Why not use what is being used at work?  Again no standard markup and very flakey or annoying web interface.</p>
+<p class="zdoc">Why not plain text?  Plain text is good but it lacks a certain presentation.  Plus when it comes to editing to a line length, you end up spending a lot of time just editing line length instead of working on content.</p>
+
+<h2 class="zdoc"><a name="2_3">Goals</a></h2>
+<ul class="zdoc">
+<li class="zdoc">Simple markup that is easily remembered.</li>
+<li class="zdoc">Fast to write the markup format and still have it readable.</li>
+<li class="zdoc">Simple converted to other targets.</li>
+</ul>
+
+
+<h1 class="zdoc"><a name="3">Usage</a></h1>
+<p class="zdoc">[cmd] will be one of...</p>
+<table class="zdoc"><tbody class="zdoc">
+<tr class="zdoc">
+<th class="zdoc"><nobr>[cmd]</nobr></th>
+<th class="zdoc_fill">Description</th>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>all</nobr></td>
+<td class="zdoc_fill">Convert the zdoc file to all supported formats.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>html</nobr></td>
+<td class="zdoc_fill">Convert the zdoc file to an html file.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>md</nobr></td>
+<td class="zdoc_fill">Convert the zdoc file to a markdown file.</td>
+
+</tr>
+</tbody></table>
+
+
+<h1 class="zdoc"><a name="4">Format</a></h1>
+<p class="zdoc">Everything is based on the idea of a paragraph.</p>
+<p class="zdoc">The markup is just the first tag of a paragraph, must not have any space befor the tag as a space denotes a regular paragraph.</p>
+<p class="zdoc">A blank line is meaningless but it can be used for making the file more readable.</p>
+
+<h2 class="zdoc"><a name="4_1">File level markup.</a></h2>
+<p class="zdoc">Note, not all markup may have a meaning in the target format that you will ask the converter to target.</p>
+<table class="zdoc"><tbody class="zdoc">
+<tr class="zdoc">
+<th class="zdoc"><nobr>Markup</nobr></th>
+<th class="zdoc_fill">Description</th>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>*, **, ***, ... *********</nobr></td>
+<td class="zdoc_fill">Title lines.  "*" is the most significant title. "**" less significant.  etc.  There title lines will be included in a table of contents if "toc" markup is used.  Single line of text only.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>~, ~~, ~~~, ... ~~~~~~~~~</nobr></td>
+<td class="zdoc_fill">Title lines.  Exactly like "*" except these titles will not be included in the table of contents.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>toc</nobr></td>
+<td class="zdoc_fill">Insert a table of contents.  Nothing follows this tag.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[white space]</nobr></td>
+<td class="zdoc_fill">Any white space, like a table or a space, will denote the paragraph is just a regular text paragraph.  You can split the paragraph over multiple lines however the following lines must not start with a known markup tag or a space.  If it does then the program will think it is a new paragraph.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>=[</nobr></td>
+<td class="zdoc_fill">Start of a bullet point list.  Nothing follows this tag.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>]=</nobr></td>
+<td class="zdoc_fill">End of a bullet point list.  Nothing follows this tag.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>#[</nobr></td>
+<td class="zdoc_fill">Start of a numbered point list.  Nothing follows this tag.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>]#</nobr></td>
+<td class="zdoc_fill">End of a bullet point list.  Nothing follows this tag.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>-</nobr></td>
+<td class="zdoc_fill">A simple bullet point on one line.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>-[</nobr></td>
+<td class="zdoc_fill">Start of a complex bullet point.  You can nest lists this way or have other paragraphs inside.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>]-</nobr></td>
+<td class="zdoc_fill">End of a bullet point list.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>t[</nobr></td>
+<td class="zdoc_fill">Start of a table.  Nothing follows this tag.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>]t</nobr></td>
+<td class="zdoc_fill">End of a table.  Nothing follows this tag.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>t-</nobr></td>
+<td class="zdoc_fill">New row marker.  Nothing follows this tag.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>th</nobr></td>
+<td class="zdoc_fill">New column header marker.  Contents follow the tag on one line.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>thx</nobr></td>
+<td class="zdoc_fill">New column header marker.  Contents follow the tag on one line. The contents will not be broken at whitespace.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>th*</nobr></td>
+<td class="zdoc_fill">New column header marker.  Contents follow the tag on one line. The column will fill the remaining space of the table.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>t|</nobr></td>
+<td class="zdoc_fill">New column marker.  Contents follow the tag on one line.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>t|x</nobr></td>
+<td class="zdoc_fill">New column marker.  Contents follow the tag on one line.  The contents will not be broken at whitespace.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>t|*</nobr></td>
+<td class="zdoc_fill">New column marker.  Contents follow the tag on one line.  The column will fill the remaining space of the table.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[</nobr></td>
+<td class="zdoc_fill">A simple formated text string on one line.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[[</nobr></td>
+<td class="zdoc_fill">Start of a formated text block.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>]]</nobr></td>
+<td class="zdoc_fill">End of a bullet point list.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>===</nobr></td>
+<td class="zdoc_fill">Insert a page break.</td>
+
+</tr>
+</tbody></table>
+
+<h2 class="zdoc"><a name="4_2">Inline level markup</a></h2>
+<p class="zdoc">[Currently not implemented.]</p>
+<table class="zdoc"><tbody class="zdoc">
+<tr class="zdoc">
+<th class="zdoc"><nobr>Markup</nobr></th>
+<th class="zdoc_fill">Descrption</th>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[chapter]</nobr></td>
+<td class="zdoc_fill">Chapter number.  "3.1.4.1.5.9"</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[img ...]</nobr></td>
+<td class="zdoc_fill">Insert an image inline.  Path must be relative to the zdoc file.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[b ...]</nobr></td>
+<td class="zdoc_fill">Bold the contents.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[i ...]</nobr></td>
+<td class="zdoc_fill">Italicize the contents.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[_ ...]</nobr></td>
+<td class="zdoc_fill">Underline the contents.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[- ...]</nobr></td>
+<td class="zdoc_fill">Strick through the contents.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[^ ...]</nobr></td>
+<td class="zdoc_fill">Superscript the contents.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[v ...]</nobr></td>
+<td class="zdoc_fill">Subscript the contents.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[* ...]</nobr></td>
+<td class="zdoc_fill">Add an index item.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[link ...|...]</nobr></td>
+<td class="zdoc_fill">Create a web link.  First ... is the line.  Second ... is the nice text.</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr>[sym ...]</nobr></td>
+<td class="zdoc_fill">Insert a symbol.  One of...</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr></nobr></td>
+<td class="zdoc_fill">"copy" - copyright</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr></nobr></td>
+<td class="zdoc_fill">"reg" - registered trademark</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr></nobr></td>
+<td class="zdoc_fill">"pound" - British Pound currency</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr></nobr></td>
+<td class="zdoc_fill">"euro" - Euro currency</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr></nobr></td>
+<td class="zdoc_fill">"yen" - Japanese Yen currency</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr></nobr></td>
+<td class="zdoc_fill">"dollar" - US/CDN/AUS/Etc. Dollar currency</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr></nobr></td>
+<td class="zdoc_fill">"cent" - US/CDN/AUS/etc. Cent currency</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr></nobr></td>
+<td class="zdoc_fill">"amp" - ampersand</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr></nobr></td>
+<td class="zdoc_fill">"hash" - hash tag, pount sign, number significant</td>
+
+</tr>
+<tr class="zdoc">
+<td class="zdoc"><nobr></nobr></td>
+<td class="zdoc_fill">"at" - at sign</td>
+
+</tr>
+</tbody></table>
+ </body>
+
+</html>
