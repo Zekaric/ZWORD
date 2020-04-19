@@ -1160,6 +1160,7 @@ static Gb _WriteMD(Gpath const * const path, ParaArray const * const paraList)
          break;
 
       case paraTypeTABLE_START:
+         gfileSetA(file, gcTypeU1, "\n", NULL);
          break;
 
       case paraTypeTABLE_STOP:
