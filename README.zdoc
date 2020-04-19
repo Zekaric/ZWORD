@@ -31,7 +31,7 @@ toc
 
 *	Usage
 
-[zdoc [cmd] [path to file name].doc
+[	zdoc [cmd] [path to file name].doc
 
 	[cmd] will be one of...
 

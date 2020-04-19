@@ -1176,22 +1176,32 @@ static Gb _WriteMD(Gpath const * const path, ParaArray const * const paraList)
          break;
 
       case paraTypeTABLE_COL_HEADER:
+      case paraTypeTABLE_COL_HEADER_NO_BREAK:
+      case paraTypeTABLE_COL_HEADER_FILL:
          if (isTableColHActive)
          {
             gfileSetA(file, gcTypeU1, " | ", NULL);
          }
-
-         gfileSetA(file, gcTypeU1, "| ", NULL);
+         else 
+         {
+            gfileSetA(file, gcTypeU1, "| ", NULL);
+         }
+         gfileSetS(file, gcTypeU1, para->str, NULL);
          isTableColHActive = gbTRUE;
          break;
 
       case paraTypeTABLE_COL:
+      case paraTypeTABLE_COL_NO_BREAK:
+      case paraTypeTABLE_COL_FILL:
          if (isTableColActive)
          {
             gfileSetA(file, gcTypeU1, " | ", NULL);
          }
-
-         gfileSetA(file, gcTypeU1, "| ", NULL);
+         else 
+         {
+            gfileSetA(file, gcTypeU1, "| ", NULL);
+         }
+         gfileSetS(file, gcTypeU1, para->str, NULL);
          isTableColActive = gbTRUE;
          break;
 
