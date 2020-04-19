@@ -941,9 +941,9 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"[link=]",                     L"[LINK](",             NULL);
    gsFindAndReplaceU2(str, L"[=link=]",                    L") ",                  NULL);
    gsFindAndReplaceU2(str, L"[=link]",                     L"",                    NULL);
-   gsFindAndReplaceU2(str, L"[line]",                      L" ",                   NULL);
-   gsFindAndReplaceU2(str, L"[line s]",                    L" ",                   NULL);
-   gsFindAndReplaceU2(str, L"[line d]",                    L" ",                   NULL);
+   gsFindAndReplaceU2(str, L"[line]",                      L"<br />",              NULL);
+   gsFindAndReplaceU2(str, L"[line s]",                    L"<br /><br />",        NULL);
+   gsFindAndReplaceU2(str, L"[line d]",                    L"<br /><br /><br />",  NULL);
 
    // Legal
    gsFindAndReplaceU2(str, L"[sym copyright]",             L"&copy;",              NULL);
