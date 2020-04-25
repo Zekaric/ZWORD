@@ -3,3 +3,6 @@
 /ZDoccer/Debug32
 /ZDoccer/Debug64
 /.vs
+/Release64
+/ZDoccer/Release64
+/ZDoccer/*.user

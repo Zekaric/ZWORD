@@ -1,17 +1,17 @@
-~	Zekaric: Doccer
+H	Zekaric: Doccer
 
-~~	Table Of Contents
+HH	Table Of Contents
 
 toc
 
-*	[chapter] - About Z:Doccer
+h	|chapter| - About Z:Doccer
 
-**	[chapter] - Description
+hh	|chapter| - Description
 
 	This program converts zdoc files to different targets.  The the goals for speed of writing, modification, and generation of target formats.
 	The format is a simple text file using simple markup for styling.
 
-**	[chapter] - Why?
+hh	|chapter| - Why?
 
 	I have been doing a lot of documentation lately.  And All options for writing doc are getting to be very annoying and there are too many options...  So I made yet another option.  Go figure.
 	Why not use MS Word?  I was using word for a while.  I had a template with hot keys all set up and the doc created was consistent in display and worked realy well.  Problem is that in order to view it you had to down load the file and open it in MS Word.  It wasn't online viewable easily.  Old Word files suffer from neglect.
@@ -21,17 +21,15 @@ toc
 	Why not use what is being used at work?  Again no standard markup and very flakey or annoying web interface.  
 	Why not plain text?  Plain text is good but it lacks a certain presentation.  Plus when it comes to editing to a line length, you end up spending a lot of time just editing line length instead of working on content.
 
-**	[chapter] - Goals
+hh	|chapter| - Goals
 
-=[
 -	Simple markup that is easily remembered.
 -	Fast to write the markup format and still have it readable.
 -	Simple converted to other targets.  
-]=
 
-*	[chapter] - Usage
+h	|chapter| - Usage
 
-[	zdoc [cmd] [path to file name].doc
+...	zdoc [cmd] [path to file name].doc
 
 	[cmd] will be one of...
 
@@ -53,15 +51,15 @@ t-
 tcx	md
 tc*	Convert the zdoc file to a markdown file.
 
-]t
+t]
 
-*	[chapter] - Format
+h	|chapter| - Format
 
 	Everything is based on the idea of a paragraph.
 	The markup is just the first tag of a paragraph, must not have any space befor the tag as a space denotes a regular paragraph.  
 	A blank line is meaningless but it can be used for making the file more readable.
 
-**	[chapter] - File level markup.
+hh	|chapter| - File level markup.
 
 	Note, not all markup may have a meaning in the target format that you will ask the converter to target.
 
@@ -72,12 +70,12 @@ thx	Markup
 th*	Description
 
 t-
-tcx	*, **, ***, ... *********
-tc*	Title lines.  "*" is the most significant title. "**" less significant.  etc.  There title lines will be included in a table of contents if "toc" markup is used.  Single line of text only.
+tcx	h, hh, hhh, hhhh, hhhhh, hhhhhh
+tc*	Title lines.  "h" is the most significant title. "hh" less significant.  etc.  There title lines will be included in a table of contents if "toc" markup is used.  Single line of text only.
 
 t-
-tcx	~, ~~, ~~~, ... ~~~~~~~~~
-tc*	Title lines.  Exactly like "*" except these titles will not be included in the table of contents.
+tcx	H, HH, HHH, HHHH, HHHHH, HHHHHH
+tc*	Title lines.  Exactly like "h" except these titles will not be included in the table of contents.
 
 t-
 tcx	toc
@@ -88,31 +86,27 @@ tcx	[white space]
 tc*	Any white space, like a table or a space, will denote the paragraph is just a regular text paragraph.  You can split the paragraph over multiple lines however the following lines must not start with a known markup tag or a space.  If it does then the program will think it is a new paragraph.
 
 t-
-tcx	=[
-tc*	Start of a bullet point list.  Nothing follows this tag.
+tcx	-, .-, ..-, ...-, ....-, .....-
+tc*	A simple bullet point on one line.  The "." denotes nested level.
 
 t-
-tcx	]=
-tc*	End of a bullet point list.  Nothing follows this tag.
+tcx	-[, .-[, ..-[, ...-[, ....-[, .....-[
+tc*	Start of a complex bullet point.  You can nest lists this way or have other paragraphs inside.  The "." denotes nested level.
 
 t-
-tcx	#[
-tc*	Start of a numbered point list.  Nothing follows this tag.
+tcx	-], .-], ..-], ...-], ....-], .....-]
+tc*	End of a bullet point list.
 
 t-
-tcx	]#
-tc*	End of a bullet point list.  Nothing follows this tag.
+tcx	1, .1, ..1, ...1, ....1, .....1
+tc*	A simple bullet point on one line.  The "." denotes nested level.
 
 t-
-tcx	-
-tc*	A simple bullet point on one line.
+tcx	1[, .1[, ..1[, ...1[, ....1[, .....1[
+tc*	Start of a complex bullet point.  You can nest lists this way or have other paragraphs inside.  The "." denotes nested level.
 
 t-
-tcx	-[
-tc*	Start of a complex bullet point.  You can nest lists this way or have other paragraphs inside.
-
-t-
-tcx	]-
+tcx	1], .1], ..1], ...1], ....1], .....1]
 tc*	End of a bullet point list.
 
 t-
@@ -120,7 +114,7 @@ tcx	t[
 tc*	Start of a table.  Nothing follows this tag.
 
 t-
-tcx	]t
+tcx	t]
 tc*	End of a table.  Nothing follows this tag.
 
 t-
@@ -152,23 +146,31 @@ tcx	tc*
 tc*	New column marker.  Contents follow the tag on one line.  The column will fill the remaining space of the table.
 
 t-
-tcx	[
+tcx	tc1
+tc*	New column marker.  Contents follow the tag on one line.  Number column, right aligned.
+
+t-
+tcx	tc1*
+tc*	New column marker.  Contents follow the tag on one line.  Number column, right aligned.  The column will fill the remaining space of the table.
+
+t-
+tcx	...
 tc*	A simple formated text string on one line.  No inline markup processing performed on the contents.
 t-
-tcx	[[
+tcx	...[
 tc*	Start of a formated text block.  No inline markup processing performed on the contents.
 t-
-tcx	]]
+tcx	...]
 tc*	End of a bullet point list.
 
 t-
 tcx	===
 tc*	Insert a page break.
 
-]t
+t]
 
 
-**	[chapter] - Inline level markup
+hh	|chapter| - Inline level markup
 
 	[Currently not implemented.]
 
@@ -179,59 +181,63 @@ thx	Markup
 th*	Descrption
 
 t-
-tcx	[chapter[]]
+tcx	|chapter\|
 tc*	Chapter number.  "3.1.4.1.5.9"
 
 t-
-tcx	[img=[]]...[=img[]]
+tcx	|img=\|...|=img\|
 tc*	Insert an image inline.  Path must be relative to the zdoc file.
 
 t-
-tcx	[b=[]]...[=b[]]
-tc*	[b=]Bold[=b] the contents.
+tcx	|\*...*\|
+tc*	|*Bold*| the contents.
 
 t-
-tcx	[i=[]]...[=i[]]
-tc*	[i=]Italicize[=i] the contents.
+tcx	|\/.../\|
+tc*	|/Italicize/| the contents.
 
 t-
-tcx	[_=]...[=_]
-tc*	[_=]Underline[=_] the contents.
+tcx	|\_..._\|
+tc*	|_Underline_| the contents.
 
 t-
-tcx	[-=[]]...[=-[]]
-tc*	[-=]Strike[=-] through the contents.
+tcx	|\-...-\|
+tc*	|-Strike-| through the contents.
 
 t-
-tcx	[^=[]]...[=^[]]
-tc*	[^=]Superscript[=^] the contents.
+tcx	|\^...^\|
+tc*	|^Superscript^| the contents.
 
 t-
-tcx	[v=[]]...[=v[]]
-tc*	[v=]Subscript[=v] the contents.
+tcx	|\v...v\|
+tc*	|vSubscriptv| the contents.
 
 t-
-tcx	[link=[]]...[=link=[]]...[=link[]]
-tc*	Create a [link=]http://www.zekaric.com/[=link=]web link[=link].  First ... is the line.  Second ... is the nice text.
+tcx	|\. ... .\|
+tc*	|.monospace.| the contents.
 
 t-
-tcx	[line[]]
+tcx	|link-\|...|-link-\|...|-link\|
+tc*	Create a |link-|http://www.zekaric.com/|-link-|web link|-link|.  First ... is the line.  Second ... is the nice text.
+
+t-
+tcx	|line\|
 tc*	Break the line.  Start on the next line.
 
 t-
-tcx	[line s[]]
+tcx	|line s\|
 tc*	Break the line.  Leave a space.  Start on the next line.
 
 t-
-tcx	[line d[]]
+tcx	|line d\|
 tc*	Break the line.  Leave two spaces.  Start on the next line.
 
 t-
-tcx	[ ]]
-tc*	Escape for a ].  No space inside the brackets.
+tcx	\|, |\
+tc*	Escape for a |.  No space inside the brackets.
 
 t-
-tcx	[sym ...[]]
-tc*	Insert a symbol.  One of...[line s][b=]Legal:[=b] copyright, registered tm, tm,[line s][sym copyright][sym registered tm][sym tm][line s][b=]Currency:[=b] bitcoin, cent, dollar, euro, franc, lira, lira turkey, peso, pound, ruble, rupee, rupee india, won, yen[line s][sym bitcoin][sym cent][sym dollar][sym euro][sym franc][sym lira][sym lira turkey][sym peso][sym pound][sym ruble][sym rupee][sym rupee india][sym won][sym yen][line s][b=]Punctuation:[=b] ..., 1/4, 1/2, 3/4, ampersand, at, bullet, dagger s, dagger d, hash, inv!, inv?, quote angle d l, quote angle d r, quote angle s l, quote angle s r, quote d, quote d l, quote d r, quote d low, quote s, quote s l, quote s r, quote s low, para, prime d, prime s[line s][sym ...][sym 1/4][sym 1/2][sym 3/4][sym ampersand][sym at][sym bullet][sym dagger s][sym dagger d][sym hash][sym inv!][sym inv?][sym quote angle d l][sym quote angle d r][sym quote angle s l][sym quote angle s r][sym quote d][sym quote d l][sym quote d r][sym quote d low][sym quote s][sym quote s l][sym quote s r][sym quote s low][sym para][sym prime d][sym prime s][line s][b=]Game:[=b] arrow d, arrow l, arrow r, arrow u, arrow lr, arrow ud, arrow \d, arrow /d, arrow \u, arrow /u, arrow d l, arrow d lr, arrow d r, arrow redo, arrow undo, card suit c, card suit d, card suit h, card suit s, chess b k, chess b q, chess b r, chess b b, chess b h, chess b p, chess w k, chess w q, chess w r, chess w b, chess w h, chess w p, die 1, die 2, die 3, die 4, die 5, die 6, ball baseball, ball soccer[line s][sym arrow d][sym arrow l][sym arrow r][sym arrow u][sym arrow lr][sym arrow ud][sym arrow \d][sym arrow /d][sym arrow \u][sym arrow /u][sym arrow d l][sym arrow d lr][sym arrow d r][sym arrow redo][sym arrow undo][sym card suit c][sym card suit d][sym card suit h][sym card suit s][sym chess b k][sym chess b q][sym chess b r][sym chess b b][sym chess b h][sym chess b p][sym chess w k][sym chess w q][sym chess w r][sym chess w b][sym chess w h][sym chess w p][sym die 1][sym die 2][sym die 3][sym die 4][sym die 5][sym die 6][sym ball baseball][sym ball soccer][line s][b=]Symbols:[=b] checkbox off, checkbox on, circle 0%, circle 25%, circle 50%, circle 75%, circle 100%, correct, biohazard, dot, dot filled, envelope, gender f, gender m, gender mf, incorrect, plane, poison, radioactive, Rx, recycle, scissor, snowflake, star 5, star 5 filled, sun[line s][sym checkbox off][sym checkbox on][sym circle 0%][sym circle 25%][sym circle 50%][sym circle 75%][sym circle 100%][sym correct][sym biohazard][sym dot][sym dot filled][sym envelope][sym gender f][sym gender m][sym gender mf][sym incorrect][sym plane][sym poison][sym radioactive][sym Rx][sym recycle][sym scissor][sym snowflake][sym star 5][sym star 5 filled][sym sun][line s][b=]Math:[=b] +/-, angle, contains, degree, dot, empty set, equal almost, equal approx, equal greater than, equal less than, equal same, equal not, for all, infinity, integral, intersection, is in, is not in, math phi, math pi, minus, nabla, partial diff, product, proportional to, root, sum, there exists, therefore, union[line s][sym +/-][sym angle][sym contains][sym degree][sym dot][sym empty set][sym equal almost][sym equal approx ][sym equal greater than][sym equal less than][sym equal same][sym equal not][sym for all][sym infinity][sym integral][sym intersection][sym is in][sym is not in][sym math phi][sym math pi][sym minus][sym nabla][sym partial diff][sym product][sym proportional to][sym root][sym sum][sym there exists][sym therefore][sym union][line s][b=]Greek:[=b] alpha cap, beta cap, gamma cap, delta cap, epsilon cap, zeta cap, eta cap, theta cap, iota cap, kappa cap, lambda cap, mu cap, nu cap, xi cap, omicron cap, pi cap, rho cap, signma cap, tau cap, upsilon cap, phi cap, chi cap, psi cap, omega cap, alpha, beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa, lambda, mu, nu, xi, omicron, pi, rho, signma, tau, upsilon, phi, chi, psi, omega[line s][sym alpha cap][sym beta cap][sym gamma cap][sym delta cap][sym epsilon cap][sym zeta cap][sym eta cap][sym theta cap][sym iota cap][sym kappa cap][sym lambda cap][sym mu cap][sym nu cap][sym xi cap][sym omicron cap][sym pi cap][sym rho cap][sym signma cap][sym tau cap][sym upsilon cap][sym phi cap][sym chi cap][sym psi cap][sym omega cap][sym alpha][sym beta][sym gamma][sym delta][sym epsilon][sym zeta][sym eta][sym theta][sym iota][sym kappa][sym lambda][sym mu][sym nu][sym xi][sym omicron][sym pi][sym rho][sym signma][sym tau][sym upsilon][sym phi][sym chi][sym psi][sym omega]
+tcx	|sym ...\|
+tc*	Insert a symbol.  One of...|line s||*Legal:*| copyright, registered tm, tm,|line s||sym copyright||sym registered tm||sym tm||line s||*Currency:*| bitcoin, cent, dollar, euro, franc, lira, lira turkey, peso, pound, ruble, rupee, rupee india, won, yen|line s||sym bitcoin||sym cent||sym dollar||sym euro||sym franc||sym lira||sym lira turkey||sym peso||sym pound||sym ruble||sym rupee||sym rupee india||sym won||sym yen||line s||*Punctuation:*| ..., 1/4, 1/2, 3/4, ampersand, at, bullet, dagger s, dagger d, hash, inv!, inv?, quote angle d l, quote angle d r, quote angle s l, quote angle s r, quote d, quote d l, quote d r, quote d low, quote s, quote s l, quote s r, quote s low, para, prime d, prime s|line s||sym ...||sym 1/4||sym 1/2||sym 3/4||sym ampersand||sym at||sym bullet||sym dagger s||sym dagger d||sym hash||sym inv!||sym inv?||sym quote angle d l||sym quote angle d r||sym quote angle s l||sym quote angle s r||sym quote d||sym quote d l||sym quote d r||sym quote d low||sym quote s||sym quote s l||sym quote s r||sym quote s low||sym para||sym prime d||sym prime s||line s||*Game:*| arrow d, arrow l, arrow r, arrow u, arrow lr, arrow ud, arrow \d, arrow /d, arrow \u, arrow /u, arrow d l, arrow d lr, arrow d r, arrow redo, arrow undo, card suit c, card suit d, card suit h, card suit s, chess b k, chess b q, chess b r, chess b b, chess b h, chess b p, chess w k, chess w q, chess w r, chess w b, chess w h, chess w p, die 1, die 2, die 3, die 4, die 5, die 6, ball baseball, ball soccer|line s||sym arrow d||sym arrow l||sym arrow r||sym arrow u||sym arrow lr||sym arrow ud||sym arrow \d||sym arrow /d||sym arrow \u||sym arrow /u||sym arrow d l||sym arrow d lr||sym arrow d r||sym arrow redo||sym arrow undo||sym card suit c||sym card suit d||sym card suit h||sym card suit s||sym chess b k||sym chess b q||sym chess b r||sym chess b b||sym chess b h||sym chess b p||sym chess w k||sym chess w q||sym chess w r||sym chess w b||sym chess w h||sym chess w p||sym die 1||sym die 2||sym die 3||sym die 4||sym die 5||sym die 6||sym ball baseball||sym ball soccer||line s||*Symbols:*| checkbox off, checkbox on, circle 0%, circle 25%, circle 50%, circle 75%, circle 100%, correct, biohazard, dot, dot filled, envelope, gender f, gender m, gender mf, incorrect, plane, poison, radioactive, Rx, recycle, scissor, snowflake, star 5, star 5 filled, sun|line s||sym checkbox off||sym checkbox on||sym circle 0%||sym circle 25%||sym circle 50%||sym circle 75%||sym circle 100%||sym correct||sym biohazard||sym dot||sym dot filled||sym envelope||sym gender f||sym gender m||sym gender mf||sym incorrect||sym plane||sym poison||sym radioactive||sym Rx||sym recycle||sym scissor||sym snowflake||sym star 5||sym star 5 filled||sym sun||line s||*Math:*| +/-, angle, contains, degree, dot, empty set, equal almost, equal approx, equal greater than, equal less than, equal same, equal not, for all, infinity, integral, intersection, is in, is not in, math phi, math pi, minus, nabla, partial diff, product, proportional to, root, sum, there exists, therefore, union|line s||sym +/-||sym angle||sym contains||sym degree||sym dot||sym empty set||sym equal almost||sym equal approx ||sym equal greater than||sym equal less than||sym equal same||sym equal not||sym for all||sym infinity||sym integral||sym intersection||sym is in||sym is not in||sym math phi||sym math pi||sym minus||sym nabla||sym partial diff||sym product||sym proportional to||sym root||sym sum||sym there exists||sym therefore||sym union||line s||*Greek:*| alpha cap, beta cap, gamma cap, delta cap, epsilon cap, zeta cap, eta cap, theta cap, iota cap, kappa cap, lambda cap, mu cap, nu cap, xi cap, omicron cap, pi cap, rho cap, signma cap, tau cap, upsilon cap, phi cap, chi cap, psi cap, omega cap, alpha, beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa, lambda, mu, nu, xi, omicron, pi, rho, signma, tau, upsilon, phi, chi, psi, omega|line s||sym alpha cap||sym beta cap||sym gamma cap||sym delta cap||sym epsilon cap||sym zeta cap||sym eta cap||sym theta cap||sym iota cap||sym kappa cap||sym lambda cap||sym mu cap||sym nu cap||sym xi cap||sym omicron cap||sym pi cap||sym rho cap||sym signma cap||sym tau cap||sym upsilon cap||sym phi cap||sym chi cap||sym psi cap||sym omega cap||sym alpha||sym beta||sym gamma||sym delta||sym epsilon||sym zeta||sym eta||sym theta||sym iota||sym kappa||sym lambda||sym mu||sym nu||sym xi||sym omicron||sym pi||sym rho||sym signma||sym tau||sym upsilon||sym phi||sym chi||sym psi||sym omega]
 
-]t
+t]

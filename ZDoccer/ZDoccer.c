@@ -23,6 +23,19 @@ type:
 ******************************************************************************/
 typedef enum
 {
+   listTypeBULLET,
+   listTypeNUMBER
+} ListType;
+
+typedef enum
+{
+   listActiveNO,
+   listActiveYES_SINGLE_LINE,
+   listActiveYES
+} ListActive;
+
+typedef enum
+{
    paraTypeNONE,
 
    paraTypeREGULAR,
@@ -46,13 +59,60 @@ typedef enum
    paraTypeTITLE_TOC_8,
    paraTypeTITLE_TOC_9,
    
-   paraTypeLIST_START_BULLET,
-   paraTypeLIST_START_NUMBER,
-   paraTypeLIST_STOP_BULLET,
-   paraTypeLIST_STOP_NUMBER,
-   paraTypeLIST_ITEM,
-   paraTypeLIST_ITEM_START,
-   paraTypeLIST_ITEM_STOP,
+   paraTypeLIST_ITEM_BULLET_1,
+   paraTypeLIST_ITEM_BULLET_2,
+   paraTypeLIST_ITEM_BULLET_3,
+   paraTypeLIST_ITEM_BULLET_4,
+   paraTypeLIST_ITEM_BULLET_5,
+   paraTypeLIST_ITEM_BULLET_6,
+   paraTypeLIST_ITEM_BULLET_7,
+   paraTypeLIST_ITEM_BULLET_8,
+   paraTypeLIST_ITEM_BULLET_9,
+   paraTypeLIST_ITEM_BULLET_START_1,
+   paraTypeLIST_ITEM_BULLET_START_2,
+   paraTypeLIST_ITEM_BULLET_START_3,
+   paraTypeLIST_ITEM_BULLET_START_4,
+   paraTypeLIST_ITEM_BULLET_START_5,
+   paraTypeLIST_ITEM_BULLET_START_6,
+   paraTypeLIST_ITEM_BULLET_START_7,
+   paraTypeLIST_ITEM_BULLET_START_8,
+   paraTypeLIST_ITEM_BULLET_START_9,
+   paraTypeLIST_ITEM_BULLET_STOP_1,
+   paraTypeLIST_ITEM_BULLET_STOP_2,
+   paraTypeLIST_ITEM_BULLET_STOP_3,
+   paraTypeLIST_ITEM_BULLET_STOP_4,
+   paraTypeLIST_ITEM_BULLET_STOP_5,
+   paraTypeLIST_ITEM_BULLET_STOP_6,
+   paraTypeLIST_ITEM_BULLET_STOP_7,
+   paraTypeLIST_ITEM_BULLET_STOP_8,
+   paraTypeLIST_ITEM_BULLET_STOP_9,
+   paraTypeLIST_ITEM_NUMBER_1,
+   paraTypeLIST_ITEM_NUMBER_2,
+   paraTypeLIST_ITEM_NUMBER_3,
+   paraTypeLIST_ITEM_NUMBER_4,
+   paraTypeLIST_ITEM_NUMBER_5,
+   paraTypeLIST_ITEM_NUMBER_6,
+   paraTypeLIST_ITEM_NUMBER_7,
+   paraTypeLIST_ITEM_NUMBER_8,
+   paraTypeLIST_ITEM_NUMBER_9,
+   paraTypeLIST_ITEM_NUMBER_START_1,
+   paraTypeLIST_ITEM_NUMBER_START_2,
+   paraTypeLIST_ITEM_NUMBER_START_3,
+   paraTypeLIST_ITEM_NUMBER_START_4,
+   paraTypeLIST_ITEM_NUMBER_START_5,
+   paraTypeLIST_ITEM_NUMBER_START_6,
+   paraTypeLIST_ITEM_NUMBER_START_7,
+   paraTypeLIST_ITEM_NUMBER_START_8,
+   paraTypeLIST_ITEM_NUMBER_START_9,
+   paraTypeLIST_ITEM_NUMBER_STOP_1,
+   paraTypeLIST_ITEM_NUMBER_STOP_2,
+   paraTypeLIST_ITEM_NUMBER_STOP_3,
+   paraTypeLIST_ITEM_NUMBER_STOP_4,
+   paraTypeLIST_ITEM_NUMBER_STOP_5,
+   paraTypeLIST_ITEM_NUMBER_STOP_6,
+   paraTypeLIST_ITEM_NUMBER_STOP_7,
+   paraTypeLIST_ITEM_NUMBER_STOP_8,
+   paraTypeLIST_ITEM_NUMBER_STOP_9,
 
    paraTypeTABLE_START,
    paraTypeTABLE_STOP,
@@ -63,6 +123,8 @@ typedef enum
    paraTypeTABLE_COL,
    paraTypeTABLE_COL_NO_BREAK,
    paraTypeTABLE_COL_FILL,
+   paraTypeTABLE_COL_NUMBER,
+   paraTypeTABLE_COL_NUMBER_FILL,
 
    paraTypeFORMATED_START,
    paraTypeFORMATED_STOP,
@@ -150,6 +212,7 @@ static Gs   *_ProcessInlineMD(         Gs       * const str, Para const * const 
 static Gb    _WriteConfluence(         Gpath const * const path, ParaArray const * const paraList);
 static Gb    _WriteConfluenceTOC(      Gfile       * const file, ParaArray const * const paraList);
 static Gb    _WriteHTML(               Gpath const * const path, ParaArray const * const paraList);
+static void  _WriteHTMLPopList(        Gfile       * const file, Gb const isForced, Gindex const listLevel, ListType * const listType, ListActive * const isListActive);
 static Gb    _WriteHTMLTOC(            Gfile       * const file, ParaArray const * const paraList);
 static Gb    _WriteMD(                 Gpath const * const path, ParaArray const * const paraList);
 static Gb    _WriteMDTOC(              Gfile       * const file, ParaArray const * const paraList);
@@ -426,28 +489,93 @@ static int _Process(Gs const * const command, Gpath const * const path)
 
             // Do we markup that isn't blank.
             markup = gsCreateFromSub(stemp, 0, position);
-            if (*gsGetAt(markup, 0) == L'*' ||
-                *gsGetAt(markup, 0) == L'~' ||
-                gsIsEqualU2(markup, L"=[")  ||
-                gsIsEqualU2(markup, L"]=")  ||
-                gsIsEqualU2(markup, L"#[")  ||
-                gsIsEqualU2(markup, L"]#")  ||
-                gsIsEqualU2(markup, L"-")   ||
-                gsIsEqualU2(markup, L"-[")  ||
-                gsIsEqualU2(markup, L"]-")  ||
-                gsIsEqualU2(markup, L"t[")  ||
-                gsIsEqualU2(markup, L"]t")  ||
-                gsIsEqualU2(markup, L"t-")  ||
-                gsIsEqualU2(markup, L"th")  ||
-                gsIsEqualU2(markup, L"thx") ||
-                gsIsEqualU2(markup, L"th*") ||
-                gsIsEqualU2(markup, L"tc")  ||
-                gsIsEqualU2(markup, L"tcx") ||
-                gsIsEqualU2(markup, L"tc*") ||
-                gsIsEqualU2(markup, L"[")   ||
-                gsIsEqualU2(markup, L"[[")  ||
-                gsIsEqualU2(markup, L"]]")  ||
-                gsIsEqualU2(markup, L"toc") ||
+            if (gsIsEqualU2(markup, L"h")          ||
+                gsIsEqualU2(markup, L"hh")         ||
+                gsIsEqualU2(markup, L"hhh")        ||
+                gsIsEqualU2(markup, L"hhhh")       ||
+                gsIsEqualU2(markup, L"hhhhh")      ||
+                gsIsEqualU2(markup, L"hhhhhh")     ||
+                gsIsEqualU2(markup, L"hhhhhhh")    ||
+                gsIsEqualU2(markup, L"hhhhhhhh")   ||
+                gsIsEqualU2(markup, L"hhhhhhhhh")  ||
+                gsIsEqualU2(markup, L"H")          ||
+                gsIsEqualU2(markup, L"HH")         ||
+                gsIsEqualU2(markup, L"HHH")        ||
+                gsIsEqualU2(markup, L"HHHH")       ||
+                gsIsEqualU2(markup, L"HHHHH")      ||
+                gsIsEqualU2(markup, L"HHHHHH")     ||
+                gsIsEqualU2(markup, L"HHHHHHH")    ||
+                gsIsEqualU2(markup, L"HHHHHHHH")   ||
+                gsIsEqualU2(markup, L"HHHHHHHHH")  ||
+                gsIsEqualU2(markup, L"-")          ||
+                gsIsEqualU2(markup, L".-")         ||
+                gsIsEqualU2(markup, L"..-")        ||
+                gsIsEqualU2(markup, L"...-")       ||
+                gsIsEqualU2(markup, L"....-")      ||
+                gsIsEqualU2(markup, L".....-")     ||
+                gsIsEqualU2(markup, L"......-")    ||
+                gsIsEqualU2(markup, L".......-")   ||
+                gsIsEqualU2(markup, L"........-")  ||
+                gsIsEqualU2(markup, L"-[")         ||
+                gsIsEqualU2(markup, L".-[")        ||
+                gsIsEqualU2(markup, L"..-[")       ||
+                gsIsEqualU2(markup, L"...-[")      ||
+                gsIsEqualU2(markup, L"....-[")     ||
+                gsIsEqualU2(markup, L".....-[")    ||
+                gsIsEqualU2(markup, L"......-[")   ||
+                gsIsEqualU2(markup, L".......-[")  ||
+                gsIsEqualU2(markup, L"........-[") ||
+                gsIsEqualU2(markup, L"-]")         ||
+                gsIsEqualU2(markup, L".-]")        ||
+                gsIsEqualU2(markup, L"..-]")       ||
+                gsIsEqualU2(markup, L"...-]")      ||
+                gsIsEqualU2(markup, L"....-]")     ||
+                gsIsEqualU2(markup, L".....-]")    ||
+                gsIsEqualU2(markup, L"......-]")   ||
+                gsIsEqualU2(markup, L".......-]")  ||
+                gsIsEqualU2(markup, L"........-]") ||
+                gsIsEqualU2(markup, L"1")          ||
+                gsIsEqualU2(markup, L".1")         ||
+                gsIsEqualU2(markup, L"..1")        ||
+                gsIsEqualU2(markup, L"...1")       ||
+                gsIsEqualU2(markup, L"....1")      ||
+                gsIsEqualU2(markup, L".....1")     ||
+                gsIsEqualU2(markup, L"......1")    ||
+                gsIsEqualU2(markup, L".......1")   ||
+                gsIsEqualU2(markup, L"........1")  ||
+                gsIsEqualU2(markup, L"1[")         ||
+                gsIsEqualU2(markup, L".1[")        ||
+                gsIsEqualU2(markup, L"..1[")       ||
+                gsIsEqualU2(markup, L"...1[")      ||
+                gsIsEqualU2(markup, L"....1[")     ||
+                gsIsEqualU2(markup, L".....1[")    ||
+                gsIsEqualU2(markup, L"......1[")   ||
+                gsIsEqualU2(markup, L".......1[")  ||
+                gsIsEqualU2(markup, L"........1[") ||
+                gsIsEqualU2(markup, L"1]")         ||
+                gsIsEqualU2(markup, L".1]")        ||
+                gsIsEqualU2(markup, L"..1]")       ||
+                gsIsEqualU2(markup, L"...1]")      ||
+                gsIsEqualU2(markup, L"....1]")     ||
+                gsIsEqualU2(markup, L".....1]")    ||
+                gsIsEqualU2(markup, L"......1]")   ||
+                gsIsEqualU2(markup, L".......1]")  ||
+                gsIsEqualU2(markup, L"........1]") ||
+                gsIsEqualU2(markup, L"t[")         ||
+                gsIsEqualU2(markup, L"t]")         ||
+                gsIsEqualU2(markup, L"t-")         ||
+                gsIsEqualU2(markup, L"th")         ||
+                gsIsEqualU2(markup, L"thx")        ||
+                gsIsEqualU2(markup, L"th*")        ||
+                gsIsEqualU2(markup, L"tc")         ||
+                gsIsEqualU2(markup, L"tcx")        ||
+                gsIsEqualU2(markup, L"tc*")        ||
+                gsIsEqualU2(markup, L"tc1")        ||
+                gsIsEqualU2(markup, L"tc1*")       ||
+                gsIsEqualU2(markup, L"...")        ||
+                gsIsEqualU2(markup, L"...[")       ||
+                gsIsEqualU2(markup, L"...]")       ||
+                gsIsEqualU2(markup, L"toc")        ||
                 gsIsEqualU2(markup, L"==="))
             {
                gsDestroy(markup);
@@ -469,15 +597,31 @@ static int _Process(Gs const * const command, Gpath const * const path)
          gsStrip(stemp, gcStripWHITE_SPACE_LEADING | gcStripWHITE_SPACE_TRAILING);
 
          // Title Lines.
-         if (*gsGetAt(markup, 0) == L'*' ||
-             *gsGetAt(markup, 0) == L'~')
+         if      (gsIsEqualU2(markup, L"h")         ||
+                  gsIsEqualU2(markup, L"hh")        ||
+                  gsIsEqualU2(markup, L"hhh")       ||
+                  gsIsEqualU2(markup, L"hhhh")      ||
+                  gsIsEqualU2(markup, L"hhhhh")     ||
+                  gsIsEqualU2(markup, L"hhhhhh")    ||
+                  gsIsEqualU2(markup, L"hhhhhhh")   ||
+                  gsIsEqualU2(markup, L"hhhhhhhh")  ||
+                  gsIsEqualU2(markup, L"hhhhhhhhh") ||
+                  gsIsEqualU2(markup, L"H")         ||
+                  gsIsEqualU2(markup, L"HH")        ||
+                  gsIsEqualU2(markup, L"HHH")       ||
+                  gsIsEqualU2(markup, L"HHHH")      ||
+                  gsIsEqualU2(markup, L"HHHHH")     ||
+                  gsIsEqualU2(markup, L"HHHHHH")    ||
+                  gsIsEqualU2(markup, L"HHHHHHH")   ||
+                  gsIsEqualU2(markup, L"HHHHHHHH")  ||
+                  gsIsEqualU2(markup, L"HHHHHHHHH"))
          {
-            if (*gsGetAt(markup, 0) == L'*') para->type = paraTypeTITLE_TOC_1;
+            if (*gsGetAt(markup, 0) == L'h') para->type = paraTypeTITLE_TOC_1;
             else                             para->type = paraTypeTITLE_1;
 
-            para->type += position - 1;
+            para->type += gsGetCount(markup) - 1;
 
-            if (*gsGetAt(markup, 0) == L'*')
+            if (*gsGetAt(markup, 0) == L'h')
             {
                // Increment the chapter.
                chapter.value[position - 1]++;
@@ -492,43 +636,90 @@ static int _Process(Gs const * const command, Gpath const * const path)
             para->str     = stemp;
          }
          // List Lines.
-         else if (gsIsEqualU2(markup, L"=["))
+         else if (gsIsEqualU2(markup, L"-")         ||
+                  gsIsEqualU2(markup, L".-")        ||
+                  gsIsEqualU2(markup, L"..-")       ||
+                  gsIsEqualU2(markup, L"...-")      ||
+                  gsIsEqualU2(markup, L"....-")     ||
+                  gsIsEqualU2(markup, L".....-")    ||
+                  gsIsEqualU2(markup, L"......-")   ||
+                  gsIsEqualU2(markup, L".......-")  ||
+                  gsIsEqualU2(markup, L"........-"))
          {
-            para->type     = paraTypeLIST_START_BULLET;
+            para->type = paraTypeLIST_ITEM_BULLET_1 + gsGetCount(markup) - 1;
+            para->str  = stemp;
          }
-         else if (gsIsEqualU2(markup, L"]="))
+         else if (gsIsEqualU2(markup, L"1")        ||
+                  gsIsEqualU2(markup, L".1")       ||
+                  gsIsEqualU2(markup, L"..1")      ||
+                  gsIsEqualU2(markup, L"...1")     ||
+                  gsIsEqualU2(markup, L"....1")    ||
+                  gsIsEqualU2(markup, L".....1")   ||
+                  gsIsEqualU2(markup, L"......1")  ||
+                  gsIsEqualU2(markup, L".......1") ||
+                  gsIsEqualU2(markup, L"........1"))
          {
-            para->type     = paraTypeLIST_STOP_BULLET;
+            para->type = paraTypeLIST_ITEM_NUMBER_1 + gsGetCount(markup) - 1;
+            para->str  = stemp;
          }
-         else if (gsIsEqualU2(markup, L"#["))
+         else if (gsIsEqualU2(markup, L"-[")         ||
+                  gsIsEqualU2(markup, L".-[")        ||
+                  gsIsEqualU2(markup, L"..-[")       ||
+                  gsIsEqualU2(markup, L"...-[")      ||
+                  gsIsEqualU2(markup, L"....-[")     ||
+                  gsIsEqualU2(markup, L".....-[")    ||
+                  gsIsEqualU2(markup, L"......-[")   ||
+                  gsIsEqualU2(markup, L".......-[")  ||
+                  gsIsEqualU2(markup, L"........-["))
          {
-            para->type     = paraTypeLIST_START_NUMBER;
+            para->type = paraTypeLIST_ITEM_BULLET_START_1 + gsGetCount(markup) - 1;
+            para->str  = stemp;
          }
-         else if (gsIsEqualU2(markup, L"]#"))
+         else if (gsIsEqualU2(markup, L"1[")         ||
+                  gsIsEqualU2(markup, L".1[")        ||
+                  gsIsEqualU2(markup, L"..1[")       ||
+                  gsIsEqualU2(markup, L"...1[")      ||
+                  gsIsEqualU2(markup, L"....1[")     ||
+                  gsIsEqualU2(markup, L".....1[")    ||
+                  gsIsEqualU2(markup, L"......1[")   ||
+                  gsIsEqualU2(markup, L".......1[")  ||
+                  gsIsEqualU2(markup, L"........1["))
          {
-            para->type     = paraTypeLIST_STOP_NUMBER;
+            para->type = paraTypeLIST_ITEM_BULLET_START_1 + gsGetCount(markup) - 1;
+            para->str  = stemp;
          }
-         else if (gsIsEqualU2(markup, L"-"))
+         else if (gsIsEqualU2(markup, L"-]")         ||
+                  gsIsEqualU2(markup, L".-]")        ||
+                  gsIsEqualU2(markup, L"..-]")       ||
+                  gsIsEqualU2(markup, L"...-]")      ||
+                  gsIsEqualU2(markup, L"....-]")     ||
+                  gsIsEqualU2(markup, L".....-]")    ||
+                  gsIsEqualU2(markup, L"......-]")   ||
+                  gsIsEqualU2(markup, L".......-]")  ||
+                  gsIsEqualU2(markup, L"........-]"))
          {
-            para->type     = paraTypeLIST_ITEM;
-            para->str      = stemp;
+            para->type = paraTypeLIST_ITEM_BULLET_STOP_1 + gsGetCount(markup) - 1;
+            para->str  = stemp;
          }
-         else if (gsIsEqualU2(markup, L"-["))
+         else if (gsIsEqualU2(markup, L"1]")         ||
+                  gsIsEqualU2(markup, L".1]")        ||
+                  gsIsEqualU2(markup, L"..1]")       ||
+                  gsIsEqualU2(markup, L"...1]")      ||
+                  gsIsEqualU2(markup, L"....1]")     ||
+                  gsIsEqualU2(markup, L".....1]")    ||
+                  gsIsEqualU2(markup, L"......1]")   ||
+                  gsIsEqualU2(markup, L".......1]")  ||
+                  gsIsEqualU2(markup, L"........1]"))
          {
-            para->type     = paraTypeLIST_ITEM_START;
-            para->str      = stemp;
-         }
-         else if (gsIsEqualU2(markup, L"]-"))
-         {
-            para->type     = paraTypeLIST_ITEM_STOP;
-            para->str      = stemp;
+            para->type = paraTypeLIST_ITEM_BULLET_STOP_1 + gsGetCount(markup) - 1;
+            para->str  = stemp;
          }
          // Table Lines.
          else if (gsIsEqualU2(markup, L"t["))
          {
             para->type     = paraTypeTABLE_START;
          }
-         else if (gsIsEqualU2(markup, L"]t"))
+         else if (gsIsEqualU2(markup, L"t]"))
          {
             para->type     = paraTypeTABLE_STOP;
          }
@@ -566,13 +757,23 @@ static int _Process(Gs const * const command, Gpath const * const path)
             para->type     = paraTypeTABLE_COL_FILL;
             para->str      = stemp;
          }
+         else if (gsIsEqualU2(markup, L"tc1"))
+         {
+            para->type     = paraTypeTABLE_COL_NUMBER;
+            para->str      = stemp;
+         }
+         else if (gsIsEqualU2(markup, L"tc1*"))
+         {
+            para->type     = paraTypeTABLE_COL_NUMBER_FILL;
+            para->str      = stemp;
+         }
          // Formated Lines.
-         else if (gsIsEqualU2(markup, L"["))
+         else if (gsIsEqualU2(markup, L"..."))
          {
             para->type     = paraTypeFORMATED_START;
             para->str      = gsStrip(stemp, gcStripWHITE_SPACE_LEADING | gcStripWHITE_SPACE_TRAILING);
          }
-         else if (gsIsEqualU2(markup, L"[["))
+         else if (gsIsEqualU2(markup, L"...["))
          {
             para->type     = paraTypeFORMATED_START;
 
@@ -584,9 +785,11 @@ static int _Process(Gs const * const command, Gpath const * const path)
 
                // Break; on terminator.
                breakIf(
-                  gsGetCount(stemp) >= 2     &&
-                  *gsGetAt(stemp, 0) == L']' &&
-                  *gsGetAt(stemp, 1) == L']');
+                  gsGetCount(stemp)  >= 4    &&
+                  *gsGetAt(stemp, 0) == L'.' &&
+                  *gsGetAt(stemp, 1) == L'.' &&
+                  *gsGetAt(stemp, 2) == L'.' &&
+                  *gsGetAt(stemp, 3) == L']');
 
                if (para->str)
                {
@@ -599,7 +802,7 @@ static int _Process(Gs const * const command, Gpath const * const path)
                }
             }
          }
-         else if (gsIsEqualU2(markup, L"]]"))
+         else if (gsIsEqualU2(markup, L"...]"))
          {
             // This should never happen.
             para->type     = paraTypeFORMATED_STOP;
@@ -679,236 +882,238 @@ static Gs *_ProcessInlineConfluence(Gs * const inStr, Para const * const para)
    // Chapter
    chapter = _ChapterGetString(para->chapter);
 
-   gsFindAndReplaceU2(str, L"[chapter]",                   gsGet(chapter),         NULL);
+   gsFindAndReplaceU2(str, L"|chapter|",                   gsGet(chapter),         NULL);
 
    gsDestroy(chapter);
 
    // Styling
-   gsFindAndReplaceU2(str, L"[img=]",                      L"[!",                  NULL);
-   gsFindAndReplaceU2(str, L"[=img]",                      L"]",                   NULL);
-   gsFindAndReplaceU2(str, L"[.=]",                        L"{{",                  NULL);
-   gsFindAndReplaceU2(str, L"[=.]",                        L"}}",                  NULL);
-   gsFindAndReplaceU2(str, L"[b=]",                        L"*",                   NULL);
-   gsFindAndReplaceU2(str, L"[=b]",                        L"*",                   NULL);
-   gsFindAndReplaceU2(str, L"[=i]",                        L"_",                   NULL);
-   gsFindAndReplaceU2(str, L"[i=]",                        L"_",                   NULL);
-   gsFindAndReplaceU2(str, L"[_=]",                        L"+",                   NULL);
-   gsFindAndReplaceU2(str, L"[=_]",                        L"+",                   NULL);
-   gsFindAndReplaceU2(str, L"[-=]",                        L"-",                   NULL);
-   gsFindAndReplaceU2(str, L"[=-]",                        L"-",                   NULL);
-   gsFindAndReplaceU2(str, L"[^=]",                        L"^",                   NULL);
-   gsFindAndReplaceU2(str, L"[=^]",                        L"^",                   NULL);
-   gsFindAndReplaceU2(str, L"[v=]",                        L"~",                   NULL);
-   gsFindAndReplaceU2(str, L"[=v]",                        L"~",                   NULL);
-   gsFindAndReplaceU2(str, L"[link=]",                     L"[LINK](",             NULL);
-   gsFindAndReplaceU2(str, L"[=link=]",                    L") ",                  NULL);
-   gsFindAndReplaceU2(str, L"[=link]",                     L"",                    NULL);
-   gsFindAndReplaceU2(str, L"[line]",                      L"\\\\",                NULL);
-   gsFindAndReplaceU2(str, L"[line s]",                    L"\\\\ \\\\",           NULL);
-   gsFindAndReplaceU2(str, L"[line d]",                    L"\\\\ \\\\ \\\\",      NULL);
+   gsFindAndReplaceU2(str, L"|img-|",                      L"[!",                  NULL);
+   gsFindAndReplaceU2(str, L"|-img|",                      L"]",                   NULL);
+   gsFindAndReplaceU2(str, L"|link-|",                     L"[LINK](",             NULL);
+   gsFindAndReplaceU2(str, L"|-link-|",                    L") ",                  NULL);
+   gsFindAndReplaceU2(str, L"|-link|",                     L"",                    NULL);
+   gsFindAndReplaceU2(str, L"|line|",                      L"\\\\",                NULL);
+   gsFindAndReplaceU2(str, L"|line s|",                    L"\\\\ \\\\",           NULL);
+   gsFindAndReplaceU2(str, L"|line d|",                    L"\\\\ \\\\ \\\\",      NULL);
 
    // Legal
-   gsFindAndReplaceU2(str, L"[sym copyright]",             L"&copy;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym registered tm]",         L"&reg;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym tm]",                    L"&trade;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym copyright|",             L"&copy;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym registered tm|",         L"&reg;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym tm|",                    L"&trade;",             NULL);
 
    // Currency
-   gsFindAndReplaceU2(str, L"[sym bitcoin]",               L"&#x20BF;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym cent]",                  L"&cent;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym dollar]",                L"$",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym euro]",                  L"&euro;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym franc]",                 L"&#x20A3;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym lira]",                  L"&#x20A4;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym lira turkey]",           L"&#x20BA;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym peso]",                  L"&#x20B1;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym pound]",                 L"&pound;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym ruble]",                 L"&#x20BD;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym rupee]",                 L"&#x20A8;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym rupee india]",           L"&#x20B9;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym won]",                   L"&#x20A9;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym yen]",                   L"&yen;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym bitcoin|",               L"&#x20BF;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym cent|",                  L"&cent;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym dollar|",                L"$",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym euro|",                  L"&euro;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym franc|",                 L"&#x20A3;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym lira|",                  L"&#x20A4;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym lira turkey|",           L"&#x20BA;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym peso|",                  L"&#x20B1;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym pound|",                 L"&pound;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym ruble|",                 L"&#x20BD;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym rupee|",                 L"&#x20A8;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym rupee india|",           L"&#x20B9;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym won|",                   L"&#x20A9;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym yen|",                   L"&yen;",               NULL);
 
    // Punctuation
-   gsFindAndReplaceU2(str, L"[sym ...]",                   L"&hellip;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym 1/4]",                   L"&frac14;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym 1/2]",                   L"&frac12;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym 3/4]",                   L"&frac34;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym ampersand]",             L"&amp;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym at]",                    L"@",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym bullet]",                L"&bull;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym dagger s]",              L"&dagger;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dagger d]",              L"&Dagger;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym hash]",                  L"#",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym inv!]",                  L"&iexcl;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym inv?]",                  L"&iquest;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle d l]",       L"&laquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle d r]",       L"&raquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle s l]",       L"&lsaquo;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle s r]",       L"&rsaquo;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d]",               L"\"",                  NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d l]",             L"&ldquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d r]",             L"&rdquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d low]",           L"&bdquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s]",               L"'",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s l]",             L"&lsquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s r]",             L"&rsquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s low]",           L"&sbquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym para]",                  L"&para;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym prime d]",               L"&Prime;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym prime s]",               L"&prime;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym ...|",                   L"&hellip;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 1/4|",                   L"&frac14;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 1/2|",                   L"&frac12;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 3/4|",                   L"&frac34;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ampersand|",             L"&amp;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym at|",                    L"@",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym bullet|",                L"&bull;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym dagger s|",              L"&dagger;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dagger d|",              L"&Dagger;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym hash|",                  L"#",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym inv!|",                  L"&iexcl;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym inv?|",                  L"&iquest;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle d l|",       L"&laquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle d r|",       L"&raquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle s l|",       L"&lsaquo;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle s r|",       L"&rsaquo;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d|",               L"\"",                  NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d l|",             L"&ldquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d r|",             L"&rdquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d low|",           L"&bdquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s|",               L"'",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s l|",             L"&lsquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s r|",             L"&rsquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s low|",           L"&sbquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym para|",                  L"&para;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym prime d|",               L"&Prime;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym prime s|",               L"&prime;",             NULL);
 
    // Game
-   gsFindAndReplaceU2(str, L"[sym arrow d]",               L"&darr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow l]",               L"&larr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow r]",               L"&rarr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow u]",               L"&uarr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow lr]",              L"&harr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow ud]",              L"&#x2195;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow \\d]",             L"&#x2198;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow /d]",              L"&#x2199;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow \\u]",             L"&#x2196;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow /u]",              L"&#x2197;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow d l]",             L"&lArr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow d lr]",            L"&hArr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow d r]",             L"&rArr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow redo]",            L"&#x21B7;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow undo]",            L"&#x21B6;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit c]",           L"&clubs;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit d]",           L"&diams;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit h]",           L"&hearts;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit s]",           L"&spades;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b k]",             L"&#x2654;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b q]",             L"&#x2655;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b r]",             L"&#x2656;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b b]",             L"&#x2657;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b h]",             L"&#x2658;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b p]",             L"&#x2659;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w k]",             L"&#x265A;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w q]",             L"&#x265B;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w r]",             L"&#x265C;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w b]",             L"&#x265D;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w h]",             L"&#x265E;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w p]",             L"&#x265F;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 1]",                 L"&#x2680;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 2]",                 L"&#x2681;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 3]",                 L"&#x2682;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 4]",                 L"&#x2683;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 5]",                 L"&#x2684;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 6]",                 L"&#x2685;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym ball baseball]",         L"&#x26BE;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym ball soccer]",           L"&#x26BD;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d|",               L"&darr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow l|",               L"&larr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow r|",               L"&rarr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow u|",               L"&uarr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow lr|",              L"&harr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow ud|",              L"&#x2195;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow \\d|",             L"&#x2198;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow /d|",              L"&#x2199;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow \\u|",             L"&#x2196;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow /u|",              L"&#x2197;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d l|",             L"&lArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d lr|",            L"&hArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d r|",             L"&rArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow redo|",            L"&#x21B7;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow undo|",            L"&#x21B6;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit c|",           L"&clubs;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit d|",           L"&diams;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit h|",           L"&hearts;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit s|",           L"&spades;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b k|",             L"&#x2654;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b q|",             L"&#x2655;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b r|",             L"&#x2656;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b b|",             L"&#x2657;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b h|",             L"&#x2658;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b p|",             L"&#x2659;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w k|",             L"&#x265A;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w q|",             L"&#x265B;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w r|",             L"&#x265C;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w b|",             L"&#x265D;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w h|",             L"&#x265E;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w p|",             L"&#x265F;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 1|",                 L"&#x2680;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 2|",                 L"&#x2681;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 3|",                 L"&#x2682;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 4|",                 L"&#x2683;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 5|",                 L"&#x2684;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 6|",                 L"&#x2685;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ball baseball|",         L"&#x26BE;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ball soccer|",           L"&#x26BD;",            NULL);
 
    // Symbols
-   gsFindAndReplaceU2(str, L"[sym checkbox off]",          L"(off)",               NULL);
-   gsFindAndReplaceU2(str, L"[sym checkbox on]",           L"(on)",                NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 0%]",             L"&#x25CB;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 25%]",            L"&#x25D4;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 50%]",            L"&#x25D1;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 75%]",            L"&#x25D5;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 100%]",           L"&#x25CF;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym correct]",               L"(/)",                 NULL);
-   gsFindAndReplaceU2(str, L"[sym biohazard]",             L"&#x2623;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dot]",                   L"&#x26AA;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dot filled]",            L"&#x26AB;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym envelope]",              L"&#x2709;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym gender f]",              L"&#x2640;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym gender m]",              L"&#x2642;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym gender mf]",             L"&#x26A5;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym incorrect]",             L"(x)",                 NULL);
-   gsFindAndReplaceU2(str, L"[sym plane]",                 L"&#x2708;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym poison]",                L"&#x2620;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym radioactive]",           L"&#x2622;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym Rx]",                    L"&#x211E;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym recycle]",               L"&#x267B;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym scissor]",               L"&#x2702;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym snowflake]",             L"&#x2744;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym star 5]",                L"&#x2606;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym star 5 filled]",         L"&#x2605;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym sun]",                   L"&#x2600;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym checkbox off|",          L"(off)",               NULL);
+   gsFindAndReplaceU2(str, L"|sym checkbox on|",           L"(on)",                NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 0%|",             L"&#x25CB;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 25%|",            L"&#x25D4;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 50%|",            L"&#x25D1;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 75%|",            L"&#x25D5;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 100%|",           L"&#x25CF;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym correct|",               L"(/)",                 NULL);
+   gsFindAndReplaceU2(str, L"|sym biohazard|",             L"&#x2623;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dot|",                   L"&#x26AA;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dot filled|",            L"&#x26AB;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym envelope|",              L"&#x2709;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender f|",              L"&#x2640;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender m|",              L"&#x2642;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender mf|",             L"&#x26A5;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym incorrect|",             L"(x)",                 NULL);
+   gsFindAndReplaceU2(str, L"|sym plane|",                 L"&#x2708;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym poison|",                L"&#x2620;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym radioactive|",           L"&#x2622;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym Rx|",                    L"&#x211E;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym recycle|",               L"&#x267B;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym scissor|",               L"&#x2702;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym snowflake|",             L"&#x2744;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym star 5|",                L"&#x2606;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym star 5 filled|",         L"&#x2605;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym sun|",                   L"&#x2600;",            NULL);
 
    // Math
-   gsFindAndReplaceU2(str, L"[sym +/-]",                   L"&plusmn;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym angle]",                 L"&ang;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym contains]",              L"&ni;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym degree]",                L"&deg;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym dot]",                   L"&sdot;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym empty set]",             L"&empty;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym equal almost]",          L"&asymp;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym equal approx ]",         L"&cong;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym equal greater than]",    L"&ge;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym equal less than]",       L"&le;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym equal same]",            L"&equiv;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym equal not]",             L"&ne;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym for all]",               L"&forall;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym infinity]",              L"&infin;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym integral]",              L"&int;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym intersection]",          L"&cap;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym is in]",                 L"&isin;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym is not in]",             L"&notin;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym math phi]",              L"&straightphi;",       NULL);
-   gsFindAndReplaceU2(str, L"[sym math pi]",               L"&piv;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym minus]",                 L"&minus;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym nabla]",                 L"&nabla;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym partial diff]",          L"&part;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym product]",               L"&prod;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym proportional to]",       L"&prop;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym root]",                  L"&radic;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym sum]",                   L"&sum;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym there exists]",          L"&exist;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym therefore]",             L"&there4;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym union]",                 L"&cup;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym +/-|",                   L"&plusmn;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym angle|",                 L"&ang;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym contains|",              L"&ni;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym degree|",                L"&deg;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym dot|",                   L"&sdot;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym empty set|",             L"&empty;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal almost|",          L"&asymp;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal approx |",         L"&cong;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym equal greater than|",    L"&ge;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym equal less than|",       L"&le;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym equal same|",            L"&equiv;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal not|",             L"&ne;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym for all|",               L"&forall;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym infinity|",              L"&infin;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym integral|",              L"&int;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym intersection|",          L"&cap;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym is in|",                 L"&isin;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym is not in|",             L"&notin;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym math phi|",              L"&straightphi;",       NULL);
+   gsFindAndReplaceU2(str, L"|sym math pi|",               L"&piv;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym minus|",                 L"&minus;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym nabla|",                 L"&nabla;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym partial diff|",          L"&part;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym product|",               L"&prod;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym proportional to|",       L"&prop;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym root|",                  L"&radic;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym sum|",                   L"&sum;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym there exists|",          L"&exist;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym therefore|",             L"&there4;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym union|",                 L"&cup;",               NULL);
 
    // Greek
-   gsFindAndReplaceU2(str, L"[sym alpha cap]",             L"&Alpha;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym beta cap]",              L"&Beta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym gamma cap]",             L"&Gamma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym delta cap]",             L"&Delta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym epsilon cap]",           L"&Epsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym zeta cap]",              L"&Zeta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym eta cap]",               L"&Eta;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym theta cap]",             L"&Theta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym iota cap]",              L"&Iota;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym kappa cap]",             L"&Kappa;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym lambda cap]",            L"&Lambda;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym mu cap]",                L"&Mu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym nu cap]",                L"&Nu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym xi cap]",                L"&Xi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym omicron cap]",           L"&Omicron;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym pi cap]",                L"&Pi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym rho cap]",               L"&Rho;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym signma cap]",            L"&Sigma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym tau cap]",               L"&Tau;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym upsilon cap]",           L"&Upsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym phi cap]",               L"&Phi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym chi cap]",               L"&Chi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym psi cap]",               L"&Psi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym omega cap]",             L"&Omega;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym alpha]",                 L"&alpha;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym beta]",                  L"&beta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym gamma]",                 L"&gamma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym delta]",                 L"&delta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym epsilon]",               L"&Epsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym zeta]",                  L"&zeta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym eta]",                   L"&eta;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym theta]",                 L"&theta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym iota]",                  L"&iota;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym kappa]",                 L"&kappa;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym lambda]",                L"&lambda;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym mu]",                    L"&mu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym nu]",                    L"&nu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym xi]",                    L"&xi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym omicron]",               L"&Omicron;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym pi]",                    L"&pi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym rho]",                   L"&rho;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym signma]",                L"&sigma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym tau]",                   L"&tau;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym upsilon]",               L"&Upsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym phi]",                   L"&phi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym chi]",                   L"&chi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym psi]",                   L"&psi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym omega]",                 L"&omega;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym alpha cap|",             L"&Alpha;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym beta cap|",              L"&Beta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym gamma cap|",             L"&Gamma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym delta cap|",             L"&Delta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym epsilon cap|",           L"&Epsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym zeta cap|",              L"&Zeta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym eta cap|",               L"&Eta;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym theta cap|",             L"&Theta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym iota cap|",              L"&Iota;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym kappa cap|",             L"&Kappa;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym lambda cap|",            L"&Lambda;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym mu cap|",                L"&Mu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym nu cap|",                L"&Nu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym xi cap|",                L"&Xi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym omicron cap|",           L"&Omicron;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym pi cap|",                L"&Pi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym rho cap|",               L"&Rho;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym signma cap|",            L"&Sigma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym tau cap|",               L"&Tau;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym upsilon cap|",           L"&Upsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym phi cap|",               L"&Phi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym chi cap|",               L"&Chi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym psi cap|",               L"&Psi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym omega cap|",             L"&Omega;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym alpha|",                 L"&alpha;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym beta|",                  L"&beta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym gamma|",                 L"&gamma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym delta|",                 L"&delta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym epsilon|",               L"&Epsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym zeta|",                  L"&zeta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym eta|",                   L"&eta;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym theta|",                 L"&theta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym iota|",                  L"&iota;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym kappa|",                 L"&kappa;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym lambda|",                L"&lambda;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym mu|",                    L"&mu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym nu|",                    L"&nu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym xi|",                    L"&xi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym omicron|",               L"&Omicron;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym pi|",                    L"&pi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym rho|",                   L"&rho;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym signma|",                L"&sigma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym tau|",                   L"&tau;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym upsilon|",               L"&Upsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym phi|",                   L"&phi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym chi|",                   L"&chi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym psi|",                   L"&psi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym omega|",                 L"&omega;",             NULL);
 
-   gsFindAndReplaceU2(str, L"[]]",                         L"]",                   NULL);
+   gsFindAndReplaceU2(str, L"|.",                          L"{{",                  NULL);
+   gsFindAndReplaceU2(str, L".|",                          L"}}",                  NULL);
+   gsFindAndReplaceU2(str, L"|*",                          L"*",                   NULL);
+   gsFindAndReplaceU2(str, L"*|",                          L"*",                   NULL);
+   gsFindAndReplaceU2(str, L"|/",                          L"_",                   NULL);
+   gsFindAndReplaceU2(str, L"/|",                          L"_",                   NULL);
+   gsFindAndReplaceU2(str, L"|_",                          L"+",                   NULL);
+   gsFindAndReplaceU2(str, L"_|",                          L"+",                   NULL);
+   gsFindAndReplaceU2(str, L"|-",                          L"-",                   NULL);
+   gsFindAndReplaceU2(str, L"-|",                          L"-",                   NULL);
+   gsFindAndReplaceU2(str, L"|^",                          L"^",                   NULL);
+   gsFindAndReplaceU2(str, L"^|",                          L"^",                   NULL);
+   gsFindAndReplaceU2(str, L"|v",                          L"~",                   NULL);
+   gsFindAndReplaceU2(str, L"v|",                          L"~",                   NULL);
+
+   gsFindAndReplaceU2(str, L"\\|",                         L"|",                   NULL);
+   gsFindAndReplaceU2(str, L"|\\",                         L"|",                   NULL);
 
    greturn str;
 }
@@ -930,236 +1135,238 @@ static Gs *_ProcessInlineHTML(Gs * const inStr, Para const * const para)
    // Chapter
    chapter = _ChapterGetString(para->chapter);
 
-   gsFindAndReplaceU2(str, L"[chapter]",                   gsGet(chapter),         NULL);
+   gsFindAndReplaceU2(str, L"|chapter|",                   gsGet(chapter),         NULL);
 
    gsDestroy(chapter);
 
    // Styling
-   gsFindAndReplaceU2(str, L"[img=]",                      L"<img src=\"",         NULL);
-   gsFindAndReplaceU2(str, L"[=img]",                      L"\" />",               NULL);
-   gsFindAndReplaceU2(str, L"[.=]",                        L"<code>",              NULL);
-   gsFindAndReplaceU2(str, L"[=.]",                        L"</code>",             NULL);
-   gsFindAndReplaceU2(str, L"[b=]",                        L"<strong>",            NULL);
-   gsFindAndReplaceU2(str, L"[=b]",                        L"</strong>",           NULL);
-   gsFindAndReplaceU2(str, L"[i=]",                        L"<em>",                NULL);
-   gsFindAndReplaceU2(str, L"[=i]",                        L"</em>",               NULL);
-   gsFindAndReplaceU2(str, L"[_=]",                        L"<u>",                 NULL);
-   gsFindAndReplaceU2(str, L"[=_]",                        L"</u>",                NULL);
-   gsFindAndReplaceU2(str, L"[-=]",                        L"<s>",                 NULL);
-   gsFindAndReplaceU2(str, L"[=-]",                        L"</s>",                NULL);
-   gsFindAndReplaceU2(str, L"[^=]",                        L"<sup>",               NULL);
-   gsFindAndReplaceU2(str, L"[=^]",                        L"</sup>",              NULL);
-   gsFindAndReplaceU2(str, L"[v=]",                        L"<sub>",               NULL);
-   gsFindAndReplaceU2(str, L"[=v]",                        L"</sub>",              NULL);
-   gsFindAndReplaceU2(str, L"[link=]",                     L"<a href=\"",          NULL);
-   gsFindAndReplaceU2(str, L"[=link=]",                    L"\">",                 NULL);
-   gsFindAndReplaceU2(str, L"[=link]",                     L"</a>",                NULL);
-   gsFindAndReplaceU2(str, L"[line]",                      L"<br />",              NULL);
-   gsFindAndReplaceU2(str, L"[line s]",                    L"<br /><br />",        NULL);
-   gsFindAndReplaceU2(str, L"[line d]",                    L"<br /><br /><br />",  NULL);
+   gsFindAndReplaceU2(str, L"|img-|",                      L"<img src=\"",         NULL);
+   gsFindAndReplaceU2(str, L"|-img|",                      L"\" />",               NULL);
+   gsFindAndReplaceU2(str, L"|link-|",                     L"<a href=\"",          NULL);
+   gsFindAndReplaceU2(str, L"|-link-|",                    L"\">",                 NULL);
+   gsFindAndReplaceU2(str, L"|-link|",                     L"</a>",                NULL);
+   gsFindAndReplaceU2(str, L"|line|",                      L"<br />",              NULL);
+   gsFindAndReplaceU2(str, L"|line s|",                    L"<br /><br />",        NULL);
+   gsFindAndReplaceU2(str, L"|line d|",                    L"<br /><br /><br />",  NULL);
 
    // Legal
-   gsFindAndReplaceU2(str, L"[sym copyright]",             L"&copy;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym registered tm]",         L"&reg;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym tm]",                    L"&trade;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym copyright|",             L"&copy;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym registered tm|",         L"&reg;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym tm|",                    L"&trade;",             NULL);
 
    // Currency
-   gsFindAndReplaceU2(str, L"[sym bitcoin]",               L"&#x20BF;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym cent]",                  L"&cent;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym dollar]",                L"$",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym euro]",                  L"&euro;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym franc]",                 L"&#x20A3;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym lira]",                  L"&#x20A4;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym lira turkey]",           L"&#x20BA;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym peso]",                  L"&#x20B1;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym pound]",                 L"&pound;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym ruble]",                 L"&#x20BD;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym rupee]",                 L"&#x20A8;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym rupee india]",           L"&#x20B9;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym won]",                   L"&#x20A9;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym yen]",                   L"&yen;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym bitcoin|",               L"&#x20BF;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym cent|",                  L"&cent;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym dollar|",                L"$",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym euro|",                  L"&euro;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym franc|",                 L"&#x20A3;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym lira|",                  L"&#x20A4;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym lira turkey|",           L"&#x20BA;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym peso|",                  L"&#x20B1;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym pound|",                 L"&pound;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym ruble|",                 L"&#x20BD;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym rupee|",                 L"&#x20A8;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym rupee india|",           L"&#x20B9;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym won|",                   L"&#x20A9;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym yen|",                   L"&yen;",               NULL);
 
    // Punctuation
-   gsFindAndReplaceU2(str, L"[sym ...]",                   L"&hellip;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym 1/4]",                   L"&frac14;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym 1/2]",                   L"&frac12;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym 3/4]",                   L"&frac34;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym ampersand]",             L"&amp;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym at]",                    L"@",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym bullet]",                L"&bull;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym dagger s]",              L"&dagger;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dagger d]",              L"&Dagger;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym hash]",                  L"#",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym inv!]",                  L"&iexcl;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym inv?]",                  L"&iquest;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle d l]",       L"&laquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle d r]",       L"&raquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle s l]",       L"&lsaquo;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle s r]",       L"&rsaquo;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d]",               L"\"",                  NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d l]",             L"&ldquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d r]",             L"&rdquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d low]",           L"&bdquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s]",               L"'",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s l]",             L"&lsquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s r]",             L"&rsquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s low]",           L"&sbquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym para]",                  L"&para;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym prime d]",               L"&Prime;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym prime s]",               L"&prime;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym ...|",                   L"&hellip;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 1/4|",                   L"&frac14;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 1/2|",                   L"&frac12;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 3/4|",                   L"&frac34;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ampersand|",             L"&amp;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym at|",                    L"@",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym bullet|",                L"&bull;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym dagger s|",              L"&dagger;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dagger d|",              L"&Dagger;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym hash|",                  L"#",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym inv!|",                  L"&iexcl;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym inv?|",                  L"&iquest;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle d l|",       L"&laquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle d r|",       L"&raquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle s l|",       L"&lsaquo;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle s r|",       L"&rsaquo;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d|",               L"\"",                  NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d l|",             L"&ldquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d r|",             L"&rdquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d low|",           L"&bdquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s|",               L"'",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s l|",             L"&lsquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s r|",             L"&rsquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s low|",           L"&sbquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym para|",                  L"&para;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym prime d|",               L"&Prime;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym prime s|",               L"&prime;",             NULL);
 
    // Game
-   gsFindAndReplaceU2(str, L"[sym arrow d]",               L"&darr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow l]",               L"&larr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow r]",               L"&rarr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow u]",               L"&uarr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow lr]",              L"&harr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow ud]",              L"&#x2195;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow \\d]",             L"&#x2198;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow /d]",              L"&#x2199;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow \\u]",             L"&#x2196;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow /u]",              L"&#x2197;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow d l]",             L"&lArr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow d lr]",            L"&hArr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow d r]",             L"&rArr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow redo]",            L"&#x21B7;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow undo]",            L"&#x21B6;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit c]",           L"&clubs;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit d]",           L"&diams;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit h]",           L"&hearts;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit s]",           L"&spades;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b k]",             L"&#x2654;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b q]",             L"&#x2655;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b r]",             L"&#x2656;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b b]",             L"&#x2657;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b h]",             L"&#x2658;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b p]",             L"&#x2659;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w k]",             L"&#x265A;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w q]",             L"&#x265B;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w r]",             L"&#x265C;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w b]",             L"&#x265D;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w h]",             L"&#x265E;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w p]",             L"&#x265F;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 1]",                 L"&#x2680;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 2]",                 L"&#x2681;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 3]",                 L"&#x2682;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 4]",                 L"&#x2683;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 5]",                 L"&#x2684;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 6]",                 L"&#x2685;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym ball baseball]",         L"&#x26BE;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym ball soccer]",           L"&#x26BD;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d|",               L"&darr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow l|",               L"&larr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow r|",               L"&rarr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow u|",               L"&uarr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow lr|",              L"&harr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow ud|",              L"&#x2195;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow \\d|",             L"&#x2198;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow /d|",              L"&#x2199;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow \\u|",             L"&#x2196;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow /u|",              L"&#x2197;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d l|",             L"&lArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d lr|",            L"&hArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d r|",             L"&rArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow redo|",            L"&#x21B7;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow undo|",            L"&#x21B6;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit c|",           L"&clubs;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit d|",           L"&diams;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit h|",           L"&hearts;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit s|",           L"&spades;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b k|",             L"&#x2654;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b q|",             L"&#x2655;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b r|",             L"&#x2656;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b b|",             L"&#x2657;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b h|",             L"&#x2658;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b p|",             L"&#x2659;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w k|",             L"&#x265A;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w q|",             L"&#x265B;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w r|",             L"&#x265C;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w b|",             L"&#x265D;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w h|",             L"&#x265E;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w p|",             L"&#x265F;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 1|",                 L"&#x2680;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 2|",                 L"&#x2681;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 3|",                 L"&#x2682;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 4|",                 L"&#x2683;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 5|",                 L"&#x2684;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 6|",                 L"&#x2685;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ball baseball|",         L"&#x26BE;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ball soccer|",           L"&#x26BD;",            NULL);
 
    // Symbols
-   gsFindAndReplaceU2(str, L"[sym checkbox off]",          L"&#x2610;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym checkbox on]",           L"&#x2611;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 0%]",             L"&#x25CB;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 25%]",            L"&#x25D4;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 50%]",            L"&#x25D1;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 75%]",            L"&#x25D5;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 100%]",           L"&#x25CF;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym correct]",               L"&#x2713;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym biohazard]",             L"&#x2623;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dot]",                   L"&#x26AA;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dot filled]",            L"&#x26AB;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym envelope]",              L"&#x2709;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym gender f]",              L"&#x2640;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym gender m]",              L"&#x2642;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym gender mf]",             L"&#x26A5;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym incorrect]",             L"&#x2717;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym plane]",                 L"&#x2708;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym poison]",                L"&#x2620;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym radioactive]",           L"&#x2622;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym Rx]",                    L"&#x211E;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym recycle]",               L"&#x267B;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym scissor]",               L"&#x2702;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym snowflake]",             L"&#x2744;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym star 5]",                L"&#x2606;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym star 5 filled]",         L"&#x2605;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym sun]",                   L"&#x2600;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym checkbox off|",          L"&#x2610;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym checkbox on|",           L"&#x2611;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 0%|",             L"&#x25CB;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 25%|",            L"&#x25D4;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 50%|",            L"&#x25D1;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 75%|",            L"&#x25D5;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 100%|",           L"&#x25CF;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym correct|",               L"&#x2713;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym biohazard|",             L"&#x2623;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dot|",                   L"&#x26AA;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dot filled|",            L"&#x26AB;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym envelope|",              L"&#x2709;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender f|",              L"&#x2640;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender m|",              L"&#x2642;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender mf|",             L"&#x26A5;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym incorrect|",             L"&#x2717;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym plane|",                 L"&#x2708;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym poison|",                L"&#x2620;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym radioactive|",           L"&#x2622;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym Rx|",                    L"&#x211E;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym recycle|",               L"&#x267B;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym scissor|",               L"&#x2702;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym snowflake|",             L"&#x2744;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym star 5|",                L"&#x2606;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym star 5 filled|",         L"&#x2605;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym sun|",                   L"&#x2600;",            NULL);
 
    // Math
-   gsFindAndReplaceU2(str, L"[sym +/-]",                   L"&plusmn;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym angle]",                 L"&ang;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym contains]",              L"&ni;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym degree]",                L"&deg;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym dot]",                   L"&sdot;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym empty set]",             L"&empty;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym equal almost]",          L"&asymp;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym equal approx ]",         L"&cong;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym equal greater than]",    L"&ge;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym equal less than]",       L"&le;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym equal same]",            L"&equiv;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym equal not]",             L"&ne;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym for all]",               L"&forall;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym infinity]",              L"&infin;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym integral]",              L"&int;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym intersection]",          L"&cap;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym is in]",                 L"&isin;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym is not in]",             L"&notin;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym math phi]",              L"&straightphi;",       NULL);
-   gsFindAndReplaceU2(str, L"[sym math pi]",               L"&piv;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym minus]",                 L"&minus;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym nabla]",                 L"&nabla;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym partial diff]",          L"&part;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym product]",               L"&prod;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym proportional to]",       L"&prop;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym root]",                  L"&radic;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym sum]",                   L"&sum;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym there exists]",          L"&exist;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym therefore]",             L"&there4;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym union]",                 L"&cup;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym +/-|",                   L"&plusmn;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym angle|",                 L"&ang;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym contains|",              L"&ni;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym degree|",                L"&deg;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym dot|",                   L"&sdot;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym empty set|",             L"&empty;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal almost|",          L"&asymp;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal approx |",         L"&cong;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym equal greater than|",    L"&ge;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym equal less than|",       L"&le;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym equal same|",            L"&equiv;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal not|",             L"&ne;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym for all|",               L"&forall;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym infinity|",              L"&infin;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym integral|",              L"&int;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym intersection|",          L"&cap;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym is in|",                 L"&isin;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym is not in|",             L"&notin;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym math phi|",              L"&straightphi;",       NULL);
+   gsFindAndReplaceU2(str, L"|sym math pi|",               L"&piv;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym minus|",                 L"&minus;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym nabla|",                 L"&nabla;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym partial diff|",          L"&part;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym product|",               L"&prod;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym proportional to|",       L"&prop;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym root|",                  L"&radic;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym sum|",                   L"&sum;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym there exists|",          L"&exist;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym therefore|",             L"&there4;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym union|",                 L"&cup;",               NULL);
 
    // Greek
-   gsFindAndReplaceU2(str, L"[sym alpha cap]",             L"&Alpha;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym beta cap]",              L"&Beta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym gamma cap]",             L"&Gamma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym delta cap]",             L"&Delta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym epsilon cap]",           L"&Epsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym zeta cap]",              L"&Zeta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym eta cap]",               L"&Eta;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym theta cap]",             L"&Theta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym iota cap]",              L"&Iota;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym kappa cap]",             L"&Kappa;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym lambda cap]",            L"&Lambda;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym mu cap]",                L"&Mu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym nu cap]",                L"&Nu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym xi cap]",                L"&Xi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym omicron cap]",           L"&Omicron;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym pi cap]",                L"&Pi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym rho cap]",               L"&Rho;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym signma cap]",            L"&Sigma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym tau cap]",               L"&Tau;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym upsilon cap]",           L"&Upsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym phi cap]",               L"&Phi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym chi cap]",               L"&Chi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym psi cap]",               L"&Psi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym omega cap]",             L"&Omega;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym alpha]",                 L"&alpha;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym beta]",                  L"&beta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym gamma]",                 L"&gamma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym delta]",                 L"&delta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym epsilon]",               L"&Epsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym zeta]",                  L"&zeta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym eta]",                   L"&eta;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym theta]",                 L"&theta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym iota]",                  L"&iota;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym kappa]",                 L"&kappa;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym lambda]",                L"&lambda;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym mu]",                    L"&mu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym nu]",                    L"&nu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym xi]",                    L"&xi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym omicron]",               L"&Omicron;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym pi]",                    L"&pi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym rho]",                   L"&rho;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym signma]",                L"&sigma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym tau]",                   L"&tau;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym upsilon]",               L"&Upsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym phi]",                   L"&phi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym chi]",                   L"&chi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym psi]",                   L"&psi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym omega]",                 L"&omega;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym alpha cap|",             L"&Alpha;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym beta cap|",              L"&Beta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym gamma cap|",             L"&Gamma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym delta cap|",             L"&Delta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym epsilon cap|",           L"&Epsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym zeta cap|",              L"&Zeta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym eta cap|",               L"&Eta;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym theta cap|",             L"&Theta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym iota cap|",              L"&Iota;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym kappa cap|",             L"&Kappa;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym lambda cap|",            L"&Lambda;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym mu cap|",                L"&Mu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym nu cap|",                L"&Nu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym xi cap|",                L"&Xi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym omicron cap|",           L"&Omicron;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym pi cap|",                L"&Pi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym rho cap|",               L"&Rho;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym signma cap|",            L"&Sigma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym tau cap|",               L"&Tau;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym upsilon cap|",           L"&Upsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym phi cap|",               L"&Phi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym chi cap|",               L"&Chi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym psi cap|",               L"&Psi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym omega cap|",             L"&Omega;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym alpha|",                 L"&alpha;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym beta|",                  L"&beta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym gamma|",                 L"&gamma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym delta|",                 L"&delta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym epsilon|",               L"&Epsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym zeta|",                  L"&zeta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym eta|",                   L"&eta;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym theta|",                 L"&theta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym iota|",                  L"&iota;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym kappa|",                 L"&kappa;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym lambda|",                L"&lambda;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym mu|",                    L"&mu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym nu|",                    L"&nu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym xi|",                    L"&xi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym omicron|",               L"&Omicron;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym pi|",                    L"&pi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym rho|",                   L"&rho;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym signma|",                L"&sigma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym tau|",                   L"&tau;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym upsilon|",               L"&Upsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym phi|",                   L"&phi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym chi|",                   L"&chi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym psi|",                   L"&psi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym omega|",                 L"&omega;",             NULL);
 
-   gsFindAndReplaceU2(str, L"[]]",                         L"]",                   NULL);
+   gsFindAndReplaceU2(str, L"|.",                          L"<code>",              NULL);
+   gsFindAndReplaceU2(str, L".|",                          L"</code>",             NULL);
+   gsFindAndReplaceU2(str, L"|*",                          L"<strong>",            NULL);
+   gsFindAndReplaceU2(str, L"*|",                          L"</strong>",           NULL);
+   gsFindAndReplaceU2(str, L"|/",                          L"<em>",                NULL);
+   gsFindAndReplaceU2(str, L"/|",                          L"</em>",               NULL);
+   gsFindAndReplaceU2(str, L"|_",                          L"<u>",                 NULL);
+   gsFindAndReplaceU2(str, L"_|",                          L"</u>",                NULL);
+   gsFindAndReplaceU2(str, L"|-",                          L"<s>",                 NULL);
+   gsFindAndReplaceU2(str, L"-|",                          L"</s>",                NULL);
+   gsFindAndReplaceU2(str, L"|^",                          L"<sup>",               NULL);
+   gsFindAndReplaceU2(str, L"^|",                          L"</sup>",              NULL);
+   gsFindAndReplaceU2(str, L"|v",                          L"<sub>",               NULL);
+   gsFindAndReplaceU2(str, L"v|",                          L"</sub>",              NULL);
+
+   gsFindAndReplaceU2(str, L"\\|",                         L"|",                   NULL);
+   gsFindAndReplaceU2(str, L"|\\",                         L"|",                   NULL);
 
    greturn str;
 }
@@ -1181,236 +1388,238 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    // Chapter
    chapter = _ChapterGetString(para->chapter);
 
-   gsFindAndReplaceU2(str, L"[chapter]",                   gsGet(chapter),         NULL);
+   gsFindAndReplaceU2(str, L"|chapter|",                   gsGet(chapter),         NULL);
 
    gsDestroy(chapter);
 
    // Styling
-   gsFindAndReplaceU2(str, L"[img=]",                      L"![image](",           NULL);
-   gsFindAndReplaceU2(str, L"[=img]",                      L")",                   NULL);
-   gsFindAndReplaceU2(str, L"[.=]",                        L"`",                   NULL);
-   gsFindAndReplaceU2(str, L"[=.]",                        L"`",                   NULL);
-   gsFindAndReplaceU2(str, L"[b=]",                        L"**",                  NULL);
-   gsFindAndReplaceU2(str, L"[=b]",                        L"**",                  NULL);
-   gsFindAndReplaceU2(str, L"[=i]",                        L"*",                   NULL);
-   gsFindAndReplaceU2(str, L"[i=]",                        L"*",                   NULL);
-   gsFindAndReplaceU2(str, L"[_=]",                        L"<u>",                 NULL);
-   gsFindAndReplaceU2(str, L"[=_]",                        L"</u>",                NULL);
-   gsFindAndReplaceU2(str, L"[-=]",                        L"~~",                  NULL);
-   gsFindAndReplaceU2(str, L"[=-]",                        L"~~",                  NULL);
-   gsFindAndReplaceU2(str, L"[^=]",                        L"<sup>",               NULL);
-   gsFindAndReplaceU2(str, L"[=^]",                        L"</sup>",              NULL);
-   gsFindAndReplaceU2(str, L"[v=]",                        L"<sub>",               NULL);
-   gsFindAndReplaceU2(str, L"[=v]",                        L"</sub>",              NULL);
-   gsFindAndReplaceU2(str, L"[link=]",                     L"[LINK](",             NULL);
-   gsFindAndReplaceU2(str, L"[=link=]",                    L") ",                  NULL);
-   gsFindAndReplaceU2(str, L"[=link]",                     L"",                    NULL);
-   gsFindAndReplaceU2(str, L"[line]",                      L"<br />",              NULL);
-   gsFindAndReplaceU2(str, L"[line s]",                    L"<br /><br />",        NULL);
-   gsFindAndReplaceU2(str, L"[line d]",                    L"<br /><br /><br />",  NULL);
+   gsFindAndReplaceU2(str, L"|img-|",                      L"![image](",           NULL);
+   gsFindAndReplaceU2(str, L"|-img|",                      L")",                   NULL);
+   gsFindAndReplaceU2(str, L"|link-|",                     L"[LINK](",             NULL);
+   gsFindAndReplaceU2(str, L"|-link-|",                    L") ",                  NULL);
+   gsFindAndReplaceU2(str, L"|-link|",                     L"",                    NULL);
+   gsFindAndReplaceU2(str, L"|line|",                      L"<br />",              NULL);
+   gsFindAndReplaceU2(str, L"|line s|",                    L"<br /><br />",        NULL);
+   gsFindAndReplaceU2(str, L"|line d|",                    L"<br /><br /><br />",  NULL);
 
    // Legal
-   gsFindAndReplaceU2(str, L"[sym copyright]",             L"&copy;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym registered tm]",         L"&reg;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym tm]",                    L"&trade;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym copyright|",             L"&copy;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym registered tm|",         L"&reg;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym tm|",                    L"&trade;",             NULL);
 
    // Currency
-   gsFindAndReplaceU2(str, L"[sym bitcoin]",               L"&#x20BF;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym cent]",                  L"&cent;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym dollar]",                L"$",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym euro]",                  L"&euro;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym franc]",                 L"&#x20A3;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym lira]",                  L"&#x20A4;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym lira turkey]",           L"&#x20BA;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym peso]",                  L"&#x20B1;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym pound]",                 L"&pound;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym ruble]",                 L"&#x20BD;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym rupee]",                 L"&#x20A8;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym rupee india]",           L"&#x20B9;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym won]",                   L"&#x20A9;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym yen]",                   L"&yen;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym bitcoin|",               L"&#x20BF;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym cent|",                  L"&cent;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym dollar|",                L"$",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym euro|",                  L"&euro;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym franc|",                 L"&#x20A3;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym lira|",                  L"&#x20A4;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym lira turkey|",           L"&#x20BA;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym peso|",                  L"&#x20B1;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym pound|",                 L"&pound;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym ruble|",                 L"&#x20BD;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym rupee|",                 L"&#x20A8;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym rupee india|",           L"&#x20B9;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym won|",                   L"&#x20A9;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym yen|",                   L"&yen;",               NULL);
 
    // Punctuation
-   gsFindAndReplaceU2(str, L"[sym ...]",                   L"&hellip;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym 1/4]",                   L"&frac14;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym 1/2]",                   L"&frac12;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym 3/4]",                   L"&frac34;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym ampersand]",             L"&amp;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym at]",                    L"@",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym bullet]",                L"&bull;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym dagger s]",              L"&dagger;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dagger d]",              L"&Dagger;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym hash]",                  L"#",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym inv!]",                  L"&iexcl;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym inv?]",                  L"&iquest;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle d l]",       L"&laquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle d r]",       L"&raquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle s l]",       L"&lsaquo;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym quote angle s r]",       L"&rsaquo;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d]",               L"\"",                  NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d l]",             L"&ldquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d r]",             L"&rdquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote d low]",           L"&bdquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s]",               L"'",                   NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s l]",             L"&lsquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s r]",             L"&rsquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym quote s low]",           L"&sbquo;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym para]",                  L"&para;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym prime d]",               L"&Prime;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym prime s]",               L"&prime;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym ...|",                   L"&hellip;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 1/4|",                   L"&frac14;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 1/2|",                   L"&frac12;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 3/4|",                   L"&frac34;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ampersand|",             L"&amp;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym at|",                    L"@",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym bullet|",                L"&bull;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym dagger s|",              L"&dagger;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dagger d|",              L"&Dagger;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym hash|",                  L"#",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym inv!|",                  L"&iexcl;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym inv?|",                  L"&iquest;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle d l|",       L"&laquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle d r|",       L"&raquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle s l|",       L"&lsaquo;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle s r|",       L"&rsaquo;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d|",               L"\"",                  NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d l|",             L"&ldquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d r|",             L"&rdquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d low|",           L"&bdquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s|",               L"'",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s l|",             L"&lsquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s r|",             L"&rsquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s low|",           L"&sbquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym para|",                  L"&para;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym prime d|",               L"&Prime;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym prime s|",               L"&prime;",             NULL);
 
    // Game
-   gsFindAndReplaceU2(str, L"[sym arrow d]",               L"&darr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow l]",               L"&larr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow r]",               L"&rarr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow u]",               L"&uarr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow lr]",              L"&harr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow ud]",              L"&#x2195;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow \\d]",             L"&#x2198;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow /d]",              L"&#x2199;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow \\u]",             L"&#x2196;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow /u]",              L"&#x2197;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow d l]",             L"&lArr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow d lr]",            L"&hArr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow d r]",             L"&rArr;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow redo]",            L"&#x21B7;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym arrow undo]",            L"&#x21B6;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit c]",           L"&clubs;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit d]",           L"&diams;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit h]",           L"&hearts;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym card suit s]",           L"&spades;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b k]",             L"&#x2654;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b q]",             L"&#x2655;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b r]",             L"&#x2656;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b b]",             L"&#x2657;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b h]",             L"&#x2658;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess b p]",             L"&#x2659;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w k]",             L"&#x265A;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w q]",             L"&#x265B;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w r]",             L"&#x265C;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w b]",             L"&#x265D;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w h]",             L"&#x265E;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym chess w p]",             L"&#x265F;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 1]",                 L"&#x2680;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 2]",                 L"&#x2681;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 3]",                 L"&#x2682;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 4]",                 L"&#x2683;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 5]",                 L"&#x2684;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym die 6]",                 L"&#x2685;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym ball baseball]",         L"&#x26BE;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym ball soccer]",           L"&#x26BD;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d|",               L"&darr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow l|",               L"&larr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow r|",               L"&rarr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow u|",               L"&uarr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow lr|",              L"&harr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow ud|",              L"&#x2195;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow \\d|",             L"&#x2198;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow /d|",              L"&#x2199;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow \\u|",             L"&#x2196;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow /u|",              L"&#x2197;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d l|",             L"&lArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d lr|",            L"&hArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d r|",             L"&rArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow redo|",            L"&#x21B7;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow undo|",            L"&#x21B6;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit c|",           L"&clubs;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit d|",           L"&diams;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit h|",           L"&hearts;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit s|",           L"&spades;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b k|",             L"&#x2654;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b q|",             L"&#x2655;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b r|",             L"&#x2656;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b b|",             L"&#x2657;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b h|",             L"&#x2658;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b p|",             L"&#x2659;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w k|",             L"&#x265A;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w q|",             L"&#x265B;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w r|",             L"&#x265C;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w b|",             L"&#x265D;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w h|",             L"&#x265E;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w p|",             L"&#x265F;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 1|",                 L"&#x2680;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 2|",                 L"&#x2681;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 3|",                 L"&#x2682;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 4|",                 L"&#x2683;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 5|",                 L"&#x2684;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 6|",                 L"&#x2685;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ball baseball|",         L"&#x26BE;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ball soccer|",           L"&#x26BD;",            NULL);
 
    // Symbols
-   gsFindAndReplaceU2(str, L"[sym checkbox off]",          L"&#x2610;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym checkbox on]",           L"&#x2611;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 0%]",             L"&#x25CB;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 25%]",            L"&#x25D4;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 50%]",            L"&#x25D1;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 75%]",            L"&#x25D5;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym circle 100%]",           L"&#x25CF;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym correct]",               L"&#x2713;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym biohazard]",             L"&#x2623;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dot]",                   L"&#x26AA;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym dot filled]",            L"&#x26AB;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym envelope]",              L"&#x2709;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym gender f]",              L"&#x2640;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym gender m]",              L"&#x2642;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym gender mf]",             L"&#x26A5;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym incorrect]",             L"&#x2717;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym plane]",                 L"&#x2708;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym poison]",                L"&#x2620;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym radioactive]",           L"&#x2622;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym Rx]",                    L"&#x211E;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym recycle]",               L"&#x267B;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym scissor]",               L"&#x2702;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym snowflake]",             L"&#x2744;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym star 5]",                L"&#x2606;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym star 5 filled]",         L"&#x2605;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym sun]",                   L"&#x2600;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym checkbox off|",          L"&#x2610;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym checkbox on|",           L"&#x2611;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 0%|",             L"&#x25CB;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 25%|",            L"&#x25D4;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 50%|",            L"&#x25D1;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 75%|",            L"&#x25D5;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 100%|",           L"&#x25CF;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym correct|",               L"&#x2713;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym biohazard|",             L"&#x2623;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dot|",                   L"&#x26AA;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dot filled|",            L"&#x26AB;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym envelope|",              L"&#x2709;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender f|",              L"&#x2640;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender m|",              L"&#x2642;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender mf|",             L"&#x26A5;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym incorrect|",             L"&#x2717;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym plane|",                 L"&#x2708;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym poison|",                L"&#x2620;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym radioactive|",           L"&#x2622;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym Rx|",                    L"&#x211E;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym recycle|",               L"&#x267B;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym scissor|",               L"&#x2702;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym snowflake|",             L"&#x2744;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym star 5|",                L"&#x2606;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym star 5 filled|",         L"&#x2605;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym sun|",                   L"&#x2600;",            NULL);
 
    // Math
-   gsFindAndReplaceU2(str, L"[sym +/-]",                   L"&plusmn;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym angle]",                 L"&ang;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym contains]",              L"&ni;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym degree]",                L"&deg;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym dot]",                   L"&sdot;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym empty set]",             L"&empty;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym equal almost]",          L"&asymp;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym equal approx ]",         L"&cong;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym equal greater than]",    L"&ge;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym equal less than]",       L"&le;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym equal same]",            L"&equiv;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym equal not]",             L"&ne;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym for all]",               L"&forall;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym infinity]",              L"&infin;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym integral]",              L"&int;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym intersection]",          L"&cap;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym is in]",                 L"&isin;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym is not in]",             L"&notin;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym math phi]",              L"&straightphi;",       NULL);
-   gsFindAndReplaceU2(str, L"[sym math pi]",               L"&piv;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym minus]",                 L"&minus;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym nabla]",                 L"&nabla;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym partial diff]",          L"&part;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym product]",               L"&prod;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym proportional to]",       L"&prop;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym root]",                  L"&radic;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym sum]",                   L"&sum;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym there exists]",          L"&exist;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym therefore]",             L"&there4;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym union]",                 L"&cup;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym +/-|",                   L"&plusmn;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym angle|",                 L"&ang;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym contains|",              L"&ni;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym degree|",                L"&deg;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym dot|",                   L"&sdot;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym empty set|",             L"&empty;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal almost|",          L"&asymp;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal approx |",         L"&cong;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym equal greater than|",    L"&ge;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym equal less than|",       L"&le;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym equal same|",            L"&equiv;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal not|",             L"&ne;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym for all|",               L"&forall;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym infinity|",              L"&infin;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym integral|",              L"&int;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym intersection|",          L"&cap;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym is in|",                 L"&isin;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym is not in|",             L"&notin;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym math phi|",              L"&straightphi;",       NULL);
+   gsFindAndReplaceU2(str, L"|sym math pi|",               L"&piv;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym minus|",                 L"&minus;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym nabla|",                 L"&nabla;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym partial diff|",          L"&part;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym product|",               L"&prod;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym proportional to|",       L"&prop;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym root|",                  L"&radic;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym sum|",                   L"&sum;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym there exists|",          L"&exist;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym therefore|",             L"&there4;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym union|",                 L"&cup;",               NULL);
 
    // Greek
-   gsFindAndReplaceU2(str, L"[sym alpha cap]",             L"&Alpha;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym beta cap]",              L"&Beta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym gamma cap]",             L"&Gamma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym delta cap]",             L"&Delta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym epsilon cap]",           L"&Epsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym zeta cap]",              L"&Zeta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym eta cap]",               L"&Eta;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym theta cap]",             L"&Theta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym iota cap]",              L"&Iota;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym kappa cap]",             L"&Kappa;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym lambda cap]",            L"&Lambda;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym mu cap]",                L"&Mu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym nu cap]",                L"&Nu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym xi cap]",                L"&Xi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym omicron cap]",           L"&Omicron;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym pi cap]",                L"&Pi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym rho cap]",               L"&Rho;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym signma cap]",            L"&Sigma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym tau cap]",               L"&Tau;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym upsilon cap]",           L"&Upsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym phi cap]",               L"&Phi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym chi cap]",               L"&Chi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym psi cap]",               L"&Psi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym omega cap]",             L"&Omega;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym alpha]",                 L"&alpha;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym beta]",                  L"&beta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym gamma]",                 L"&gamma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym delta]",                 L"&delta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym epsilon]",               L"&Epsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym zeta]",                  L"&zeta;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym eta]",                   L"&eta;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym theta]",                 L"&theta;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym iota]",                  L"&iota;",              NULL);
-   gsFindAndReplaceU2(str, L"[sym kappa]",                 L"&kappa;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym lambda]",                L"&lambda;",            NULL);
-   gsFindAndReplaceU2(str, L"[sym mu]",                    L"&mu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym nu]",                    L"&nu;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym xi]",                    L"&xi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym omicron]",               L"&Omicron;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym pi]",                    L"&pi;",                NULL);
-   gsFindAndReplaceU2(str, L"[sym rho]",                   L"&rho;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym signma]",                L"&sigma;",             NULL);
-   gsFindAndReplaceU2(str, L"[sym tau]",                   L"&tau;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym upsilon]",               L"&Upsilon;",           NULL);
-   gsFindAndReplaceU2(str, L"[sym phi]",                   L"&phi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym chi]",                   L"&chi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym psi]",                   L"&psi;",               NULL);
-   gsFindAndReplaceU2(str, L"[sym omega]",                 L"&omega;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym alpha cap|",             L"&Alpha;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym beta cap|",              L"&Beta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym gamma cap|",             L"&Gamma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym delta cap|",             L"&Delta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym epsilon cap|",           L"&Epsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym zeta cap|",              L"&Zeta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym eta cap|",               L"&Eta;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym theta cap|",             L"&Theta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym iota cap|",              L"&Iota;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym kappa cap|",             L"&Kappa;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym lambda cap|",            L"&Lambda;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym mu cap|",                L"&Mu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym nu cap|",                L"&Nu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym xi cap|",                L"&Xi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym omicron cap|",           L"&Omicron;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym pi cap|",                L"&Pi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym rho cap|",               L"&Rho;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym signma cap|",            L"&Sigma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym tau cap|",               L"&Tau;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym upsilon cap|",           L"&Upsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym phi cap|",               L"&Phi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym chi cap|",               L"&Chi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym psi cap|",               L"&Psi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym omega cap|",             L"&Omega;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym alpha|",                 L"&alpha;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym beta|",                  L"&beta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym gamma|",                 L"&gamma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym delta|",                 L"&delta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym epsilon|",               L"&Epsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym zeta|",                  L"&zeta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym eta|",                   L"&eta;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym theta|",                 L"&theta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym iota|",                  L"&iota;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym kappa|",                 L"&kappa;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym lambda|",                L"&lambda;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym mu|",                    L"&mu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym nu|",                    L"&nu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym xi|",                    L"&xi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym omicron|",               L"&Omicron;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym pi|",                    L"&pi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym rho|",                   L"&rho;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym signma|",                L"&sigma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym tau|",                   L"&tau;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym upsilon|",               L"&Upsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym phi|",                   L"&phi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym chi|",                   L"&chi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym psi|",                   L"&psi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym omega|",                 L"&omega;",             NULL);
 
-   gsFindAndReplaceU2(str, L"[]]",                         L"\\]",                 NULL);
+   gsFindAndReplaceU2(str, L"|.",                          L"`",                   NULL);
+   gsFindAndReplaceU2(str, L".|",                          L"`",                   NULL);
+   gsFindAndReplaceU2(str, L"|*",                          L"**",                  NULL);
+   gsFindAndReplaceU2(str, L"*|",                          L"**",                  NULL);
+   gsFindAndReplaceU2(str, L"|/",                          L"*",                   NULL);
+   gsFindAndReplaceU2(str, L"/|",                          L"*",                   NULL);
+   gsFindAndReplaceU2(str, L"|_",                          L"<u>",                 NULL);
+   gsFindAndReplaceU2(str, L"_|",                          L"</u>",                NULL);
+   gsFindAndReplaceU2(str, L"|-",                          L"~~",                  NULL);
+   gsFindAndReplaceU2(str, L"-|",                          L"~~",                  NULL);
+   gsFindAndReplaceU2(str, L"|^",                          L"<sup>",               NULL);
+   gsFindAndReplaceU2(str, L"^|",                          L"</sup>",              NULL);
+   gsFindAndReplaceU2(str, L"|v",                          L"<sub>",               NULL);
+   gsFindAndReplaceU2(str, L"v|",                          L"</sub>",              NULL);
+
+   gsFindAndReplaceU2(str, L"\\|",                         L"|",                   NULL);
+   gsFindAndReplaceU2(str, L"|\\",                         L"|",                   NULL);
 
    greturn str;
 }
@@ -1518,37 +1727,37 @@ static Gb _WriteConfluence(Gpath const * const path, ParaArray const * const par
          gfileSetA(file, gcTypeU1, "\n", NULL);
          break;
 
-      case paraTypeLIST_START_BULLET:
-         isInsideListNumber = gbFALSE;
-         isInsideListBullet = gbTRUE;
-         break;
-
-      case paraTypeLIST_START_NUMBER:
-         isInsideListBullet = gbFALSE;
-         isInsideListNumber = gbTRUE;
-         break;
-
-      case paraTypeLIST_STOP_BULLET:
-      case paraTypeLIST_STOP_NUMBER:
-         gfileSetA(file, gcTypeU1, "\n", NULL);
-         isInsideListBullet = gbFALSE;
-         isInsideListNumber = gbFALSE;
-         break;
-
-      case paraTypeLIST_ITEM:
-         if (isInsideListBullet)
-         {
-            gfileSetA(file, gcTypeU1, "\n* ", NULL);
-         }
-         else
-         {
-            gfileSetA(file, gcTypeU1, "\n# ", NULL);
-         }
-         stemp = _ProcessInlineConfluence(para->str, para);
-         gfileSetS(file, gcTypeU1, stemp, NULL);
-         gfileSetA(file, gcTypeU1, "\n",  NULL);
-         gsDestroy(stemp);
-         break;
+      //case paraTypeLIST_START_BULLET:
+      //   isInsideListNumber = gbFALSE;
+      //   isInsideListBullet = gbTRUE;
+      //   break;
+      //
+      //case paraTypeLIST_START_NUMBER:
+      //   isInsideListBullet = gbFALSE;
+      //   isInsideListNumber = gbTRUE;
+      //   break;
+      //
+      //case paraTypeLIST_STOP_BULLET:
+      //case paraTypeLIST_STOP_NUMBER:
+      //   gfileSetA(file, gcTypeU1, "\n", NULL);
+      //   isInsideListBullet = gbFALSE;
+      //   isInsideListNumber = gbFALSE;
+      //   break;
+      //
+      //case paraTypeLIST_ITEM:
+      //   if (isInsideListBullet)
+      //   {
+      //      gfileSetA(file, gcTypeU1, "\n* ", NULL);
+      //   }
+      //   else
+      //   {
+      //      gfileSetA(file, gcTypeU1, "\n# ", NULL);
+      //   }
+      //   stemp = _ProcessInlineConfluence(para->str, para);
+      //   gfileSetS(file, gcTypeU1, stemp, NULL);
+      //   gfileSetA(file, gcTypeU1, "\n",  NULL);
+      //   gsDestroy(stemp);
+      //   break;
 
       case paraTypeTABLE_START:
          gfileSetA(file, gcTypeU1, "\n", NULL);
@@ -1654,24 +1863,31 @@ func: _WriteHTML
 ******************************************************************************/
 static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
 {
-   Gpath *pathHtml;
-   Gfile *file;
-   Gindex index;
-   Para  *para;
-   Gs    *title,
-         *chapter,
-         *stemp;
-   Gb     isTableRowActive,
-          isTableColHActive,
-          isTableColActive,
-          isListItemActive;
+   Gpath       *pathHtml;
+   Gfile       *file;
+   Gindex       index;
+   Para        *para;
+   Gs          *title,
+               *chapter,
+               *stemp;
+   Gb           isTableRowActive,
+                isTableColHActive,
+                isTableColActive;
+   ListType     listType[9];
+   ListActive   isListActive[9];
+   Gi4          listLevel;
 
    genter;
 
    isTableRowActive  = gbFALSE;
    isTableColHActive = gbFALSE;
    isTableColActive  = gbFALSE;
-   isListItemActive  = gbFALSE;
+
+   forCount (index, 9)
+   {
+      listType[index]     = listTypeBULLET;
+      isListActive[index] = listActiveNO;
+   }
       
    // Make the destination file path.
    pathHtml = gpathCreateFrom(path);
@@ -1727,6 +1943,8 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
       switch (para->type)
       {
       case paraTypeREGULAR:
+         _WriteHTMLPopList(file, gbFALSE, 0, listType, isListActive);
+
          stemp = _ProcessInlineHTML(para->str, para);
          gfileSetA(file, gcTypeU1, "<p class=\"zdoc\">", NULL);
          gfileSetS(file, gcTypeU1, stemp,                NULL);
@@ -1752,6 +1970,9 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
       case paraTypeTITLE_TOC_7:
       case paraTypeTITLE_TOC_8:
       case paraTypeTITLE_TOC_9:
+         // Titles will never appear in a list.  Force any open list closed.
+         _WriteHTMLPopList(file, gbTRUE, 0, listType, isListActive);
+
          switch (para->type)
          {
          case paraTypeTITLE_1:
@@ -1817,36 +2038,28 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          }
          break;
 
-      case paraTypeLIST_START_BULLET:
-         gfileSetA(file, gcTypeU1, "<ul class=\"zdoc\">\n", NULL);
-         break;
+      case paraTypeLIST_ITEM_BULLET_1:
+      case paraTypeLIST_ITEM_BULLET_2:
+      case paraTypeLIST_ITEM_BULLET_3:
+      case paraTypeLIST_ITEM_BULLET_4:
+      case paraTypeLIST_ITEM_BULLET_5:
+      case paraTypeLIST_ITEM_BULLET_6:
+      case paraTypeLIST_ITEM_BULLET_7:
+      case paraTypeLIST_ITEM_BULLET_8:
+      case paraTypeLIST_ITEM_BULLET_9:
+         listLevel = para->type - paraTypeLIST_ITEM_BULLET_1;
 
-      case paraTypeLIST_START_NUMBER:
-         gfileSetA(file, gcTypeU1, "<ol class=\"zdoc\">\n", NULL);
-         break;
+         // Close off lower levels.
+         _WriteHTMLPopList(file, gbTRUE, listLevel + 1, listType, isListActive);
 
-      case paraTypeLIST_STOP_BULLET:
-         if (isListItemActive)
+         // Start the list.
+         if      (isListActive[listLevel] == listActiveNO)
          {
-            gfileSetA(file, gcTypeU1, "</li>\n", NULL);
+            gfileSetA(file, gcTypeU1, "<ul class=\"zdoc\">\n", NULL);
+            listType[listLevel] = listTypeBULLET;
          }
-
-         gfileSetA(file, gcTypeU1, "</ul>\n", NULL);
-         isListItemActive = gbFALSE;
-         break;
-
-      case paraTypeLIST_STOP_NUMBER:
-         if (isListItemActive)
-         {
-            gfileSetA(file, gcTypeU1, "</li>\n", NULL);
-         }
-
-         gfileSetA(file, gcTypeU1, "</ol>\n", NULL);
-         isListItemActive = gbFALSE;
-         break;
-
-      case paraTypeLIST_ITEM:
-         if (isListItemActive)
+         // Close off the last item.
+         else if (isListActive[listLevel] == listActiveYES)
          {
             gfileSetA(file, gcTypeU1, "</li>\n", NULL);
          }
@@ -1856,25 +2069,183 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          gfileSetS(file, gcTypeU1, stemp,                 NULL);
          gfileSetA(file, gcTypeU1, "</li>\n",             NULL);
          gsDestroy(stemp);
-         isListItemActive = gbFALSE;
+
+         isListActive[listLevel] = listActiveYES_SINGLE_LINE;
          break;
 
-      case paraTypeLIST_ITEM_START:
-         if (isListItemActive)
+      case paraTypeLIST_ITEM_NUMBER_1:
+      case paraTypeLIST_ITEM_NUMBER_2:
+      case paraTypeLIST_ITEM_NUMBER_3:
+      case paraTypeLIST_ITEM_NUMBER_4:
+      case paraTypeLIST_ITEM_NUMBER_5:
+      case paraTypeLIST_ITEM_NUMBER_6:
+      case paraTypeLIST_ITEM_NUMBER_7:
+      case paraTypeLIST_ITEM_NUMBER_8:
+      case paraTypeLIST_ITEM_NUMBER_9:
+         listLevel = para->type - paraTypeLIST_ITEM_NUMBER_1;
+
+         // Close off lower levels.
+         _WriteHTMLPopList(file, gbTRUE, listLevel + 1, listType, isListActive);
+
+         // Start the list.
+         if      (isListActive[listLevel] == listActiveNO)
+         {
+            gfileSetA(file, gcTypeU1, "<ol class=\"zdoc\">\n", NULL);
+            listType[listLevel] = listTypeNUMBER;
+         }
+         // Close off the last item.
+         else if (isListActive[listLevel] == listActiveYES)
+         {
+            gfileSetA(file, gcTypeU1, "</li>\n", NULL);
+         }
+
+         stemp = _ProcessInlineHTML(para->str, para);
+         gfileSetA(file, gcTypeU1, "<li class=\"zdoc\">", NULL);
+         gfileSetS(file, gcTypeU1, stemp,                 NULL);
+         gfileSetA(file, gcTypeU1, "</li>\n",             NULL);
+         gsDestroy(stemp);
+
+         isListActive[listLevel] = listActiveYES_SINGLE_LINE;
+         break;
+
+      case paraTypeLIST_ITEM_BULLET_START_1:
+      case paraTypeLIST_ITEM_BULLET_START_2:
+      case paraTypeLIST_ITEM_BULLET_START_3:
+      case paraTypeLIST_ITEM_BULLET_START_4:
+      case paraTypeLIST_ITEM_BULLET_START_5:
+      case paraTypeLIST_ITEM_BULLET_START_6:
+      case paraTypeLIST_ITEM_BULLET_START_7:
+      case paraTypeLIST_ITEM_BULLET_START_8:
+      case paraTypeLIST_ITEM_BULLET_START_9:
+         listLevel = para->type - paraTypeLIST_ITEM_BULLET_START_1;
+
+         // Close off lower levels.
+         _WriteHTMLPopList(file, gbTRUE, listLevel + 1, listType, isListActive);
+
+         // Start the list.
+         if      (isListActive[listLevel] == listActiveNO)
+         {
+            gfileSetA(file, gcTypeU1, "<ol class=\"zdoc\">\n", NULL);
+            listType[listLevel] = listTypeBULLET;
+         }
+         // Close off the last item.
+         else if (isListActive[listLevel] == listActiveYES)
          {
             gfileSetA(file, gcTypeU1, "</li>\n", NULL);
          }
 
          gfileSetA(file, gcTypeU1, "<li class=\"zdoc\">", NULL);
-         isListItemActive = gbTRUE;
+
+         isListActive[listLevel] = listActiveYES;
          break;
 
-      case paraTypeLIST_ITEM_STOP:
-         gfileSetA(file, gcTypeU1, "</li>\n", NULL);
-         isListItemActive = gbFALSE;
+      case paraTypeLIST_ITEM_NUMBER_START_1:
+      case paraTypeLIST_ITEM_NUMBER_START_2:
+      case paraTypeLIST_ITEM_NUMBER_START_3:
+      case paraTypeLIST_ITEM_NUMBER_START_4:
+      case paraTypeLIST_ITEM_NUMBER_START_5:
+      case paraTypeLIST_ITEM_NUMBER_START_6:
+      case paraTypeLIST_ITEM_NUMBER_START_7:
+      case paraTypeLIST_ITEM_NUMBER_START_8:
+      case paraTypeLIST_ITEM_NUMBER_START_9:
+         listLevel = para->type - paraTypeLIST_ITEM_NUMBER_START_1;
+
+         // Close off lower levels.
+         _WriteHTMLPopList(file, gbTRUE, listLevel + 1, listType, isListActive);
+
+         // Start the list.
+         if      (isListActive[listLevel] == listActiveNO)
+         {
+            gfileSetA(file, gcTypeU1, "<ol class=\"zdoc\">\n", NULL);
+            listType[listLevel] = listTypeNUMBER;
+         }
+         // Close off the last item.
+         else if (isListActive[listLevel] == listActiveYES)
+         {
+            gfileSetA(file, gcTypeU1, "</li>\n", NULL);
+         }
+
+         gfileSetA(file, gcTypeU1, "<li class=\"zdoc\">", NULL);
+
+         isListActive[listLevel] = listActiveYES;
+         break;
+
+      case paraTypeLIST_ITEM_BULLET_STOP_1:
+      case paraTypeLIST_ITEM_BULLET_STOP_2:
+      case paraTypeLIST_ITEM_BULLET_STOP_3:
+      case paraTypeLIST_ITEM_BULLET_STOP_4:
+      case paraTypeLIST_ITEM_BULLET_STOP_5:
+      case paraTypeLIST_ITEM_BULLET_STOP_6:
+      case paraTypeLIST_ITEM_BULLET_STOP_7:
+      case paraTypeLIST_ITEM_BULLET_STOP_8:
+      case paraTypeLIST_ITEM_BULLET_STOP_9:
+         listLevel = para->type = paraTypeLIST_ITEM_BULLET_STOP_1;
+
+         // Close off lower levels.
+         _WriteHTMLPopList(file, gbTRUE, listLevel + 1, listType, isListActive);
+
+         if (isListActive[listLevel] == listActiveYES ||
+             isListActive[listLevel] == listActiveYES_SINGLE_LINE)
+         {
+            // Close off the last item.
+            if (isListActive[listLevel] == listActiveYES)
+            {
+               gfileSetA(file, gcTypeU1, "</li>\n", NULL);
+            }
+   
+            if (listType[listLevel] == listTypeBULLET)
+            {
+               gfileSetA(file, gcTypeU1, "</ul>\n", NULL);
+            }
+            else
+            {
+               gfileSetA(file, gcTypeU1, "</ol>\n", NULL);
+            }
+         }
+
+         isListActive[listLevel] = listActiveNO;
+         break;
+
+      case paraTypeLIST_ITEM_NUMBER_STOP_1:
+      case paraTypeLIST_ITEM_NUMBER_STOP_2:
+      case paraTypeLIST_ITEM_NUMBER_STOP_3:
+      case paraTypeLIST_ITEM_NUMBER_STOP_4:
+      case paraTypeLIST_ITEM_NUMBER_STOP_5:
+      case paraTypeLIST_ITEM_NUMBER_STOP_6:
+      case paraTypeLIST_ITEM_NUMBER_STOP_7:
+      case paraTypeLIST_ITEM_NUMBER_STOP_8:
+      case paraTypeLIST_ITEM_NUMBER_STOP_9:
+         listLevel = para->type = paraTypeLIST_ITEM_NUMBER_STOP_1;
+
+         // Close off lower levels.
+         _WriteHTMLPopList(file, gbTRUE, listLevel + 1, listType, isListActive);
+
+         if (isListActive[listLevel] == listActiveYES ||
+             isListActive[listLevel] == listActiveYES_SINGLE_LINE)
+         {
+            // Close off the last item.
+            if (isListActive[listLevel] == listActiveYES)
+            {
+               gfileSetA(file, gcTypeU1, "</li>\n", NULL);
+            }
+   
+            if (listType[listLevel] == listTypeBULLET)
+            {
+               gfileSetA(file, gcTypeU1, "</ul>\n", NULL);
+            }
+            else
+            {
+               gfileSetA(file, gcTypeU1, "</ol>\n", NULL);
+            }
+         }
+
+         isListActive[listLevel] = listActiveNO;
          break;
 
       case paraTypeTABLE_START:
+         // Close off any applicable lists.
+         _WriteHTMLPopList(file, gbFALSE, 0, listType, isListActive);
+
          gfileSetA(file, gcTypeU1, "<table class=\"zdoc\"><tbody class=\"zdoc\">\n", NULL);
          isTableRowActive  = gbFALSE;
          isTableColActive  = gbFALSE;
@@ -1895,7 +2266,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
             gfileSetA(file, gcTypeU1, "\n</tr>\n", NULL);
          }
 
-         gfileSetA(file, gcTypeU1, "</tbody></table>\n", NULL);
+         gfileSetA(file, gcTypeU1, "\n</tbody></table>\n", NULL);
          isTableRowActive = gbFALSE;
          isTableColActive = gbFALSE;
          break;
@@ -1964,16 +2335,25 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          break;
 
       case paraTypeFORMATED_START:
+         // Close off any applicable lists.
+         _WriteHTMLPopList(file, gbFALSE, 0, listType, isListActive);
+
          gfileSetA(file, gcTypeU1, "<pre class=\"zdoc\">\n", NULL);
          gfileSetS(file, gcTypeU1, para->str, NULL);
          gfileSetA(file, gcTypeU1, "\n</pre>\n", NULL);
          break;
 
       case paraTypeTABLE_OF_CONTENTS:
+         // Close off any applicable lists.
+         _WriteHTMLPopList(file, gbTRUE, 0, listType, isListActive);
+
          _WriteHTMLTOC(file, paraList);
          break;
 
       case paraTypePAGE_BREAK:
+         // Close off any applicable lists.
+         _WriteHTMLPopList(file, gbTRUE, 0, listType, isListActive);
+         gfileSetA(file, gcTypeU1, "\n<hr />\n", NULL);
          break;
       }
    }
@@ -1991,6 +2371,56 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
    gfileClose(file);
 
    greturn gbTRUE;
+}
+
+/******************************************************************************
+func: _WriteHTMLPopList
+******************************************************************************/
+static void _WriteHTMLPopList(Gfile * const file, Gb const isForced, Gindex const listLevel, 
+   ListType * const listType, ListActive * const isListActive)
+{
+   Gindex index;
+
+   genter;
+
+   for (index = 8; index >= listLevel; index--)
+   {
+      // Level is not active.
+      continueIf(isListActive[index] == listActiveNO);
+
+      // If the list is active but it is a multi-paragraph item then we are still
+      // inside the list item.
+      if (!isForced)
+      {
+         breakIf(isListActive[index] == listActiveYES);
+      }
+
+      // The level is a single line list item.  If we are not seeing another 
+      // list item then this function is called.  And we should close up the
+      // list.
+
+      // Only happens when forced.  Close off the list item.
+      if (isListActive[index] == listActiveYES)
+      {
+         gfileSetA(file, gcTypeU1, "</li>\n", NULL);
+      }
+
+      // Terminate the list.
+      if (listType[index] == listTypeBULLET)
+      {
+         gfileSetA(file, gcTypeU1, "</ul>\n", NULL);
+      }
+      else
+      {
+         gfileSetA(file, gcTypeU1, "</ol>\n", NULL);
+      }
+
+      // Set the level inactive.
+      isListActive[index] = listActiveNO;
+      listType[    index] = listTypeBULLET;
+   }
+
+   greturn;
 }
 
 /******************************************************************************
@@ -2056,30 +2486,33 @@ static Gb _WriteMD(Gpath const * const path, ParaArray const * const paraList)
 {
    Gpath *pathHtml;
    Gfile *file;
-   Gindex index,
-          hindex;
-   Para  *para;
-   Gs    *stemp;
-   Gcount tableHeaderCount;
-   Gb     isInsideListBullet,
-          isInsideListNumber,
-          isTableRowActive,
-          isTableColHActive,
-          isTableColActive,
-          isTableHeaderLineWritten,
-          isListItemActive;
+   Gindex       index,
+                hindex,
+                lindex;
+   Para        *para;
+   Gs          *stemp;
+   Gcount       tableHeaderCount;
+   Gb           isTableRowActive,
+                isTableColHActive,
+                isTableColActive,
+                isTableHeaderLineWritten;
+   ListType     listType[9];
+   ListActive   isListActive[9];
 
    genter;
 
    tableHeaderCount         = 0;
    isTableHeaderLineWritten = gbFALSE;
-   isInsideListBullet       = gbFALSE;
-   isInsideListNumber       = gbFALSE;
    isTableRowActive         = gbFALSE;
    isTableColHActive        = gbFALSE;
    isTableColActive         = gbFALSE;
-   isListItemActive         = gbFALSE;
       
+   forCount (index, 9)
+   {
+      listType[index]     = listTypeBULLET;
+      isListActive[index] = listActiveNO;
+   }
+
    // Make the destination file path.
    pathHtml = gpathCreateFrom(path);
    gpathPopExtension(pathHtml);
@@ -2157,36 +2590,183 @@ static Gb _WriteMD(Gpath const * const path, ParaArray const * const paraList)
          gfileSetA(file, gcTypeU1, "\n", NULL);
          break;
 
-      case paraTypeLIST_START_BULLET:
-         isInsideListNumber = gbFALSE;
-         isInsideListBullet = gbTRUE;
-         break;
+      case paraTypeLIST_ITEM_BULLET_1:
+      case paraTypeLIST_ITEM_BULLET_2:
+      case paraTypeLIST_ITEM_BULLET_3:
+      case paraTypeLIST_ITEM_BULLET_4:
+      case paraTypeLIST_ITEM_BULLET_5:
+      case paraTypeLIST_ITEM_BULLET_6:
+      case paraTypeLIST_ITEM_BULLET_7:
+      case paraTypeLIST_ITEM_BULLET_8:
+      case paraTypeLIST_ITEM_BULLET_9:
+      case paraTypeLIST_ITEM_NUMBER_1:
+      case paraTypeLIST_ITEM_NUMBER_2:
+      case paraTypeLIST_ITEM_NUMBER_3:
+      case paraTypeLIST_ITEM_NUMBER_4:
+      case paraTypeLIST_ITEM_NUMBER_5:
+      case paraTypeLIST_ITEM_NUMBER_6:
+      case paraTypeLIST_ITEM_NUMBER_7:
+      case paraTypeLIST_ITEM_NUMBER_8:
+      case paraTypeLIST_ITEM_NUMBER_9:
+      case paraTypeLIST_ITEM_BULLET_START_1:
+      case paraTypeLIST_ITEM_BULLET_START_2:
+      case paraTypeLIST_ITEM_BULLET_START_3:
+      case paraTypeLIST_ITEM_BULLET_START_4:
+      case paraTypeLIST_ITEM_BULLET_START_5:
+      case paraTypeLIST_ITEM_BULLET_START_6:
+      case paraTypeLIST_ITEM_BULLET_START_7:
+      case paraTypeLIST_ITEM_BULLET_START_8:
+      case paraTypeLIST_ITEM_BULLET_START_9:
+      case paraTypeLIST_ITEM_NUMBER_START_1:
+      case paraTypeLIST_ITEM_NUMBER_START_2:
+      case paraTypeLIST_ITEM_NUMBER_START_3:
+      case paraTypeLIST_ITEM_NUMBER_START_4:
+      case paraTypeLIST_ITEM_NUMBER_START_5:
+      case paraTypeLIST_ITEM_NUMBER_START_6:
+      case paraTypeLIST_ITEM_NUMBER_START_7:
+      case paraTypeLIST_ITEM_NUMBER_START_8:
+      case paraTypeLIST_ITEM_NUMBER_START_9:
 
-      case paraTypeLIST_START_NUMBER:
-         isInsideListBullet = gbFALSE;
-         isInsideListNumber = gbTRUE;
-         break;
-
-      case paraTypeLIST_STOP_BULLET:
-      case paraTypeLIST_STOP_NUMBER:
          gfileSetA(file, gcTypeU1, "\n", NULL);
-         isInsideListBullet = gbFALSE;
-         isInsideListNumber = gbFALSE;
+
+         lindex = 0;
+         switch (para->type)
+         {
+         case paraTypeLIST_ITEM_BULLET_9:
+         case paraTypeLIST_ITEM_NUMBER_9:
+         case paraTypeLIST_ITEM_BULLET_START_9:
+         case paraTypeLIST_ITEM_NUMBER_START_9:
+            //if (listType[lindex] == listTypeNUMBER)
+            //{
+            //   gfileSetA(file, gcTypeU1, "1", NULL);
+            //}
+            //else
+            //{
+            //   gfileSetA(file, gcTypeU1, "*", NULL);
+            //}
+            gfileSetA(file, gcTypeU1, "    ", NULL);
+            lindex++;
+            // Fall through
+
+         case paraTypeLIST_ITEM_BULLET_8:
+         case paraTypeLIST_ITEM_NUMBER_8:
+         case paraTypeLIST_ITEM_BULLET_START_8:
+         case paraTypeLIST_ITEM_NUMBER_START_8:
+            gfileSetA(file, gcTypeU1, "    ", NULL);
+            lindex++;
+            // Fall through
+
+         case paraTypeLIST_ITEM_BULLET_7:
+         case paraTypeLIST_ITEM_NUMBER_7:
+         case paraTypeLIST_ITEM_BULLET_START_7:
+         case paraTypeLIST_ITEM_NUMBER_START_7:
+            gfileSetA(file, gcTypeU1, "    ", NULL);
+            lindex++;
+            // Fall through
+
+         case paraTypeLIST_ITEM_BULLET_6:
+         case paraTypeLIST_ITEM_NUMBER_6:
+         case paraTypeLIST_ITEM_BULLET_START_6:
+         case paraTypeLIST_ITEM_NUMBER_START_6:
+            gfileSetA(file, gcTypeU1, "    ", NULL);
+            lindex++;
+            // Fall through
+
+         case paraTypeLIST_ITEM_BULLET_5:
+         case paraTypeLIST_ITEM_NUMBER_5:
+         case paraTypeLIST_ITEM_BULLET_START_5:
+         case paraTypeLIST_ITEM_NUMBER_START_5:
+            gfileSetA(file, gcTypeU1, "    ", NULL);
+            lindex++;
+            // Fall through
+
+         case paraTypeLIST_ITEM_BULLET_4:
+         case paraTypeLIST_ITEM_NUMBER_4:
+         case paraTypeLIST_ITEM_BULLET_START_4:
+         case paraTypeLIST_ITEM_NUMBER_START_4:
+            gfileSetA(file, gcTypeU1, "    ", NULL);
+            lindex++;
+            // Fall through
+
+         case paraTypeLIST_ITEM_BULLET_3:
+         case paraTypeLIST_ITEM_NUMBER_3:
+         case paraTypeLIST_ITEM_BULLET_START_3:
+         case paraTypeLIST_ITEM_NUMBER_START_3:
+            gfileSetA(file, gcTypeU1, "    ", NULL);
+            lindex++;
+            // Fall through
+
+         case paraTypeLIST_ITEM_BULLET_2:
+         case paraTypeLIST_ITEM_NUMBER_2:
+         case paraTypeLIST_ITEM_BULLET_START_2:
+         case paraTypeLIST_ITEM_NUMBER_START_2:
+            gfileSetA(file, gcTypeU1, "    ", NULL);
+            lindex++;
+            // Fall through
+
+         case paraTypeLIST_ITEM_BULLET_1:
+         case paraTypeLIST_ITEM_NUMBER_1:
+         case paraTypeLIST_ITEM_BULLET_START_1:
+         case paraTypeLIST_ITEM_NUMBER_START_1:
+            if (listType[lindex] == listTypeNUMBER)
+            {
+               gfileSetA(file, gcTypeU1, "1. ", NULL);
+            }
+            else
+            {
+               gfileSetA(file, gcTypeU1, "*  ", NULL);
+            }
+            lindex++;
+            // Fall through
+         }
+
+         switch (para->type)
+         {
+         case paraTypeLIST_ITEM_BULLET_1:
+         case paraTypeLIST_ITEM_BULLET_2:
+         case paraTypeLIST_ITEM_BULLET_3:
+         case paraTypeLIST_ITEM_BULLET_4:
+         case paraTypeLIST_ITEM_BULLET_5:
+         case paraTypeLIST_ITEM_BULLET_6:
+         case paraTypeLIST_ITEM_BULLET_7:
+         case paraTypeLIST_ITEM_BULLET_8:
+         case paraTypeLIST_ITEM_BULLET_9:
+         case paraTypeLIST_ITEM_NUMBER_1:
+         case paraTypeLIST_ITEM_NUMBER_2:
+         case paraTypeLIST_ITEM_NUMBER_3:
+         case paraTypeLIST_ITEM_NUMBER_4:
+         case paraTypeLIST_ITEM_NUMBER_5:
+         case paraTypeLIST_ITEM_NUMBER_6:
+         case paraTypeLIST_ITEM_NUMBER_7:
+         case paraTypeLIST_ITEM_NUMBER_8:
+         case paraTypeLIST_ITEM_NUMBER_9:
+            stemp = _ProcessInlineMD(para->str, para);
+            gfileSetS(file, gcTypeU1, stemp, NULL);
+            gfileSetA(file, gcTypeU1, "\n",  NULL);
+            gsDestroy(stemp);
+            break;
+         }
          break;
 
-      case paraTypeLIST_ITEM:
-         if (isInsideListBullet)
-         {
-            gfileSetA(file, gcTypeU1, "\n* ", NULL);
-         }
-         else
-         {
-            gfileSetA(file, gcTypeU1, "1. ", NULL);
-         }
-         stemp = _ProcessInlineMD(para->str, para);
-         gfileSetS(file, gcTypeU1, stemp, NULL);
-         gfileSetA(file, gcTypeU1, "\n",  NULL);
-         gsDestroy(stemp);
+      case paraTypeLIST_ITEM_BULLET_STOP_1:
+      case paraTypeLIST_ITEM_BULLET_STOP_2:
+      case paraTypeLIST_ITEM_BULLET_STOP_3:
+      case paraTypeLIST_ITEM_BULLET_STOP_4:
+      case paraTypeLIST_ITEM_BULLET_STOP_5:
+      case paraTypeLIST_ITEM_BULLET_STOP_6:
+      case paraTypeLIST_ITEM_BULLET_STOP_7:
+      case paraTypeLIST_ITEM_BULLET_STOP_8:
+      case paraTypeLIST_ITEM_BULLET_STOP_9:
+      case paraTypeLIST_ITEM_NUMBER_STOP_1:
+      case paraTypeLIST_ITEM_NUMBER_STOP_2:
+      case paraTypeLIST_ITEM_NUMBER_STOP_3:
+      case paraTypeLIST_ITEM_NUMBER_STOP_4:
+      case paraTypeLIST_ITEM_NUMBER_STOP_5:
+      case paraTypeLIST_ITEM_NUMBER_STOP_6:
+      case paraTypeLIST_ITEM_NUMBER_STOP_7:
+      case paraTypeLIST_ITEM_NUMBER_STOP_8:
+      case paraTypeLIST_ITEM_NUMBER_STOP_9:
+         gfileSetA(file, gcTypeU1, "\n", NULL);
          break;
 
       case paraTypeTABLE_START:
