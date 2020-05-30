@@ -454,7 +454,7 @@ static int _Process(Gs const * const command, Gpath const * const path)
       // We have a basic paragraph.
       if (position == 0)
       {
-         stemp = gsStrip(stemp, gcStripWHITE_SPACE_LEADING | gcStripWHITE_SPACE_TRAILING);
+         stemp = gsTrimU2(stemp, WHITESPACE_U2);
 
          // Blank line, nothing to do.
          if (gsIsBlank(stemp))
@@ -589,7 +589,7 @@ static int _Process(Gs const * const command, Gpath const * const path)
 
             // Just a continuation of the paragraph.
             gsAppendA(para->str, " ");
-            gsAppend(para->str, gsStrip(stemp, gcStripWHITE_SPACE_LEADING | gcStripWHITE_SPACE_TRAILING));
+            gsAppend(para->str, gsTrimU2(stemp, WHITESPACE_U2));
          }
       }
       else
@@ -597,7 +597,7 @@ static int _Process(Gs const * const command, Gpath const * const path)
          // We have a special paragraph
          markup = gsCreateFromSub(stemp, 0, position);
          gsEraseSub(stemp, 0, position);
-         gsStrip(stemp, gcStripWHITE_SPACE_LEADING | gcStripWHITE_SPACE_TRAILING);
+         gsTrimU2(stemp, WHITESPACE_U2);
 
          // Title Lines.
          if      (gsIsEqualU2(markup, L"h")         ||
@@ -774,7 +774,7 @@ static int _Process(Gs const * const command, Gpath const * const path)
          else if (gsIsEqualU2(markup, L"..."))
          {
             para->type     = paraTypeFORMATED_START;
-            para->str      = gsStrip(stemp, gcStripWHITE_SPACE_LEADING | gcStripWHITE_SPACE_TRAILING);
+            para->str      = gsTrimU2(stemp, WHITESPACE_U2);
          }
          else if (gsIsEqualU2(markup, L"...["))
          {
@@ -797,11 +797,11 @@ static int _Process(Gs const * const command, Gpath const * const path)
                if (para->str)
                {
                   gsAppendA(para->str, "\n");
-                  gsAppend( para->str, gsStrip(stemp, gcStripWHITE_SPACE_TRAILING));
+                  gsAppend( para->str, gsTrimU2(stemp, WHITESPACE_U2));
                }
                else
                {
-                  para->str = gsStrip(stemp, gcStripWHITE_SPACE_TRAILING);
+                  para->str = gsTrimU2(stemp, WHITESPACE_U2);
                }
             }
          }
@@ -885,11 +885,11 @@ static Gs *_ProcessInlineHTML(Gs * const inStr, Para const * const para)
    gsDestroy(chapter);
 
    // Styling
-   gsFindAndReplaceU2(str, L"|img-|",                      L"<img src=\"",         NULL);
-   gsFindAndReplaceU2(str, L"|-img|",                      L"\" />",               NULL);
-   gsFindAndReplaceU2(str, L"|link-|",                     L"<a href=\"",          NULL);
-   gsFindAndReplaceU2(str, L"|-link-|",                    L"\">",                 NULL);
-   gsFindAndReplaceU2(str, L"|-link|",                     L"</a>",                NULL);
+   gsFindAndReplaceU2(str, L"|img |",                      L"<img src=\"",         NULL);
+   gsFindAndReplaceU2(str, L"| img|",                      L"\" />",               NULL);
+   gsFindAndReplaceU2(str, L"|link |",                     L"<a href=\"",          NULL);
+   gsFindAndReplaceU2(str, L"| link |",                    L"\">",                 NULL);
+   gsFindAndReplaceU2(str, L"| link|",                     L"</a>",                NULL);
    gsFindAndReplaceU2(str, L"|line|",                      L"<br />",              NULL);
    gsFindAndReplaceU2(str, L"|line s|",                    L"<br /><br />",        NULL);
    gsFindAndReplaceU2(str, L"|line d|",                    L"<br /><br /><br />",  NULL);
@@ -1095,20 +1095,20 @@ static Gs *_ProcessInlineHTML(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"|sym psi|",                   L"&psi;",               NULL);
    gsFindAndReplaceU2(str, L"|sym omega|",                 L"&omega;",             NULL);
 
-   gsFindAndReplaceU2(str, L"|.",                          L"<code>",              NULL);
-   gsFindAndReplaceU2(str, L".|",                          L"</code>",             NULL);
-   gsFindAndReplaceU2(str, L"|*",                          L"<strong>",            NULL);
-   gsFindAndReplaceU2(str, L"*|",                          L"</strong>",           NULL);
-   gsFindAndReplaceU2(str, L"|/",                          L"<em>",                NULL);
-   gsFindAndReplaceU2(str, L"/|",                          L"</em>",               NULL);
-   gsFindAndReplaceU2(str, L"|_",                          L"<u>",                 NULL);
-   gsFindAndReplaceU2(str, L"_|",                          L"</u>",                NULL);
-   gsFindAndReplaceU2(str, L"|-",                          L"<s>",                 NULL);
-   gsFindAndReplaceU2(str, L"-|",                          L"</s>",                NULL);
-   gsFindAndReplaceU2(str, L"|^",                          L"<sup>",               NULL);
-   gsFindAndReplaceU2(str, L"^|",                          L"</sup>",              NULL);
-   gsFindAndReplaceU2(str, L"|v",                          L"<sub>",               NULL);
-   gsFindAndReplaceU2(str, L"v|",                          L"</sub>",              NULL);
+   gsFindAndReplaceU2(str, L"|c",                          L"<code>",              NULL);
+   gsFindAndReplaceU2(str, L"c|",                          L"</code>",             NULL);
+   gsFindAndReplaceU2(str, L"|b",                          L"<strong>",            NULL);
+   gsFindAndReplaceU2(str, L"b|",                          L"</strong>",           NULL);
+   gsFindAndReplaceU2(str, L"|i",                          L"<em>",                NULL);
+   gsFindAndReplaceU2(str, L"i|",                          L"</em>",               NULL);
+   gsFindAndReplaceU2(str, L"|u",                          L"<u>",                 NULL);
+   gsFindAndReplaceU2(str, L"u|",                          L"</u>",                NULL);
+   gsFindAndReplaceU2(str, L"|sup",                        L"<sup>",               NULL);
+   gsFindAndReplaceU2(str, L"sup|",                        L"</sup>",              NULL);
+   gsFindAndReplaceU2(str, L"|sub",                        L"<sub>",               NULL);
+   gsFindAndReplaceU2(str, L"sub|",                        L"</sub>",              NULL);
+   gsFindAndReplaceU2(str, L"|s",                          L"<s>",                 NULL);
+   gsFindAndReplaceU2(str, L"s|",                          L"</s>",                NULL);
 
    gsFindAndReplaceU2(str, L"\\|",                         L"|",                   NULL);
    gsFindAndReplaceU2(str, L"|\\",                         L"|",                   NULL);
@@ -1138,11 +1138,11 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    gsDestroy(chapter);
 
    // Styling
-   gsFindAndReplaceU2(str, L"|img-|",                      L"![image](",           NULL);
-   gsFindAndReplaceU2(str, L"|-img|",                      L")",                   NULL);
-   gsFindAndReplaceU2(str, L"|link-|",                     L"[LINK](",             NULL);
-   gsFindAndReplaceU2(str, L"|-link-|",                    L") ",                  NULL);
-   gsFindAndReplaceU2(str, L"|-link|",                     L"",                    NULL);
+   gsFindAndReplaceU2(str, L"|img |",                      L"![image](",           NULL);
+   gsFindAndReplaceU2(str, L"| img|",                      L")",                   NULL);
+   gsFindAndReplaceU2(str, L"|link |",                     L"[LINK](",             NULL);
+   gsFindAndReplaceU2(str, L"| link |",                    L") ",                  NULL);
+   gsFindAndReplaceU2(str, L"| link|",                     L"",                    NULL);
    gsFindAndReplaceU2(str, L"|line|",                      L"<br />",              NULL);
    gsFindAndReplaceU2(str, L"|line s|",                    L"<br /><br />",        NULL);
    gsFindAndReplaceU2(str, L"|line d|",                    L"<br /><br /><br />",  NULL);
@@ -1348,23 +1348,29 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"|sym psi|",                   L"&psi;",               NULL);
    gsFindAndReplaceU2(str, L"|sym omega|",                 L"&omega;",             NULL);
 
-   gsFindAndReplaceU2(str, L"|.",                          L"`",                   NULL);
-   gsFindAndReplaceU2(str, L".|",                          L"`",                   NULL);
-   gsFindAndReplaceU2(str, L"|*",                          L"**",                  NULL);
-   gsFindAndReplaceU2(str, L"*|",                          L"**",                  NULL);
-   gsFindAndReplaceU2(str, L"|/",                          L"*",                   NULL);
-   gsFindAndReplaceU2(str, L"/|",                          L"*",                   NULL);
-   gsFindAndReplaceU2(str, L"|_",                          L"<u>",                 NULL);
-   gsFindAndReplaceU2(str, L"_|",                          L"</u>",                NULL);
-   gsFindAndReplaceU2(str, L"|-",                          L"~~",                  NULL);
-   gsFindAndReplaceU2(str, L"-|",                          L"~~",                  NULL);
-   gsFindAndReplaceU2(str, L"|^",                          L"<sup>",               NULL);
-   gsFindAndReplaceU2(str, L"^|",                          L"</sup>",              NULL);
-   gsFindAndReplaceU2(str, L"|v",                          L"<sub>",               NULL);
-   gsFindAndReplaceU2(str, L"v|",                          L"</sub>",              NULL);
+   gsFindAndReplaceU2(str, L"`",                           L"&#96;",               NULL);
+   gsFindAndReplaceU2(str, L"*",                           L"&#42;",               NULL);
+   gsFindAndReplaceU2(str, L"~",                           L"&#126;",              NULL);
+   gsFindAndReplaceU2(str, L"<",                           L"&#60;",               NULL);
+   gsFindAndReplaceU2(str, L">",                           L"&#62;",               NULL);
 
-   gsFindAndReplaceU2(str, L"\\|",                         L"|",                   NULL);
-   gsFindAndReplaceU2(str, L"|\\",                         L"|",                   NULL);
+   gsFindAndReplaceU2(str, L"|c",                          L"`",                   NULL);
+   gsFindAndReplaceU2(str, L"c|",                          L"`",                   NULL);
+   gsFindAndReplaceU2(str, L"|b",                          L"**",                  NULL);
+   gsFindAndReplaceU2(str, L"b|",                          L"**",                  NULL);
+   gsFindAndReplaceU2(str, L"|i",                          L"*",                   NULL);
+   gsFindAndReplaceU2(str, L"i|",                          L"*",                   NULL);
+   gsFindAndReplaceU2(str, L"|u",                          L"<u>",                 NULL);
+   gsFindAndReplaceU2(str, L"u|",                          L"</u>",                NULL);
+   gsFindAndReplaceU2(str, L"|sup",                        L"<sup>",               NULL);
+   gsFindAndReplaceU2(str, L"sup|",                        L"</sup>",              NULL);
+   gsFindAndReplaceU2(str, L"|sub",                        L"<sub>",               NULL);
+   gsFindAndReplaceU2(str, L"sub|",                        L"</sub>",              NULL);
+   gsFindAndReplaceU2(str, L"|s",                          L"~~",                  NULL);
+   gsFindAndReplaceU2(str, L"s|",                          L"~~",                  NULL);
+
+   gsFindAndReplaceU2(str, L"\\|",                         L"&#124;",              NULL);
+   gsFindAndReplaceU2(str, L"|\\",                         L"&#124;",              NULL);
 
    greturn str;
 }

@@ -183,63 +183,63 @@ thx	Markup
 th*	Descrption
 
 t-
-tcx	|chapter\|
+tcx	|\chapter\|
 tc*	Chapter number.  "3.1.4.1.5.9"
 
 t-
-tcx	|img=\|...|=img\|
+tcx	|\img \|...|\ img\|
 tc*	Insert an image inline.  Path must be relative to the zword file.
 
 t-
-tcx	|\*...*\|
-tc*	|*Bold*| the contents.
+tcx	|\b...b\|
+tc*	|bBoldb| the contents.
 
 t-
-tcx	|\/.../\|
-tc*	|/Italicize/| the contents.
+tcx	|\i...i\|
+tc*	|iItalicizei| the contents.
 
 t-
-tcx	|\_..._\|
-tc*	|_Underline_| the contents.
+tcx	|\u...u\|
+tc*	|uUnderlineu| the contents.
 
 t-
-tcx	|\-...-\|
-tc*	|-Strike-| through the contents.
+tcx	|\s...s\|
+tc*	|sStrikes| through the contents.
 
 t-
-tcx	|\^...^\|
-tc*	|^Superscript^| the contents.
+tcx	|\sup...sup\|
+tc*	|supSuperscriptsup| the contents.
 
 t-
-tcx	|\v...v\|
-tc*	|vSubscriptv| the contents.
+tcx	|\sub...sub\|
+tc*	|subSubscriptsub| the contents.
 
 t-
-tcx	|\. ... .\|
-tc*	|.monospace.| the contents.
+tcx	|\c...c\|
+tc*	|cmonospacec| the contents.
 
 t-
-tcx	|link-\|...|-link-\|...|-link\|
-tc*	Create a |link-|http://www.zekaric.com/|-link-|web link|-link|.  First ... is the line.  Second ... is the nice text.
+tcx	|\link \|...|\ link \|...|\ link\|
+tc*	Create a |link |http://www.zekaric.com/| link |web link| link|.  First ... is the line.  Second ... is the nice text.
 
 t-
-tcx	|line\|
+tcx	|\line\|
 tc*	Break the line.  Start on the next line.
 
 t-
-tcx	|line s\|
+tcx	|\line s\|
 tc*	Break the line.  Leave a space.  Start on the next line.
 
 t-
-tcx	|line d\|
+tcx	|\line d\|
 tc*	Break the line.  Leave two spaces.  Start on the next line.
 
 t-
-tcx	\|, |\
-tc*	Escape for a |.  No space inside the brackets.
+tcx	\ \|, \| \
+tc*	Escape for a |.  No space between | and \.
 
 t-
-tcx	|sym ...\|
-tc*	Insert a symbol.  One of...|line s||*Legal:*| copyright, registered tm, tm,|line s||sym copyright||sym registered tm||sym tm||line s||*Currency:*| bitcoin, cent, dollar, euro, franc, lira, lira turkey, peso, pound, ruble, rupee, rupee india, won, yen|line s||sym bitcoin||sym cent||sym dollar||sym euro||sym franc||sym lira||sym lira turkey||sym peso||sym pound||sym ruble||sym rupee||sym rupee india||sym won||sym yen||line s||*Punctuation:*| ..., 1/4, 1/2, 3/4, ampersand, at, bullet, dagger s, dagger d, hash, inv!, inv?, quote angle d l, quote angle d r, quote angle s l, quote angle s r, quote d, quote d l, quote d r, quote d low, quote s, quote s l, quote s r, quote s low, para, prime d, prime s|line s||sym ...||sym 1/4||sym 1/2||sym 3/4||sym ampersand||sym at||sym bullet||sym dagger s||sym dagger d||sym hash||sym inv!||sym inv?||sym quote angle d l||sym quote angle d r||sym quote angle s l||sym quote angle s r||sym quote d||sym quote d l||sym quote d r||sym quote d low||sym quote s||sym quote s l||sym quote s r||sym quote s low||sym para||sym prime d||sym prime s||line s||*Game:*| arrow d, arrow l, arrow r, arrow u, arrow lr, arrow ud, arrow \d, arrow /d, arrow \u, arrow /u, arrow d l, arrow d lr, arrow d r, arrow redo, arrow undo, card suit c, card suit d, card suit h, card suit s, chess b k, chess b q, chess b r, chess b b, chess b h, chess b p, chess w k, chess w q, chess w r, chess w b, chess w h, chess w p, die 1, die 2, die 3, die 4, die 5, die 6, ball baseball, ball soccer|line s||sym arrow d||sym arrow l||sym arrow r||sym arrow u||sym arrow lr||sym arrow ud||sym arrow \d||sym arrow /d||sym arrow \u||sym arrow /u||sym arrow d l||sym arrow d lr||sym arrow d r||sym arrow redo||sym arrow undo||sym card suit c||sym card suit d||sym card suit h||sym card suit s||sym chess b k||sym chess b q||sym chess b r||sym chess b b||sym chess b h||sym chess b p||sym chess w k||sym chess w q||sym chess w r||sym chess w b||sym chess w h||sym chess w p||sym die 1||sym die 2||sym die 3||sym die 4||sym die 5||sym die 6||sym ball baseball||sym ball soccer||line s||*Symbols:*| checkbox off, checkbox on, circle 0%, circle 25%, circle 50%, circle 75%, circle 100%, correct, biohazard, dot, dot filled, envelope, gender f, gender m, gender mf, incorrect, plane, poison, radioactive, Rx, recycle, scissor, snowflake, star 5, star 5 filled, sun|line s||sym checkbox off||sym checkbox on||sym circle 0%||sym circle 25%||sym circle 50%||sym circle 75%||sym circle 100%||sym correct||sym biohazard||sym dot||sym dot filled||sym envelope||sym gender f||sym gender m||sym gender mf||sym incorrect||sym plane||sym poison||sym radioactive||sym Rx||sym recycle||sym scissor||sym snowflake||sym star 5||sym star 5 filled||sym sun||line s||*Math:*| +/-, angle, contains, degree, dot, empty set, equal almost, equal approx, equal greater than, equal less than, equal same, equal not, for all, infinity, integral, intersection, is in, is not in, math phi, math pi, minus, nabla, partial diff, product, proportional to, root, sum, there exists, therefore, union|line s||sym +/-||sym angle||sym contains||sym degree||sym dot||sym empty set||sym equal almost||sym equal approx ||sym equal greater than||sym equal less than||sym equal same||sym equal not||sym for all||sym infinity||sym integral||sym intersection||sym is in||sym is not in||sym math phi||sym math pi||sym minus||sym nabla||sym partial diff||sym product||sym proportional to||sym root||sym sum||sym there exists||sym therefore||sym union||line s||*Greek:*| alpha cap, beta cap, gamma cap, delta cap, epsilon cap, zeta cap, eta cap, theta cap, iota cap, kappa cap, lambda cap, mu cap, nu cap, xi cap, omicron cap, pi cap, rho cap, signma cap, tau cap, upsilon cap, phi cap, chi cap, psi cap, omega cap, alpha, beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa, lambda, mu, nu, xi, omicron, pi, rho, signma, tau, upsilon, phi, chi, psi, omega|line s||sym alpha cap||sym beta cap||sym gamma cap||sym delta cap||sym epsilon cap||sym zeta cap||sym eta cap||sym theta cap||sym iota cap||sym kappa cap||sym lambda cap||sym mu cap||sym nu cap||sym xi cap||sym omicron cap||sym pi cap||sym rho cap||sym signma cap||sym tau cap||sym upsilon cap||sym phi cap||sym chi cap||sym psi cap||sym omega cap||sym alpha||sym beta||sym gamma||sym delta||sym epsilon||sym zeta||sym eta||sym theta||sym iota||sym kappa||sym lambda||sym mu||sym nu||sym xi||sym omicron||sym pi||sym rho||sym signma||sym tau||sym upsilon||sym phi||sym chi||sym psi||sym omega]
+tcx	|\sym ...\|
+tc*	Insert a symbol.  One of...|line s||bLegal:b| copyright, registered tm, tm,|line s||sym copyright||sym registered tm||sym tm||line s||bCurrency:b| bitcoin, cent, dollar, euro, franc, lira, lira turkey, peso, pound, ruble, rupee, rupee india, won, yen|line s||sym bitcoin||sym cent||sym dollar||sym euro||sym franc||sym lira||sym lira turkey||sym peso||sym pound||sym ruble||sym rupee||sym rupee india||sym won||sym yen||line s||bPunctuation:b| ..., 1/4, 1/2, 3/4, ampersand, at, bullet, dagger s, dagger d, hash, inv!, inv?, quote angle d l, quote angle d r, quote angle s l, quote angle s r, quote d, quote d l, quote d r, quote d low, quote s, quote s l, quote s r, quote s low, para, prime d, prime s|line s||sym ...||sym 1/4||sym 1/2||sym 3/4||sym ampersand||sym at||sym bullet||sym dagger s||sym dagger d||sym hash||sym inv!||sym inv?||sym quote angle d l||sym quote angle d r||sym quote angle s l||sym quote angle s r||sym quote d||sym quote d l||sym quote d r||sym quote d low||sym quote s||sym quote s l||sym quote s r||sym quote s low||sym para||sym prime d||sym prime s||line s||bGame:b| arrow d, arrow l, arrow r, arrow u, arrow lr, arrow ud, arrow \d, arrow /d, arrow \u, arrow /u, arrow d l, arrow d lr, arrow d r, arrow redo, arrow undo, card suit c, card suit d, card suit h, card suit s, chess b k, chess b q, chess b r, chess b b, chess b h, chess b p, chess w k, chess w q, chess w r, chess w b, chess w h, chess w p, die 1, die 2, die 3, die 4, die 5, die 6, ball baseball, ball soccer|line s||sym arrow d||sym arrow l||sym arrow r||sym arrow u||sym arrow lr||sym arrow ud||sym arrow \d||sym arrow /d||sym arrow \u||sym arrow /u||sym arrow d l||sym arrow d lr||sym arrow d r||sym arrow redo||sym arrow undo||sym card suit c||sym card suit d||sym card suit h||sym card suit s||sym chess b k||sym chess b q||sym chess b r||sym chess b b||sym chess b h||sym chess b p||sym chess w k||sym chess w q||sym chess w r||sym chess w b||sym chess w h||sym chess w p||sym die 1||sym die 2||sym die 3||sym die 4||sym die 5||sym die 6||sym ball baseball||sym ball soccer||line s||bSymbols:b| checkbox off, checkbox on, circle 0%, circle 25%, circle 50%, circle 75%, circle 100%, correct, biohazard, dot, dot filled, envelope, gender f, gender m, gender mf, incorrect, plane, poison, radioactive, Rx, recycle, scissor, snowflake, star 5, star 5 filled, sun|line s||sym checkbox off||sym checkbox on||sym circle 0%||sym circle 25%||sym circle 50%||sym circle 75%||sym circle 100%||sym correct||sym biohazard||sym dot||sym dot filled||sym envelope||sym gender f||sym gender m||sym gender mf||sym incorrect||sym plane||sym poison||sym radioactive||sym Rx||sym recycle||sym scissor||sym snowflake||sym star 5||sym star 5 filled||sym sun||line s||bMath:b| +/-, angle, contains, degree, dot, empty set, equal almost, equal approx, equal greater than, equal less than, equal same, equal not, for all, infinity, integral, intersection, is in, is not in, math phi, math pi, minus, nabla, partial diff, product, proportional to, root, sum, there exists, therefore, union|line s||sym +/-||sym angle||sym contains||sym degree||sym dot||sym empty set||sym equal almost||sym equal approx ||sym equal greater than||sym equal less than||sym equal same||sym equal not||sym for all||sym infinity||sym integral||sym intersection||sym is in||sym is not in||sym math phi||sym math pi||sym minus||sym nabla||sym partial diff||sym product||sym proportional to||sym root||sym sum||sym there exists||sym therefore||sym union||line s||bGreek:b| alpha cap, beta cap, gamma cap, delta cap, epsilon cap, zeta cap, eta cap, theta cap, iota cap, kappa cap, lambda cap, mu cap, nu cap, xi cap, omicron cap, pi cap, rho cap, signma cap, tau cap, upsilon cap, phi cap, chi cap, psi cap, omega cap, alpha, beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa, lambda, mu, nu, xi, omicron, pi, rho, signma, tau, upsilon, phi, chi, psi, omega|line s||sym alpha cap||sym beta cap||sym gamma cap||sym delta cap||sym epsilon cap||sym zeta cap||sym eta cap||sym theta cap||sym iota cap||sym kappa cap||sym lambda cap||sym mu cap||sym nu cap||sym xi cap||sym omicron cap||sym pi cap||sym rho cap||sym signma cap||sym tau cap||sym upsilon cap||sym phi cap||sym chi cap||sym psi cap||sym omega cap||sym alpha||sym beta||sym gamma||sym delta||sym epsilon||sym zeta||sym eta||sym theta||sym iota||sym kappa||sym lambda||sym mu||sym nu||sym xi||sym omicron||sym pi||sym rho||sym signma||sym tau||sym upsilon||sym phi||sym chi||sym psi||sym omega]
 
 t]
