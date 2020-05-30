@@ -236,7 +236,7 @@ tc*	Break the line.  Leave two spaces.  Start on the next line.
 
 t-
 tcx	\ \|, \| \
-tc*	Escape for a |.  No space between | and \.
+tc*	Escape for a \|.  No space between \| and \.
 
 t-
 tcx	|\sym ...\|
