@@ -1133,6 +1133,12 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    // Chapter
    chapter = _ChapterGetString(para->chapter);
 
+   gsFindAndReplaceU2(str, L"`",                           L"&#96;",               NULL);
+   gsFindAndReplaceU2(str, L"*",                           L"&#42;",               NULL);
+   gsFindAndReplaceU2(str, L"~",                           L"&#126;",              NULL);
+   gsFindAndReplaceU2(str, L"<",                           L"&#60;",               NULL);
+   gsFindAndReplaceU2(str, L">",                           L"&#62;",               NULL);
+
    gsFindAndReplaceU2(str, L"|chapter|",                   gsGet(chapter),         NULL);
 
    gsDestroy(chapter);
@@ -1347,12 +1353,6 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"|sym chi|",                   L"&chi;",               NULL);
    gsFindAndReplaceU2(str, L"|sym psi|",                   L"&psi;",               NULL);
    gsFindAndReplaceU2(str, L"|sym omega|",                 L"&omega;",             NULL);
-
-   gsFindAndReplaceU2(str, L"`",                           L"&#96;",               NULL);
-   gsFindAndReplaceU2(str, L"*",                           L"&#42;",               NULL);
-   gsFindAndReplaceU2(str, L"~",                           L"&#126;",              NULL);
-   gsFindAndReplaceU2(str, L"<",                           L"&#60;",               NULL);
-   gsFindAndReplaceU2(str, L">",                           L"&#62;",               NULL);
 
    gsFindAndReplaceU2(str, L"|c",                          L"`",                   NULL);
    gsFindAndReplaceU2(str, L"c|",                          L"`",                   NULL);
