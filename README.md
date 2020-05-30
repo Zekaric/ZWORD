@@ -1,8 +1,8 @@
 
-# Zekaric: Doccer
+# Zekaric: WORD
 
 ## Table Of Contents
-**1 - About Z:Doccer**<br />
+**1 - About Z:WORD**<br />
  1.1 - Description<br />
  1.2 - Why?<br />
  1.3 - Goals<br />
@@ -11,11 +11,13 @@
  3.1 - File level markup.<br />
  3.2 - Inline level markup<br />
 
-# 1 - About Z:Doccer
+# 1 - About Z:WORD
 
 ## 1.1 - Description
 
-This program converts zdoc files to different targets.  The the goals for speed of writing, modification, and generation of target formats.
+WORD : W)ords O)rganized R)udimentary D)ocumentation
+
+This program converts zword files to different targets.  The the goals for speed of writing, modification, and generation of target formats.
 
 The format is a simple text file using simple markup for styling.
 
@@ -37,19 +39,25 @@ Why not plain text?  Plain text is good but it lacks a certain presentation.  Pl
 
 ## 1.3 - Goals
 
+*  Simple markup that is easily remembered.
+
+*  Fast to write the markup format and still have it readable.
+
+*  Simple converted to other targets.
+
 # 2 - Usage
 
 ```
-zdoc [cmd] [path to file name].doc
+zword [cmd] [path to file name].zword
 ```
 
 [cmd] will be one of...
 
 | [cmd] | Description |
 | --- | --- |
-| all | Convert the zdoc file to all supported formats. |
-| html | Convert the zdoc file to an html file. |
-| md | Convert the zdoc file to a markdown file. |
+| all | Convert the zword file to all supported formats. |
+| html | Convert the zword file to an html file. |
+| md | Convert the zword file to a markdown file. |
 
 
 # 3 - Format
@@ -100,7 +108,7 @@ Note, not all markup may have a meaning in the target format that you will ask t
 | Markup | Descrption |
 | --- | --- |
 | |chapter| | Chapter number.  "3.1.4.1.5.9" |
-| |img=\`.`=img| | Insert an image inline.  Path must be relative to the zdoc file. |
+| |img=\`.`=img| | Insert an image inline.  Path must be relative to the zword file. |
 | |*...*| | **Bold** the contents. |
 | |/.../| | *Italicize* the contents. |
 | |_..._| | <u>Underline</u> the contents. |

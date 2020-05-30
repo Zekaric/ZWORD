@@ -1,14 +1,16 @@
-H	Zekaric: Doccer
+H	Zekaric: WORD
 
 HH	Table Of Contents
 
 toc
 
-h	|chapter| - About Z:Doccer
+h	|chapter| - About Z:WORD
 
 hh	|chapter| - Description
 
-	This program converts zdoc files to different targets.  The the goals for speed of writing, modification, and generation of target formats.
+	WORD : W)ords O)rganized R)udimentary D)ocumentation
+
+	This program converts zword files to different targets.  The the goals for speed of writing, modification, and generation of target formats.
 	The format is a simple text file using simple markup for styling.
 
 hh	|chapter| - Why?
@@ -18,7 +20,7 @@ hh	|chapter| - Why?
 	Why not use HTML?  There isn't an HTML editor that I enjoy using.  They all frustrate at some point.  I even tried to write doc manually in a simple text editor but that ended up being more annoying than anything else.
 	Why not use a Wiki?  Markup languages on wiki's are not consistent.  Sometimes hard to get what you want.  At work the wiki's and software we used changed over time so old stuff was not easy to port over or left where they were but no one goes there anymore so no one knows the doc exists.
 	Why not MD?  GitHub uses MD...  And as far as I know, only GitHub.  Nothing at my work uses GitHub.
-	Why not use what is being used at work?  Again no standard markup and very flakey or annoying web interface.  
+	Why not use what is being used at work?  Again no standard markup and very flakey or annoying web interface.
 	Why not plain text?  Plain text is good but it lacks a certain presentation.  Plus when it comes to editing to a line length, you end up spending a lot of time just editing line length instead of working on content.
 
 hh	|chapter| - Goals
@@ -29,7 +31,7 @@ hh	|chapter| - Goals
 
 h	|chapter| - Usage
 
-...	zdoc [cmd] [path to file name].doc
+...	zword [cmd] [path to file name].zword
 
 	[cmd] will be one of...
 
@@ -41,15 +43,15 @@ th*	Description
 
 t-
 tcx	all
-tc*	Convert the zdoc file to all supported formats.
+tc*	Convert the zword file to all supported formats.
 
 t-
 tcx	html
-tc*	Convert the zdoc file to an html file.
+tc*	Convert the zword file to an html file.
 
 t-
 tcx	md
-tc*	Convert the zdoc file to a markdown file.
+tc*	Convert the zword file to a markdown file.
 
 t]
 
@@ -186,7 +188,7 @@ tc*	Chapter number.  "3.1.4.1.5.9"
 
 t-
 tcx	|img=\|...|=img\|
-tc*	Insert an image inline.  Path must be relative to the zdoc file.
+tc*	Insert an image inline.  Path must be relative to the zword file.
 
 t-
 tcx	|\*...*\|

@@ -1,11 +1,13 @@
 /******************************************************************************
-file:       ZDoccer
+file:       ZWORD
 author:     Robbert de Groot
 company:    Robbert de Groot
 copyright:  2020, Robbert de Groot
 
 description:
-Entry point for the Doccer program
+Entry point for the WORD program
+
+WORD : W)ords O)rganized R)udimentary D)ocumentation
 ******************************************************************************/
 
 /******************************************************************************
@@ -235,7 +237,7 @@ int main(int acount, char **alist)
    }
 
    gconSetA(
-      "Z:Doccer\n"
+      "Z:WORD\n"
       "========\n"
       "\n");
 
@@ -243,7 +245,7 @@ int main(int acount, char **alist)
    if (acount <= 1)
    {
       gconSetA(
-         "zdoccer [command] [file]\n"
+         "zword [command] [file]\n"
          "\n"
          "[command] = \n"
          "   \"all\"        convert file to all the formats.\n"
@@ -255,7 +257,7 @@ int main(int acount, char **alist)
          "   \"ZLYT\"       convert file to Z:LYT markup.\n"
          "\n"
          "[file]    =\n"
-         "   Fully qualified file path.  Including .zdoc extension.\n"
+         "   Fully qualified file path.  Including .zword extension.\n"
          "\n");
 
       return 0;
@@ -415,6 +417,10 @@ static int _Process(Gs const * const command, Gpath const * const path)
 
    // Open the file.
    file = gfileOpen(path, gfileOpenModeREAD_ONLY);
+   if (!file)
+   {
+      return 1;
+   }
 
    // Read in the entire file.
    strListCount = gfileGetContentSArray(file, gcTypeU1, strList);
@@ -1416,7 +1422,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
       " <head>\n"
       "  <meta charset=\"utf-8\" />\n"
       "  <link rel=\"stylesheet\" type=\"text/css\" href=\"style_reset.css\">\n"
-      "  <link rel=\"stylesheet\" type=\"text/css\" href=\"style_zdoc.css\">\n"
+      "  <link rel=\"stylesheet\" type=\"text/css\" href=\"style_zword.css\">\n"
       "  <title>",
       NULL);
 
@@ -1434,7 +1440,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
       "</title>\n"
       " </head>\n"
       "\n"
-      " <body class=\"zdoc\">\n",
+      " <body class=\"zword\">\n",
       NULL);
 
    // Write out the contents of the document.
@@ -1451,7 +1457,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          _WriteHTMLPopList(file, gbFALSE, 0, listType, isListActive);
 
          stemp = _ProcessInlineHTML(para->str, para);
-         gfileSetA(file, gcTypeU1, "<p class=\"zdoc\">", NULL);
+         gfileSetA(file, gcTypeU1, "<p class=\"zword\">", NULL);
          gfileSetS(file, gcTypeU1, stemp,                NULL);
          gfileSetA(file, gcTypeU1, "</p>\n",             NULL);
          gsDestroy(stemp);
@@ -1481,23 +1487,23 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          switch (para->type)
          {
          case paraTypeTITLE_1:
-         case paraTypeTITLE_TOC_1: gfileSetA(file, gcTypeU1, "\n\n<h1 class=\"zdoc\">", NULL); break;
+         case paraTypeTITLE_TOC_1: gfileSetA(file, gcTypeU1, "\n\n<h1 class=\"zword\">", NULL); break;
          case paraTypeTITLE_2:
-         case paraTypeTITLE_TOC_2: gfileSetA(file, gcTypeU1, "\n<h2 class=\"zdoc\">", NULL); break;
+         case paraTypeTITLE_TOC_2: gfileSetA(file, gcTypeU1, "\n<h2 class=\"zword\">", NULL); break;
          case paraTypeTITLE_3:
-         case paraTypeTITLE_TOC_3: gfileSetA(file, gcTypeU1, "\n<h3 class=\"zdoc\">", NULL); break;
+         case paraTypeTITLE_TOC_3: gfileSetA(file, gcTypeU1, "\n<h3 class=\"zword\">", NULL); break;
          case paraTypeTITLE_4:
-         case paraTypeTITLE_TOC_4: gfileSetA(file, gcTypeU1, "\n<h4 class=\"zdoc\">", NULL); break;
+         case paraTypeTITLE_TOC_4: gfileSetA(file, gcTypeU1, "\n<h4 class=\"zword\">", NULL); break;
          case paraTypeTITLE_5:
-         case paraTypeTITLE_TOC_5: gfileSetA(file, gcTypeU1, "\n<h5 class=\"zdoc\">", NULL); break;
+         case paraTypeTITLE_TOC_5: gfileSetA(file, gcTypeU1, "\n<h5 class=\"zword\">", NULL); break;
          case paraTypeTITLE_6:
-         case paraTypeTITLE_TOC_6: gfileSetA(file, gcTypeU1, "\n<h6 class=\"zdoc\">", NULL); break;
+         case paraTypeTITLE_TOC_6: gfileSetA(file, gcTypeU1, "\n<h6 class=\"zword\">", NULL); break;
          case paraTypeTITLE_7:
-         case paraTypeTITLE_TOC_7: gfileSetA(file, gcTypeU1, "\n<p class=\"zdoch7\">", NULL); break;
+         case paraTypeTITLE_TOC_7: gfileSetA(file, gcTypeU1, "\n<p class=\"zwordh7\">", NULL); break;
          case paraTypeTITLE_8:
-         case paraTypeTITLE_TOC_8: gfileSetA(file, gcTypeU1, "\n<p class=\"zdoch8\">", NULL); break;
+         case paraTypeTITLE_TOC_8: gfileSetA(file, gcTypeU1, "\n<p class=\"zwordh8\">", NULL); break;
          case paraTypeTITLE_9:
-         case paraTypeTITLE_TOC_9: gfileSetA(file, gcTypeU1, "\n<p class=\"zdoch9\">", NULL); break;
+         case paraTypeTITLE_TOC_9: gfileSetA(file, gcTypeU1, "\n<p class=\"zwordh9\">", NULL); break;
          }
 
          // For titles with a table of contents line, add the anchor.
@@ -1560,7 +1566,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          // Start the list.
          if      (isListActive[listLevel] == listActiveNO)
          {
-            gfileSetA(file, gcTypeU1, "<ul class=\"zdoc\">\n", NULL);
+            gfileSetA(file, gcTypeU1, "<ul class=\"zword\">\n", NULL);
             listType[listLevel] = listTypeBULLET;
          }
          // Close off the last item.
@@ -1570,7 +1576,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          }
 
          stemp = _ProcessInlineHTML(para->str, para);
-         gfileSetA(file, gcTypeU1, "<li class=\"zdoc\">", NULL);
+         gfileSetA(file, gcTypeU1, "<li class=\"zword\">", NULL);
          gfileSetS(file, gcTypeU1, stemp,                 NULL);
          gfileSetA(file, gcTypeU1, "</li>\n",             NULL);
          gsDestroy(stemp);
@@ -1595,7 +1601,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          // Start the list.
          if      (isListActive[listLevel] == listActiveNO)
          {
-            gfileSetA(file, gcTypeU1, "<ol class=\"zdoc\">\n", NULL);
+            gfileSetA(file, gcTypeU1, "<ol class=\"zword\">\n", NULL);
             listType[listLevel] = listTypeNUMBER;
          }
          // Close off the last item.
@@ -1605,7 +1611,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          }
 
          stemp = _ProcessInlineHTML(para->str, para);
-         gfileSetA(file, gcTypeU1, "<li class=\"zdoc\">", NULL);
+         gfileSetA(file, gcTypeU1, "<li class=\"zword\">", NULL);
          gfileSetS(file, gcTypeU1, stemp,                 NULL);
          gfileSetA(file, gcTypeU1, "</li>\n",             NULL);
          gsDestroy(stemp);
@@ -1630,7 +1636,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          // Start the list.
          if      (isListActive[listLevel] == listActiveNO)
          {
-            gfileSetA(file, gcTypeU1, "<ol class=\"zdoc\">\n", NULL);
+            gfileSetA(file, gcTypeU1, "<ol class=\"zword\">\n", NULL);
             listType[listLevel] = listTypeBULLET;
          }
          // Close off the last item.
@@ -1639,7 +1645,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
             gfileSetA(file, gcTypeU1, "</li>\n", NULL);
          }
 
-         gfileSetA(file, gcTypeU1, "<li class=\"zdoc\">", NULL);
+         gfileSetA(file, gcTypeU1, "<li class=\"zword\">", NULL);
 
          isListActive[listLevel] = listActiveYES;
          break;
@@ -1661,7 +1667,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          // Start the list.
          if      (isListActive[listLevel] == listActiveNO)
          {
-            gfileSetA(file, gcTypeU1, "<ol class=\"zdoc\">\n", NULL);
+            gfileSetA(file, gcTypeU1, "<ol class=\"zword\">\n", NULL);
             listType[listLevel] = listTypeNUMBER;
          }
          // Close off the last item.
@@ -1670,7 +1676,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
             gfileSetA(file, gcTypeU1, "</li>\n", NULL);
          }
 
-         gfileSetA(file, gcTypeU1, "<li class=\"zdoc\">", NULL);
+         gfileSetA(file, gcTypeU1, "<li class=\"zword\">", NULL);
 
          isListActive[listLevel] = listActiveYES;
          break;
@@ -1751,7 +1757,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          // Close off any applicable lists.
          _WriteHTMLPopList(file, gbFALSE, 0, listType, isListActive);
 
-         gfileSetA(file, gcTypeU1, "<table class=\"zdoc\"><tbody class=\"zdoc\">\n", NULL);
+         gfileSetA(file, gcTypeU1, "<table class=\"zword\"><tbody class=\"zword\">\n", NULL);
          isTableRowActive  = gbFALSE;
          isTableColActive  = gbFALSE;
          isTableColHActive = gbFALSE;
@@ -1790,7 +1796,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
             gfileSetA(file, gcTypeU1, "\n</tr>\n", NULL);
          }
 
-         gfileSetA(file, gcTypeU1, "<tr class=\"zdoc\">\n", NULL);
+         gfileSetA(file, gcTypeU1, "<tr class=\"zword\">\n", NULL);
          isTableRowActive  = gbTRUE;
          isTableColActive  = gbFALSE;
          isTableColHActive = gbFALSE;
@@ -1814,12 +1820,12 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
 
          switch (para->type)
          {
-         case paraTypeTABLE_COL_HEADER:            gfileSetA(file, gcTypeU1, "<th class=\"zdoc\">",       NULL); break;
-         case paraTypeTABLE_COL_HEADER_NO_BREAK:   gfileSetA(file, gcTypeU1, "<th class=\"zdoc\"><nobr>", NULL); break;
-         case paraTypeTABLE_COL_HEADER_FILL:       gfileSetA(file, gcTypeU1, "<th class=\"zdoc_fill\">",  NULL); break;
-         case paraTypeTABLE_COL:                   gfileSetA(file, gcTypeU1, "<td class=\"zdoc\">",       NULL); break;
-         case paraTypeTABLE_COL_NO_BREAK:          gfileSetA(file, gcTypeU1, "<td class=\"zdoc\"><nobr>", NULL); break;
-         case paraTypeTABLE_COL_FILL:              gfileSetA(file, gcTypeU1, "<td class=\"zdoc_fill\">",  NULL); break;
+         case paraTypeTABLE_COL_HEADER:            gfileSetA(file, gcTypeU1, "<th class=\"zword\">",       NULL); break;
+         case paraTypeTABLE_COL_HEADER_NO_BREAK:   gfileSetA(file, gcTypeU1, "<th class=\"zword\"><nobr>", NULL); break;
+         case paraTypeTABLE_COL_HEADER_FILL:       gfileSetA(file, gcTypeU1, "<th class=\"zword_fill\">",  NULL); break;
+         case paraTypeTABLE_COL:                   gfileSetA(file, gcTypeU1, "<td class=\"zword\">",       NULL); break;
+         case paraTypeTABLE_COL_NO_BREAK:          gfileSetA(file, gcTypeU1, "<td class=\"zword\"><nobr>", NULL); break;
+         case paraTypeTABLE_COL_FILL:              gfileSetA(file, gcTypeU1, "<td class=\"zword_fill\">",  NULL); break;
          }
 
          stemp = _ProcessInlineHTML(para->str, para);
@@ -1843,7 +1849,7 @@ static Gb _WriteHTML(Gpath const * const path, ParaArray const * const paraList)
          // Close off any applicable lists.
          _WriteHTMLPopList(file, gbFALSE, 0, listType, isListActive);
 
-         gfileSetA(file, gcTypeU1, "<pre class=\"zdoc\">\n", NULL);
+         gfileSetA(file, gcTypeU1, "<pre class=\"zword\">\n", NULL);
          gfileSetS(file, gcTypeU1, para->str, NULL);
          gfileSetA(file, gcTypeU1, "\n</pre>\n", NULL);
          break;
@@ -1955,15 +1961,15 @@ static Gb _WriteHTMLTOC(Gfile * const file, ParaArray const * const paraList)
 
       switch (para->type)
       {
-      case paraTypeTITLE_TOC_1: gfileSetA(file, gcTypeU1, "<p class=\"zdoc_toc1\">",  NULL); break;
-      case paraTypeTITLE_TOC_2: gfileSetA(file, gcTypeU1, "<p class=\"zdoc_toc2\">",  NULL); break;
-      case paraTypeTITLE_TOC_3: gfileSetA(file, gcTypeU1, "<p class=\"zdoc_toc3\">",  NULL); break;
-      case paraTypeTITLE_TOC_4: gfileSetA(file, gcTypeU1, "<p class=\"zdoc_toc4\">",  NULL); break;
-      case paraTypeTITLE_TOC_5: gfileSetA(file, gcTypeU1, "<p class=\"zdoc_toc5\">",  NULL); break;
-      case paraTypeTITLE_TOC_6: gfileSetA(file, gcTypeU1, "<p class=\"zdoc_toc6\">",  NULL); break;
-      case paraTypeTITLE_TOC_7: gfileSetA(file, gcTypeU1, "<p class=\"zdoc_toc7\">",  NULL); break;
-      case paraTypeTITLE_TOC_8: gfileSetA(file, gcTypeU1, "<p class=\"zdoc_toc8\">",  NULL); break;
-      case paraTypeTITLE_TOC_9: gfileSetA(file, gcTypeU1, "<p class=\"zdoc_toc9\">",  NULL); break;
+      case paraTypeTITLE_TOC_1: gfileSetA(file, gcTypeU1, "<p class=\"zword_toc1\">",  NULL); break;
+      case paraTypeTITLE_TOC_2: gfileSetA(file, gcTypeU1, "<p class=\"zword_toc2\">",  NULL); break;
+      case paraTypeTITLE_TOC_3: gfileSetA(file, gcTypeU1, "<p class=\"zword_toc3\">",  NULL); break;
+      case paraTypeTITLE_TOC_4: gfileSetA(file, gcTypeU1, "<p class=\"zword_toc4\">",  NULL); break;
+      case paraTypeTITLE_TOC_5: gfileSetA(file, gcTypeU1, "<p class=\"zword_toc5\">",  NULL); break;
+      case paraTypeTITLE_TOC_6: gfileSetA(file, gcTypeU1, "<p class=\"zword_toc6\">",  NULL); break;
+      case paraTypeTITLE_TOC_7: gfileSetA(file, gcTypeU1, "<p class=\"zword_toc7\">",  NULL); break;
+      case paraTypeTITLE_TOC_8: gfileSetA(file, gcTypeU1, "<p class=\"zword_toc8\">",  NULL); break;
+      case paraTypeTITLE_TOC_9: gfileSetA(file, gcTypeU1, "<p class=\"zword_toc9\">",  NULL); break;
       }
 
       stemp = _ProcessInlineHTML(para->str, para);
