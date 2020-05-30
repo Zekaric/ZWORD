@@ -114,7 +114,7 @@ Note, not all markup may have a meaning in the target format that you will ask t
 | &#124;u...u&#124; | <u>Underline</u> the contents. |
 | &#124;s...s&#124; | ~~Strike~~ through the contents. |
 | &#124;sup...sup&#124; | <sup>Superscript</sup> the contents. |
-| &#124;sub...sub&#124; | <sub>Subscriptsu** the contents. |
+| &#124;sub...sub&#124; | <sub>Subscript</sub> the contents. |
 | &#124;c...c&#124; | `monospace` the contents. |
 | &#124;link &#124;...&#124; link &#124;...&#124; link&#124; | Create a [LINK](http://www.zekaric.com/) web link.  First ... is the line.  Second ... is the nice text. |
 | &#124;line&#124; | Break the line.  Start on the next line. |

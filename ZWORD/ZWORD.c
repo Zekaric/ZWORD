@@ -1095,6 +1095,10 @@ static Gs *_ProcessInlineHTML(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"|sym psi|",                   L"&psi;",               NULL);
    gsFindAndReplaceU2(str, L"|sym omega|",                 L"&omega;",             NULL);
 
+   gsFindAndReplaceU2(str, L"|sup",                        L"<sup>",               NULL);
+   gsFindAndReplaceU2(str, L"sup|",                        L"</sup>",              NULL);
+   gsFindAndReplaceU2(str, L"|sub",                        L"<sub>",               NULL);
+   gsFindAndReplaceU2(str, L"sub|",                        L"</sub>",              NULL);
    gsFindAndReplaceU2(str, L"|c",                          L"<code>",              NULL);
    gsFindAndReplaceU2(str, L"c|",                          L"</code>",             NULL);
    gsFindAndReplaceU2(str, L"|b",                          L"<strong>",            NULL);
@@ -1103,10 +1107,6 @@ static Gs *_ProcessInlineHTML(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"i|",                          L"</em>",               NULL);
    gsFindAndReplaceU2(str, L"|u",                          L"<u>",                 NULL);
    gsFindAndReplaceU2(str, L"u|",                          L"</u>",                NULL);
-   gsFindAndReplaceU2(str, L"|sup",                        L"<sup>",               NULL);
-   gsFindAndReplaceU2(str, L"sup|",                        L"</sup>",              NULL);
-   gsFindAndReplaceU2(str, L"|sub",                        L"<sub>",               NULL);
-   gsFindAndReplaceU2(str, L"sub|",                        L"</sub>",              NULL);
    gsFindAndReplaceU2(str, L"|s",                          L"<s>",                 NULL);
    gsFindAndReplaceU2(str, L"s|",                          L"</s>",                NULL);
 
@@ -1354,6 +1354,10 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"|sym psi|",                   L"&psi;",               NULL);
    gsFindAndReplaceU2(str, L"|sym omega|",                 L"&omega;",             NULL);
 
+   gsFindAndReplaceU2(str, L"|sup",                        L"<sup>",               NULL);
+   gsFindAndReplaceU2(str, L"sup|",                        L"</sup>",              NULL);
+   gsFindAndReplaceU2(str, L"|sub",                        L"<sub>",               NULL);
+   gsFindAndReplaceU2(str, L"sub|",                        L"</sub>",              NULL);
    gsFindAndReplaceU2(str, L"|c",                          L"`",                   NULL);
    gsFindAndReplaceU2(str, L"c|",                          L"`",                   NULL);
    gsFindAndReplaceU2(str, L"|b",                          L"**",                  NULL);
@@ -1362,10 +1366,6 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"i|",                          L"*",                   NULL);
    gsFindAndReplaceU2(str, L"|u",                          L"<u>",                 NULL);
    gsFindAndReplaceU2(str, L"u|",                          L"</u>",                NULL);
-   gsFindAndReplaceU2(str, L"|sup",                        L"<sup>",               NULL);
-   gsFindAndReplaceU2(str, L"sup|",                        L"</sup>",              NULL);
-   gsFindAndReplaceU2(str, L"|sub",                        L"<sub>",               NULL);
-   gsFindAndReplaceU2(str, L"sub|",                        L"</sub>",              NULL);
    gsFindAndReplaceU2(str, L"|s",                          L"~~",                  NULL);
    gsFindAndReplaceU2(str, L"s|",                          L"~~",                  NULL);
 
