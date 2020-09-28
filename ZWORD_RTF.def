@@ -1,0 +1,116 @@
+=page
+-size in 8.5 11.0
+-marginT in 0.5
+-marginB in 0.5
+-marginL in 0.5
+-marginR in 0.5
+=page
+=body
+-font pt 10 Times New Roman
+-align justified
+-spaceL in 1.0
+-spaceLFirst in 0.5
+-spaceR in 1.0
+-sapceT in 0.0
+-spaceB in 0.0
+=body
+=kv
+-font pt 10 Times New Roman
+-align left
+-spaceL in 3.0
+-spaceLFirst in -2.0
+-spaceR in 1.0
+-spaceT in 0.0
+-spaceB in 0.0
+=kv
+=...
+-font pt 10 Consolas
+-align left
+-nowrap
+-spaceL in 1.0
+-spaceR in 1.0
+-spaceT in 0.25
+-spaceB in 0.25
+=...
+=h
+-font pt 20 Arial
+-isbold
+-align left
+-spaceL in 0.0
+-spaceR in 0.0
+-spaceT in 0.0
+-spaceTAfterNonHeader in 0.5
+-spaceB in 0.5
+=h
+=hh
+-font pt 19 Arial
+-isbold
+-spaceL in 0.0
+-spaceR in 0.0
+-spaceT in 0.0
+-spaceTAfterNonHeader in 0.25
+-spaceB in 0.25
+=hh
+=hhh
+-font pt 19 Arial
+-isbold
+-spaceL in 0.0
+-spaceR in 0.0
+-spaceT in 0.0
+-spaceTAfterNonHeader in 0.25
+-spaceB in 0.25
+=hhh
+=hhhh
+-font pt 19 Arial
+-isbold
+-spaceL in 0.0
+-spaceR in 0.0
+-spaceT in 0.0
+-spaceTAfterNonHeader in 0.25
+-spaceB in 0.25
+=hhhh
+=hhhhh
+-font pt 19 Arial
+-isbold
+-spaceL in 0.0
+-spaceR in 0.0
+-spaceT in 0.0
+-spaceTAfterNonHeader in 0.25
+-spaceB in 0.25
+=hhhhh
+=hhhhhh
+-font pt 19 Arial
+-isbold
+-spaceL in 0.0
+-spaceR in 0.0
+-spaceT in 0.0
+-spaceTAfterNonHeader in 0.25
+-spaceB in 0.25
+=hhhhhh
+=hhhhhhh
+-font pt 19 Arial
+-isbold
+-spaceL in 0.0
+-spaceR in 0.0
+-spaceT in 0.0
+-spaceTAfterNonHeader in 0.25
+-spaceB in 0.25
+=hhhhhhh
+=hhhhhhhh
+-font pt 19 Arial
+-isbold
+-spaceL in 0.0
+-spaceR in 0.0
+-spaceT in 0.0
+-spaceTAfterNonHeader in 0.25
+-spaceB in 0.25
+=hhhhhhhh
+=hhhhhhhhh
+-font pt 19 Arial
+-isbold
+-spaceL in 0.0
+-spaceR in 0.0
+-spaceT in 0.0
+-spaceTAfterNonHeader in 0.25
+-spaceB in 0.25
+=hhhhhhhhh
