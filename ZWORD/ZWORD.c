@@ -209,12 +209,15 @@ static Gs   *_ParaListGetTitle(        ParaArray const * const paraList);
 static int   _Process(                 Gs const * const command, Gpath const * const path);
 static Gs   *_ProcessInlineHTML(       Gs       * const str, Para const * const para);
 static Gs   *_ProcessInlineMD(         Gs       * const str, Para const * const para);
+static Gs   *_ProcessInlineRTF(        Gs       * const str, Para const * const para);
 
 static Gb    _WriteHTML(               Gpath const * const path, ParaArray const * const paraList);
 static void  _WriteHTMLPopList(        Gfile       * const file, Gb const isForced, Gindex const listLevel, ListType * const listType, ListActive * const isListActive);
 static Gb    _WriteHTMLTOC(            Gfile       * const file, ParaArray const * const paraList);
 static Gb    _WriteMD(                 Gpath const * const path, ParaArray const * const paraList);
 static Gb    _WriteMDTOC(              Gfile       * const file, ParaArray const * const paraList);
+static Gb    _WriteRTF(                Gpath const * const path, ParaArray const * const paraList);
+static Gb    _WriteRTFTOC(             Gfile       * const file, ParaArray const * const paraList);
 static Gb    _WriteZLYT(               Gpath const * const path, ParaArray const * const paraList);
 
 /******************************************************************************
@@ -253,8 +256,8 @@ int main(int acount, char **alist)
          "   \"html\"       convert file to HTML format.\n"
          "   \"md\"         convert file to MD markup.\n"
          // future "   \"PDF\"  convert file to PDF format.\n"
-         // future "   \"RTF\"  convert file to RTF format.\n"
-         "   \"ZLYT\"       convert file to Z:LYT markup.\n"
+         "   \"rtf\"        convert file to RTF format.\n"
+         "   \"zlyt\"       convert file to Z:LYT markup.\n"
          "\n"
          "[file]    =\n"
          "   Fully qualified file path.  Including .zword extension.\n"
@@ -843,6 +846,11 @@ static int _Process(Gs const * const command, Gpath const * const path)
       _WriteMD(path, paraList);
    }
    if (gsIsEqualU2(command, L"all") ||
+       gsIsEqualU2(command, L"rtf"))
+   {
+      _WriteRTF(path, paraList);
+   }
+   if (gsIsEqualU2(command, L"all") ||
        gsIsEqualU2(command, L"ZLYT"))
    {
       _WriteZLYT(path, paraList);
@@ -1371,6 +1379,267 @@ static Gs *_ProcessInlineMD(Gs * const inStr, Para const * const para)
 
    gsFindAndReplaceU2(str, L"\\|",                         L"&#124;",              NULL);
    gsFindAndReplaceU2(str, L"|\\",                         L"&#124;",              NULL);
+
+   greturn str;
+}
+
+/******************************************************************************
+func: _ProcessInlineHTML
+
+Process inline markup.
+******************************************************************************/
+static Gs *_ProcessInlineRTF(Gs * const inStr, Para const * const para)
+{
+   Gs *chapter,
+      *str;
+
+   genter;
+
+   str = gsCreateFrom(inStr);
+
+   // Chapter
+   chapter = _ChapterGetString(para->chapter);
+
+   gsFindAndReplaceU2(str, L"`",                           L"\\lquote",             NULL);
+   gsFindAndReplaceU2(str, L"'",                           L"\\rquote",             NULL);
+   gsFindAndReplaceU2(str, L"*",                           L"\\u42s",               NULL);
+   gsFindAndReplaceU2(str, L"{",                           L"\\{",                  NULL);
+   gsFindAndReplaceU2(str, L"}",                           L"\\}",                  NULL);
+
+   gsFindAndReplaceU2(str, L"|chapter|",                   gsGet(chapter),          NULL);
+
+   gsDestroy(chapter);
+
+   // Styling
+   gsFindAndReplaceU2(str, L"|img |",                      L"(",                    NULL);
+   gsFindAndReplaceU2(str, L"| img|",                      L")",                    NULL);
+   gsFindAndReplaceU2(str, L"|link |",                     L"[",                    NULL);
+   gsFindAndReplaceU2(str, L"| link |",                    L"|",                    NULL);
+   gsFindAndReplaceU2(str, L"| link|",                     L"]",                    NULL);
+   gsFindAndReplaceU2(str, L"|line|",                      L"\\line",               NULL);
+   gsFindAndReplaceU2(str, L"|line s|",                    L"\\line\\line",         NULL);
+   gsFindAndReplaceU2(str, L"|line d|",                    L"\\line\\line\\line",   NULL);
+
+   // Legal
+   gsFindAndReplaceU2(str, L"|sym copyright|",             L"&copy;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym registered tm|",         L"&reg;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym tm|",                    L"&trade;",              NULL);
+
+   // Currency
+   gsFindAndReplaceU2(str, L"|sym bitcoin|",               L"\\u8383B",            NULL);
+   gsFindAndReplaceU2(str, L"|sym cent|",                  L"&cent;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym dollar|",                L"$",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym euro|",                  L"&euro;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym franc|",                 L"\\u8355F",            NULL);
+   gsFindAndReplaceU2(str, L"|sym lira|",                  L"\\u8356L",            NULL);
+   gsFindAndReplaceU2(str, L"|sym lira turkey|",           L"\\u8378L",            NULL);
+   gsFindAndReplaceU2(str, L"|sym peso|",                  L"\\u8369P",            NULL);
+   gsFindAndReplaceU2(str, L"|sym pound|",                 L"&pound;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym ruble|",                 L"\\u8381R",            NULL);
+   gsFindAndReplaceU2(str, L"|sym rupee|",                 L"\\u8360R",            NULL);
+   gsFindAndReplaceU2(str, L"|sym rupee india|",           L"\\u8377R",            NULL);
+   gsFindAndReplaceU2(str, L"|sym won|",                   L"\\u8361W",            NULL);
+   gsFindAndReplaceU2(str, L"|sym yen|",                   L"&yen;",               NULL);
+
+   // Punctuation
+   gsFindAndReplaceU2(str, L"|sym ...|",                   L"&hellip;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 1/4|",                   L"&frac14;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 1/2|",                   L"&frac12;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym 3/4|",                   L"&frac34;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ampersand|",             L"&;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym at|",                    L"@",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym bullet|",                L"&bull;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym dagger s|",              L"&dagger;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dagger d|",              L"&Dagger;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym hash|",                  L"#",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym inv!|",                  L"&iexcl;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym inv?|",                  L"&iquest;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle d l|",       L"&laquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle d r|",       L"&raquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle s l|",       L"&lsaquo;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote angle s r|",       L"&rsaquo;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d|",               L"\"",                  NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d l|",             L"&ldquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d r|",             L"&rdquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote d low|",           L"&bdquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s|",               L"'",                   NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s l|",             L"&lsquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s r|",             L"&rsquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym quote s low|",           L"&sbquo;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym para|",                  L"&para;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym prime d|",               L"&Prime;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym prime s|",               L"&prime;",             NULL);
+
+   // Game
+   gsFindAndReplaceU2(str, L"|sym arrow d|",               L"&darr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow l|",               L"&larr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow r|",               L"&rarr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow u|",               L"&uarr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow lr|",              L"&harr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow ud|",              L"\\u8597|",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow \\d|",             L"\\u8600s",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow /d|",              L"\\u8601s",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow \\u|",             L"\\u8598s",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow /u|",              L"\\u8599s",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d l|",             L"&lArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d lr|",            L"&hArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow d r|",             L"&rArr;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow redo|",            L"\\u8631r",            NULL);
+   gsFindAndReplaceU2(str, L"|sym arrow undo|",            L"\\u8630u",            NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit c|",           L"&clubs;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit d|",           L"&diams;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit h|",           L"&hearts;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym card suit s|",           L"&spades;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b k|",             L"\\u9812K",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b q|",             L"\\u9813Q",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b r|",             L"\\u9814R",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b b|",             L"\\u9815B",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b h|",             L"\\u9816H",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess b p|",             L"\\u9817P",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w k|",             L"\\u9818k",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w q|",             L"\\u9819q",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w r|",             L"\\u9820r",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w b|",             L"\\u9821b",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w h|",             L"\\u9822h",            NULL);
+   gsFindAndReplaceU2(str, L"|sym chess w p|",             L"\\u9823p",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 1|",                 L"\\u9856a",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 2|",                 L"\\u9857b",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 3|",                 L"\\u9858c",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 4|",                 L"\\u9859d",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 5|",                 L"\\u9860e",            NULL);
+   gsFindAndReplaceU2(str, L"|sym die 6|",                 L"\\u9861f",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ball baseball|",         L"\\u9918o",            NULL);
+   gsFindAndReplaceU2(str, L"|sym ball soccer|",           L"\\u9917",            NULL);
+
+   // Symbols
+   gsFindAndReplaceU2(str, L"|sym checkbox off|",          L"\\u9744O",            NULL);
+   gsFindAndReplaceU2(str, L"|sym checkbox on|",           L"\\u9745X",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 0%|",             L"\\u9675_",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 25%|",            L"\\u9684v",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 50%|",            L"\\u9681-",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 75%|",            L"\\u9685^",            NULL);
+   gsFindAndReplaceU2(str, L"|sym circle 100%|",           L"\\u9679X",            NULL);
+   gsFindAndReplaceU2(str, L"|sym correct|",               L"\\u10003Y",            NULL);
+   gsFindAndReplaceU2(str, L"|sym biohazard|",             L"\\u9763Y",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dot|",                   L"\\u9898.",            NULL);
+   gsFindAndReplaceU2(str, L"|sym dot filled|",            L"\\u9899o",            NULL);
+   gsFindAndReplaceU2(str, L"|sym envelope|",              L"\\u9993e",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender f|",              L"\\u9792F",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender m|",              L"\\u9794M",            NULL);
+   gsFindAndReplaceU2(str, L"|sym gender mf|",             L"\\u9893?",            NULL);
+   gsFindAndReplaceU2(str, L"|sym incorrect|",             L"\\u10007X",            NULL);
+   gsFindAndReplaceU2(str, L"|sym plane|",                 L"\\u9992P",            NULL);
+   gsFindAndReplaceU2(str, L"|sym poison|",                L"\\u9760P",            NULL);
+   gsFindAndReplaceU2(str, L"|sym radioactive|",           L"\\u9762R",            NULL);
+   gsFindAndReplaceU2(str, L"|sym Rx|",                    L"\\u8478R",            NULL);
+   gsFindAndReplaceU2(str, L"|sym recycle|",               L"\\u9851R",            NULL);
+   gsFindAndReplaceU2(str, L"|sym scissor|",               L"\\u9986S",            NULL);
+   gsFindAndReplaceU2(str, L"|sym snowflake|",             L"\\u10052S",            NULL);
+   gsFindAndReplaceU2(str, L"|sym star 5|",                L"\\u9734s",            NULL);
+   gsFindAndReplaceU2(str, L"|sym star 5 filled|",         L"\\u9733S",            NULL);
+   gsFindAndReplaceU2(str, L"|sym sun|",                   L"\\u9728S",            NULL);
+
+   // Math
+   gsFindAndReplaceU2(str, L"|sym +/-|",                   L"&plusmn;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym angle|",                 L"&ang;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym contains|",              L"&ni;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym degree|",                L"&deg;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym dot|",                   L"&sdot;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym empty set|",             L"&empty;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal almost|",          L"&asymp;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal approx |",         L"&cong;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym equal greater than|",    L"&ge;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym equal less than|",       L"&le;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym equal same|",            L"&equiv;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym equal not|",             L"&ne;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym for all|",               L"&forall;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym infinity|",              L"&infin;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym integral|",              L"&int;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym intersection|",          L"&cap;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym is in|",                 L"&isin;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym is not in|",             L"&notin;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym math phi|",              L"&straightphi;",       NULL);
+   gsFindAndReplaceU2(str, L"|sym math pi|",               L"&piv;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym minus|",                 L"&minus;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym nabla|",                 L"&nabla;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym partial diff|",          L"&part;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym product|",               L"&prod;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym proportional to|",       L"&prop;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym root|",                  L"&radic;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym sum|",                   L"&sum;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym there exists|",          L"&exist;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym therefore|",             L"&there4;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym union|",                 L"&cup;",               NULL);
+
+   // Greek
+   gsFindAndReplaceU2(str, L"|sym alpha cap|",             L"&Alpha;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym beta cap|",              L"&Beta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym gamma cap|",             L"&Gamma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym delta cap|",             L"&Delta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym epsilon cap|",           L"&Epsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym zeta cap|",              L"&Zeta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym eta cap|",               L"&Eta;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym theta cap|",             L"&Theta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym iota cap|",              L"&Iota;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym kappa cap|",             L"&Kappa;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym lambda cap|",            L"&Lambda;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym mu cap|",                L"&Mu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym nu cap|",                L"&Nu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym xi cap|",                L"&Xi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym omicron cap|",           L"&Omicron;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym pi cap|",                L"&Pi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym rho cap|",               L"&Rho;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym signma cap|",            L"&Sigma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym tau cap|",               L"&Tau;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym upsilon cap|",           L"&Upsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym phi cap|",               L"&Phi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym chi cap|",               L"&Chi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym psi cap|",               L"&Psi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym omega cap|",             L"&Omega;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym alpha|",                 L"&alpha;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym beta|",                  L"&beta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym gamma|",                 L"&gamma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym delta|",                 L"&delta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym epsilon|",               L"&Epsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym zeta|",                  L"&zeta;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym eta|",                   L"&eta;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym theta|",                 L"&theta;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym iota|",                  L"&iota;",              NULL);
+   gsFindAndReplaceU2(str, L"|sym kappa|",                 L"&kappa;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym lambda|",                L"&lambda;",            NULL);
+   gsFindAndReplaceU2(str, L"|sym mu|",                    L"&mu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym nu|",                    L"&nu;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym xi|",                    L"&xi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym omicron|",               L"&Omicron;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym pi|",                    L"&pi;",                NULL);
+   gsFindAndReplaceU2(str, L"|sym rho|",                   L"&rho;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym signma|",                L"&sigma;",             NULL);
+   gsFindAndReplaceU2(str, L"|sym tau|",                   L"&tau;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym upsilon|",               L"&Upsilon;",           NULL);
+   gsFindAndReplaceU2(str, L"|sym phi|",                   L"&phi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym chi|",                   L"&chi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym psi|",                   L"&psi;",               NULL);
+   gsFindAndReplaceU2(str, L"|sym omega|",                 L"&omega;",             NULL);
+
+   gsFindAndReplaceU2(str, L"|sup",                        L"<sup>",               NULL);
+   gsFindAndReplaceU2(str, L"sup|",                        L"</sup>",              NULL);
+   gsFindAndReplaceU2(str, L"|sub",                        L"<sub>",               NULL);
+   gsFindAndReplaceU2(str, L"sub|",                        L"</sub>",              NULL);
+   gsFindAndReplaceU2(str, L"|c",                          L"<code>",              NULL);
+   gsFindAndReplaceU2(str, L"c|",                          L"</code>",             NULL);
+   gsFindAndReplaceU2(str, L"|b",                          L"<strong>",            NULL);
+   gsFindAndReplaceU2(str, L"b|",                          L"</strong>",           NULL);
+   gsFindAndReplaceU2(str, L"|i",                          L"<em>",                NULL);
+   gsFindAndReplaceU2(str, L"i|",                          L"</em>",               NULL);
+   gsFindAndReplaceU2(str, L"|u",                          L"<u>",                 NULL);
+   gsFindAndReplaceU2(str, L"u|",                          L"</u>",                NULL);
+   gsFindAndReplaceU2(str, L"|s",                          L"<s>",                 NULL);
+   gsFindAndReplaceU2(str, L"s|",                          L"</s>",                NULL);
+   gsFindAndReplaceU2(str, L"|\"",                         L"\\ldblquote",         NULL);
+   gsFindAndReplaceU2(str, L"\"|",                         L"\\rdblquote",         NULL);
+
+   gsFindAndReplaceU2(str, L"\\|",                         L"|",                   NULL);
+   gsFindAndReplaceU2(str, L"|\\",                         L"|",                   NULL);
 
    greturn str;
 }
@@ -2440,5 +2709,487 @@ static Gb _WriteZLYT(Gpath const * const path, ParaArray const * const paraList)
 {
    genter;
 
+   path; paraList;
+
    greturn gbTRUE;
 }
+
+/******************************************************************************
+func: _WriteRTF
+******************************************************************************/
+static Gb _WriteRTF(Gpath const * const path, ParaArray const * const paraList)
+{
+   Gpath       *pathRtf;
+   Gfile       *file;
+   Gindex       index;
+   Para        *para;
+   Gs          *stemp;
+   Gb           isTableRowActive,
+                isTableColHActive,
+                isTableColActive;
+   ListType     listType[9];
+   ListActive   isListActive[9];
+
+   genter;
+
+   isTableRowActive  = gbFALSE;
+   isTableColHActive = gbFALSE;
+   isTableColActive  = gbFALSE;
+
+   forCount (index, 9)
+   {
+      listType[index]     = listTypeBULLET;
+      isListActive[index] = listActiveNO;
+   }
+      
+   // Make the destination file path.
+   pathRtf = gpathCreateFrom(path);
+   gpathPopExtension(  pathRtf);
+   gpathPushExtensionA(pathRtf, "rtf");
+
+   // Create the file.
+   file = gfileOpen(pathRtf, gfileOpenModeREAD_WRITE_NEW);
+
+   gpathDestroy(pathRtf);
+
+   greturnFalseIf(!file);
+
+#define RTF_STYLE_00 "\\s0"                "\\snext0"  "\\sqformat" "\\spriority0"           "\\sb0"   "\\sa72"  "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1296" "\\lin1296" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1"                                            "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_01 "\\s1"  "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn"                              "\\ltrpar" "\\li0"    "\\lin0"    "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                     "\\brdrb" "\\brdrhair" "\\rtlch" "\\ab0" "\\af1" "\\afs30" "\\ltrch" "\\b0" "\\fs30" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_02 "\\s2"  "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn"                              "\\ltrpar" "\\li144"  "\\lin144"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs26" "\\ltrch" "\\b0" "\\fs26" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_03 "\\s3"  "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn"                              "\\ltrpar" "\\li288"  "\\lin288"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs23" "\\ltrch" "\\b0" "\\fs23" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_04 "\\s4"  "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn"                              "\\ltrpar" "\\li432"  "\\lin432"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs20" "\\ltrch" "\\b0" "\\fs20" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_05 "\\s5"  "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn"                              "\\ltrpar" "\\li576"  "\\lin576"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs18" "\\ltrch" "\\b0" "\\fs18" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_06 "\\s6"  "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn"                              "\\ltrpar" "\\li720"  "\\lin720"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs16" "\\ltrch" "\\b0" "\\fs16" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_07 "\\s7"  "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn"                              "\\ltrpar" "\\li864"  "\\lin864"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs14" "\\ltrch" "\\b0" "\\fs14" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_08 "\\s8"  "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn"                              "\\ltrpar" "\\li1008" "\\lin1008" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs12" "\\ltrch" "\\b0" "\\fs12" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_09 "\\s9"  "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn"                              "\\ltrpar" "\\li1152" "\\lin1152" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs10" "\\ltrch" "\\b0" "\\fs10" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_10 "\\s10" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority0" "\\fi720" "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1296" "\\lin1296" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1"                                            "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_11 "\\s11" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn" "\\level0" "\\outlinelevel0" "\\ltrpar" "\\li0"    "\\lin0"    "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                     "\\brdrb" "\\brdrhair" "\\rtlch" "\\ab0" "\\af1" "\\afs30" "\\ltrch" "\\b0" "\\fs30" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_12 "\\s12" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn" "\\level1" "\\outlinelevel1" "\\ltrpar" "\\li144"  "\\lin144"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs26" "\\ltrch" "\\b0" "\\fs26" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_13 "\\s13" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn" "\\level2" "\\outlinelevel2" "\\ltrpar" "\\li288"  "\\lin288"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs23" "\\ltrch" "\\b0" "\\fs23" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_14 "\\s14" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn" "\\level3" "\\outlinelevel3" "\\ltrpar" "\\li432"  "\\lin432"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs20" "\\ltrch" "\\b0" "\\fs20" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_15 "\\s15" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn" "\\level4" "\\outlinelevel4" "\\ltrpar" "\\li576"  "\\lin576"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs18" "\\ltrch" "\\b0" "\\fs18" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_16 "\\s16" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn" "\\level5" "\\outlinelevel5" "\\ltrpar" "\\li720"  "\\lin720"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs16" "\\ltrch" "\\b0" "\\fs16" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_17 "\\s17" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn" "\\level6" "\\outlinelevel6" "\\ltrpar" "\\li864"  "\\lin864"  "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs14" "\\ltrch" "\\b0" "\\fs14" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_18 "\\s18" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn" "\\level7" "\\outlinelevel7" "\\ltrpar" "\\li1008" "\\lin1008" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs12" "\\ltrch" "\\b0" "\\fs12" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_19 "\\s19" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority1"           "\\sb144" "\\sa144" "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar" "\\keep" "\\keepn" "\\level8" "\\outlinelevel8" "\\ltrpar" "\\li1152" "\\lin1152" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1"                                            "\\rtlch" "\\ab0" "\\af1" "\\afs10" "\\ltrch" "\\b0" "\\fs10" "\\loch" "\\af1" "\\dbch" "\\af1" "\\hich" "\\f1" "\\strike0" "\\ulnone"
+#define RTF_STYLE_20 "\\s20" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority0"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2880" "\\lin2880" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2880"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_21 "\\s21" "\\sbasedon0" "\\snext21" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1296" "\\lin1296" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx1440"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_22 "\\s22" "\\sbasedon0" "\\snext22" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1440" "\\lin1440" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx1584"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_23 "\\s23" "\\sbasedon0" "\\snext23" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1584" "\\lin1584" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx1728"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_24 "\\s24" "\\sbasedon0" "\\snext24" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1728" "\\lin1728" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx1872"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_25 "\\s25" "\\sbasedon0" "\\snext25" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1872" "\\lin1872" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2016"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_26 "\\s26" "\\sbasedon0" "\\snext26" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2016" "\\lin2016" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2160"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_27 "\\s27" "\\sbasedon0" "\\snext27" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2160" "\\lin2160" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2304"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_28 "\\s28" "\\sbasedon0" "\\snext28" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2304" "\\lin2304" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2448"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_29 "\\s29" "\\sbasedon0" "\\snext29" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2448" "\\lin2448" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2592"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_30 "\\s30" "\\sbasedon0" "\\snext0"  "\\sqformat" "\\spriority3"           "\\sb144" "\\sa72"  "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1296" "\\lin1296" "\\ri1296" "\\rin1296"        "\\faauto" "\\slmult1" "\\nowrap" "\\box" "\\brdrhair" "\\cfpat8" "\\rtlch"         "\\af2" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af2" "\\dbch" "\\af2" "\\hich" "\\f2" "\\strike0" "\\ulnone"
+#define RTF_STYLE_31 "\\s31" "\\sbasedon0" "\\snext31" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1296" "\\lin1296" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx1440"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_32 "\\s32" "\\sbasedon0" "\\snext32" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1440" "\\lin1440" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx1584"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_33 "\\s33" "\\sbasedon0" "\\snext33" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1584" "\\lin1584" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx1728"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_34 "\\s34" "\\sbasedon0" "\\snext34" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1728" "\\lin1728" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx1872"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_35 "\\s35" "\\sbasedon0" "\\snext35" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1872" "\\lin1872" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2016"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_36 "\\s36" "\\sbasedon0" "\\snext36" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2016" "\\lin2016" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2160"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_37 "\\s37" "\\sbasedon0" "\\snext37" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2160" "\\lin2160" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2304"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_38 "\\s38" "\\sbasedon0" "\\snext38" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2304" "\\lin2304" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2448"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_39 "\\s39" "\\sbasedon0" "\\snext39" "\\sqformat" "\\spriority2"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2448" "\\lin2448" "\\ri1296" "\\rin1296" "\\qj" "\\faauto" "\\slmult1" "\\tx2592"                                 "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_41 "\\s41" "\\sbasedon0" "\\snext41" "\\sqformat" "\\spriority4"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1296" "\\lin1296" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"              "\\rtlch" "\\ab0" "\\af0" "\\afs10" "\\ltrch" "\\b0" "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_42 "\\s42" "\\sbasedon0" "\\snext42" "\\sqformat" "\\spriority4"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1440" "\\lin1440" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"              "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_43 "\\s43" "\\sbasedon0" "\\snext43" "\\sqformat" "\\spriority4"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1584" "\\lin1584" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"              "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_44 "\\s44" "\\sbasedon0" "\\snext44" "\\sqformat" "\\spriority4"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1728" "\\lin1728" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"              "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_45 "\\s45" "\\sbasedon0" "\\snext45" "\\sqformat" "\\spriority4"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li1872" "\\lin1872" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"              "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_46 "\\s46" "\\sbasedon0" "\\snext46" "\\sqformat" "\\spriority4"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2016" "\\lin2016" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"              "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_47 "\\s47" "\\sbasedon0" "\\snext47" "\\sqformat" "\\spriority4"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2160" "\\lin2160" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"              "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_48 "\\s48" "\\sbasedon0" "\\snext48" "\\sqformat" "\\spriority4"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2304" "\\lin2304" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"              "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+#define RTF_STYLE_49 "\\s49" "\\sbasedon0" "\\snext49" "\\sqformat" "\\spriority4"           "\\sb0"   "\\sa0"   "\\aspalpha" "\\aspnum" "\\adjustright" "\\widctlpar"                                                 "\\ltrpar" "\\li2448" "\\lin2448" "\\ri0"    "\\rin0"           "\\faauto" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"              "\\rtlch"         "\\af0" "\\afs10" "\\ltrch"        "\\fs10" "\\loch" "\\af0" "\\dbch" "\\af0" "\\hich" "\\f0" "\\strike0" "\\ulnone"
+
+   // Write the header
+   gfileSetA(
+      file,
+      gcTypeU1,
+      "{\\rtf1\n"
+      "\\fbidis"
+      "\\deff0\\adeff0"
+      "\\deflang1033\n"
+      "{\\fonttbl\n"
+      "{\\f0" "\\froman"  "\\fcharset0" "\\fprq2}"      // Body text font
+      "{\\f1" "\\fswiss"  "\\fcharset0" "\\fprq2}"      // Title text font
+      "{\\f2" "\\fmodern" "\\fcharset0" "\\fprq1}"     // Code text font
+      "{\\f3" "\\fnil"    "\\fcharset1" "\\fprq1}"       // other
+      "}"
+      "{\\colortbl;"
+      "\\red0"   "\\green0"   "\\blue0;"     // 0
+      "\\red255" "\\green255" "\\blue255;"   // 1
+      "\\red32"  "\\green32"  "\\blue32;"    // 2 
+      "\\red64"  "\\green64"  "\\blue64;"    // 3
+      "\\red96"  "\\green96"  "\\blue96;"    // 4
+      "\\red128" "\\green128" "\\blue128;"   // 5
+      "\\red160" "\\green160" "\\blue160;"   // 6
+      "\\red192" "\\green192" "\\blue192;"   // 7
+      "\\red224" "\\green224" "\\blue224;"   // 8
+      "}"
+      "{\\*\\generator Zekaric:Word v1.0;}"
+      "\\doctype0\n" 
+      "\\jexpand"
+      "{\\*\\wgrffmtfilter 012f}" // 0x1 All styles present. 0x2 Only custom styles to be shown, 0x4 all latent style to be shown, 0x8 only show used styles, 0x20 show all heading styles, 0x100 all unique forms of run level direct formating to be used.
+      "\\readonlyrecommended"
+      "\\viewkind1\n"
+      "\\nospaceforul\\sprsspbf\\nolnhtadjtbl\\alntblind\\lyttblrtgr\\dntblnsbdb\\noxlattoyen\\wrppunct"
+      "\\nobrkwrptbl\\expshrtn\\snaptogridincell\\asianbrkrule\\noultrlspc\\useltbaln\\splytwnine"
+      "\\ftnlytwnine\\lytcalctblwd\\lnbrkrule\\nouicompat\\nofeaturethrottle1\\nojkernpunct\n"
+      "\\pgbrdrhead\\pgbrdrfoot\n"
+      "\\sectd\\sectlinegrid360"
+      "\\pgwsxn12240\\pghsxn15480\\marglsxn720\\margrsxn720\\margtsxn720\\margbsxn720\\guttersxn0" // letter .5" margin
+      "\\headery708\\footery708"
+      "\\ltrsect",
+      NULL);
+
+   // Write out the contents of the document.
+   // For all paragraphs...
+   forCount (index, paraArrayGetCount(paraList))
+   {
+      // Get the paragraph.
+      para = paraArrayGetAt(paraList, index);
+
+      // Depending on the paragraph type...
+      switch (para->type)
+      {
+      case paraTypeREGULAR:
+         stemp = _ProcessInlineRTF(para->str, para);
+         gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_00 "\\ilvl0\n", NULL);
+         gfileSetS(file, gcTypeU1, stemp, NULL);
+         gsDestroy(stemp);
+         break;
+
+      case paraTypeTITLE_1:
+      case paraTypeTITLE_2:
+      case paraTypeTITLE_3:
+      case paraTypeTITLE_4:
+      case paraTypeTITLE_5:
+      case paraTypeTITLE_6:
+      case paraTypeTITLE_7:
+      case paraTypeTITLE_8:
+      case paraTypeTITLE_9:
+      case paraTypeTITLE_TOC_1:
+      case paraTypeTITLE_TOC_2:
+      case paraTypeTITLE_TOC_3:
+      case paraTypeTITLE_TOC_4:
+      case paraTypeTITLE_TOC_5:
+      case paraTypeTITLE_TOC_6:
+      case paraTypeTITLE_TOC_7:
+      case paraTypeTITLE_TOC_8:
+      case paraTypeTITLE_TOC_9:
+         switch (para->type)
+         {
+         case paraTypeTITLE_1:     gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_01 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_TOC_1: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_11 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_2:     gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_02 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_TOC_2: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_12 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_3:     gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_03 "\\ilvl0 ", NULL); break; 
+         case paraTypeTITLE_TOC_3: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_13 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_4:     gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_04 "\\ilvl0 ", NULL); break;                                                        
+         case paraTypeTITLE_TOC_4: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_14 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_5:     gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_05 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_TOC_5: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_15 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_6:     gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_06 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_TOC_6: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_16 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_7:     gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_07 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_TOC_7: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_17 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_8:     gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_08 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_TOC_8: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_18 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_9:     gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_09 "\\ilvl0 ", NULL); break;
+         case paraTypeTITLE_TOC_9: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_19 "\\ilvl0 ", NULL); break;
+         }
+
+         stemp = _ProcessInlineRTF(para->str, para);
+         gfileSetS(file, gcTypeU1, stemp, NULL);
+         gsDestroy(stemp);
+         break;
+
+      case paraTypeLIST_ITEM_BULLET_1:
+      case paraTypeLIST_ITEM_BULLET_2:
+      case paraTypeLIST_ITEM_BULLET_3:
+      case paraTypeLIST_ITEM_BULLET_4:
+      case paraTypeLIST_ITEM_BULLET_5:
+      case paraTypeLIST_ITEM_BULLET_6:
+      case paraTypeLIST_ITEM_BULLET_7:
+      case paraTypeLIST_ITEM_BULLET_8:
+      case paraTypeLIST_ITEM_BULLET_9:
+         switch (para->type)
+         {
+         case paraTypeLIST_ITEM_BULLET_1: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_21 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_2: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_22 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_3: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_23 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_4: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_24 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_5: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_25 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_6: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_26 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_7: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_27 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_8: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_28 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_9: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_29 "\\ilvl0\n\\bullet  ", NULL); break;
+         }
+
+         stemp = _ProcessInlineRTF(para->str, para);
+         gfileSetS(file, gcTypeU1, stemp, NULL);
+         gsDestroy(stemp);
+         break;
+
+      case paraTypeLIST_ITEM_NUMBER_1:
+      case paraTypeLIST_ITEM_NUMBER_2:
+      case paraTypeLIST_ITEM_NUMBER_3:
+      case paraTypeLIST_ITEM_NUMBER_4:
+      case paraTypeLIST_ITEM_NUMBER_5:
+      case paraTypeLIST_ITEM_NUMBER_6:
+      case paraTypeLIST_ITEM_NUMBER_7:
+      case paraTypeLIST_ITEM_NUMBER_8:
+      case paraTypeLIST_ITEM_NUMBER_9:
+         switch (para->type)
+         {
+         case paraTypeLIST_ITEM_BULLET_1: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_21 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_2: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_22 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_3: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_23 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_4: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_24 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_5: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_25 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_6: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_26 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_7: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_27 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_8: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_28 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_9: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_29 "\\ilvl0\n# ", NULL); break;
+         }
+
+         stemp = _ProcessInlineRTF(para->str, para);
+         gfileSetS(file, gcTypeU1, stemp, NULL);
+         gsDestroy(stemp);
+         break;
+
+      case paraTypeLIST_ITEM_BULLET_START_1:
+      case paraTypeLIST_ITEM_BULLET_START_2:
+      case paraTypeLIST_ITEM_BULLET_START_3:
+      case paraTypeLIST_ITEM_BULLET_START_4:
+      case paraTypeLIST_ITEM_BULLET_START_5:
+      case paraTypeLIST_ITEM_BULLET_START_6:
+      case paraTypeLIST_ITEM_BULLET_START_7:
+      case paraTypeLIST_ITEM_BULLET_START_8:
+      case paraTypeLIST_ITEM_BULLET_START_9:
+         switch (para->type)
+         {
+         case paraTypeLIST_ITEM_BULLET_1: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_21 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_2: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_22 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_3: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_23 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_4: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_24 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_5: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_25 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_6: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_26 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_7: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_27 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_8: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_28 "\\ilvl0\n\\bullet  ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_9: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_29 "\\ilvl0\n\\bullet  ", NULL); break;
+         }
+         break;
+
+      case paraTypeLIST_ITEM_NUMBER_START_1:
+      case paraTypeLIST_ITEM_NUMBER_START_2:
+      case paraTypeLIST_ITEM_NUMBER_START_3:
+      case paraTypeLIST_ITEM_NUMBER_START_4:
+      case paraTypeLIST_ITEM_NUMBER_START_5:
+      case paraTypeLIST_ITEM_NUMBER_START_6:
+      case paraTypeLIST_ITEM_NUMBER_START_7:
+      case paraTypeLIST_ITEM_NUMBER_START_8:
+      case paraTypeLIST_ITEM_NUMBER_START_9:
+         switch (para->type)
+         {
+         case paraTypeLIST_ITEM_BULLET_1: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_21 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_2: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_22 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_3: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_23 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_4: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_24 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_5: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_25 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_6: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_26 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_7: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_27 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_8: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_28 "\\ilvl0\n# ", NULL); break;
+         case paraTypeLIST_ITEM_BULLET_9: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_29 "\\ilvl0\n# ", NULL); break;
+         }
+         break;
+
+      case paraTypeLIST_ITEM_BULLET_STOP_1:
+      case paraTypeLIST_ITEM_BULLET_STOP_2:
+      case paraTypeLIST_ITEM_BULLET_STOP_3:
+      case paraTypeLIST_ITEM_BULLET_STOP_4:
+      case paraTypeLIST_ITEM_BULLET_STOP_5:
+      case paraTypeLIST_ITEM_BULLET_STOP_6:
+      case paraTypeLIST_ITEM_BULLET_STOP_7:
+      case paraTypeLIST_ITEM_BULLET_STOP_8:
+      case paraTypeLIST_ITEM_BULLET_STOP_9:
+      case paraTypeLIST_ITEM_NUMBER_STOP_1:
+      case paraTypeLIST_ITEM_NUMBER_STOP_2:
+      case paraTypeLIST_ITEM_NUMBER_STOP_3:
+      case paraTypeLIST_ITEM_NUMBER_STOP_4:
+      case paraTypeLIST_ITEM_NUMBER_STOP_5:
+      case paraTypeLIST_ITEM_NUMBER_STOP_6:
+      case paraTypeLIST_ITEM_NUMBER_STOP_7:
+      case paraTypeLIST_ITEM_NUMBER_STOP_8:
+      case paraTypeLIST_ITEM_NUMBER_STOP_9:
+         break;
+
+      case paraTypeTABLE_START:
+         //gfileSetA(file, gcTypeU1, "<table class=\"zword\"><tbody class=\"zword\">\n", NULL);
+         isTableRowActive  = gbFALSE;
+         isTableColActive  = gbFALSE;
+         isTableColHActive = gbFALSE;
+         break;
+
+      case paraTypeTABLE_STOP:
+         //if (isTableColActive)
+         //{
+         //   gfileSetA(file, gcTypeU1, "</td>\n", NULL);
+         //}
+         //if (isTableColHActive)
+         //{
+         //   gfileSetA(file, gcTypeU1, "</th>\n", NULL);
+         //}
+         //if (isTableRowActive)
+         //{
+         //   gfileSetA(file, gcTypeU1, "\n</tr>\n", NULL);
+         //}
+
+         //gfileSetA(file, gcTypeU1, "\n</tbody></table>\n", NULL);
+         isTableRowActive = gbFALSE;
+         isTableColActive = gbFALSE;
+         break;
+
+      case paraTypeTABLE_ROW:
+         //if (isTableColActive)
+         //{
+         //   gfileSetA(file, gcTypeU1, "</td>\n", NULL);
+         //}
+         //if (isTableColHActive)
+         //{
+         //   gfileSetA(file, gcTypeU1, "</th>\n", NULL);
+         //}
+         //if (isTableRowActive)
+         //{
+         //   gfileSetA(file, gcTypeU1, "\n</tr>\n", NULL);
+         //}
+
+         //gfileSetA(file, gcTypeU1, "<tr class=\"zword\">\n", NULL);
+         isTableRowActive  = gbTRUE;
+         isTableColActive  = gbFALSE;
+         isTableColHActive = gbFALSE;
+         break;
+
+      case paraTypeTABLE_COL_HEADER:
+      case paraTypeTABLE_COL_HEADER_NO_BREAK:
+      case paraTypeTABLE_COL_HEADER_FILL:
+      case paraTypeTABLE_COL:
+      case paraTypeTABLE_COL_NO_BREAK:
+      case paraTypeTABLE_COL_FILL:
+         //if (isTableColHActive)
+         //{
+         //   gfileSetA(file, gcTypeU1, "</th>\n", NULL);
+         //}
+         //if (isTableColActive)
+         //{
+         //   gfileSetA(file, gcTypeU1, "</td>\n", NULL);
+         //}
+
+
+         switch (para->type)
+         {
+         case paraTypeTABLE_COL_HEADER:            gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_00 "\\ilvl0\n", NULL); break;
+         case paraTypeTABLE_COL_HEADER_NO_BREAK:   gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_00 "\\ilvl0\n", NULL); break;
+         case paraTypeTABLE_COL_HEADER_FILL:       gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_00 "\\ilvl0\n", NULL); break;
+         case paraTypeTABLE_COL:                   gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_00 "\\ilvl0\n", NULL); break;
+         case paraTypeTABLE_COL_NO_BREAK:          gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_00 "\\ilvl0\n", NULL); break;
+         case paraTypeTABLE_COL_FILL:              gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_00 "\\ilvl0\n", NULL); break;
+         }
+
+         stemp = _ProcessInlineRTF(para->str, para);
+         gfileSetS(file, gcTypeU1, stemp, NULL);
+         gsDestroy(stemp);
+
+         //switch (para->type)
+         //{
+         //case paraTypeTABLE_COL_HEADER:            
+         //case paraTypeTABLE_COL_HEADER_FILL:       gfileSetA(file, gcTypeU1, "</th>\n",        NULL); break;
+         //case paraTypeTABLE_COL_HEADER_NO_BREAK:   gfileSetA(file, gcTypeU1, "</nobr></th>\n", NULL); break;
+         //case paraTypeTABLE_COL:            
+         //case paraTypeTABLE_COL_FILL:              gfileSetA(file, gcTypeU1, "</td>\n",        NULL); break;
+         //case paraTypeTABLE_COL_NO_BREAK:          gfileSetA(file, gcTypeU1, "</nobr></td>\n", NULL); break;
+         //}
+         
+         isTableColHActive = gbFALSE;
+         break;
+
+      case paraTypeFORMATED_START:
+         gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_30 "\\ilvl0\n ", NULL);
+         gfileSetS(file, gcTypeU1, para->str, NULL);
+         break;
+
+      case paraTypeTABLE_OF_CONTENTS:
+         _WriteRTFTOC(file, paraList);
+         break;
+
+      case paraTypePAGE_BREAK:
+         // Close off any applicable lists.
+         gfileSetA(file, gcTypeU1, "\\page\n", NULL);
+         break;
+      }
+   }
+
+   // Write the terminators.
+   gfileSetA(file, gcTypeU1, "}", NULL);
+
+   // Clean up.
+   gfileClose(file);
+
+   greturn gbTRUE;
+}
+
+/******************************************************************************
+func: _WriteRTFTOC
+******************************************************************************/
+static Gb _WriteRTFTOC(Gfile * const file, ParaArray const * const paraList)
+{
+   Gindex     index;
+   ParaArray *tocList;
+   Para      *para;
+   Gs        *chapter,
+             *stemp;
+
+   genter;
+
+   // Get the table of contents.
+   tocList = _ParaListGetToc(paraList);
+
+   // For all titles...
+   forCount (index, paraArrayGetCount(tocList))
+   {
+      // Get the title.
+      para = paraArrayGetAt(tocList, index);
+
+      // Get the chapter link.
+      chapter = _ChapterGetString(para->chapter);
+
+      switch (para->type)
+      {
+      case paraTypeTITLE_TOC_1: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_41 "\\ilvl0\n",  NULL); break;
+      case paraTypeTITLE_TOC_2: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_42 "\\ilvl0\n",  NULL); break;
+      case paraTypeTITLE_TOC_3: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_43 "\\ilvl0\n",  NULL); break;
+      case paraTypeTITLE_TOC_4: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_44 "\\ilvl0\n",  NULL); break;
+      case paraTypeTITLE_TOC_5: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_45 "\\ilvl0\n",  NULL); break;
+      case paraTypeTITLE_TOC_6: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_46 "\\ilvl0\n",  NULL); break;
+      case paraTypeTITLE_TOC_7: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_47 "\\ilvl0\n",  NULL); break;
+      case paraTypeTITLE_TOC_8: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_48 "\\ilvl0\n",  NULL); break;
+      case paraTypeTITLE_TOC_9: gfileSetA(file, gcTypeU1, "\\par \\pard\\plain " RTF_STYLE_49 "\\ilvl0\n",  NULL); break;
+      }
+
+      stemp = _ProcessInlineRTF(para->str, para);
+      gfileSetS(file, gcTypeU1, stemp, NULL);
+      gsDestroy(stemp);
+
+      // Clean up
+      gsDestroy(chapter);
+   }
+
+   // Clean up
+   paraArrayDestroy(tocList);
+
+   greturn gbTRUE;
+}
+
