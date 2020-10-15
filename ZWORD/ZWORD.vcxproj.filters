@@ -18,5 +18,19 @@
     <ClCompile Include="ZWORD.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZWORD_HTML.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZWORD_MD.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZWORD_RTF.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ZWORD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
