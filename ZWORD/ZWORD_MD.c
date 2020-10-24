@@ -723,8 +723,5 @@ static Gb _FileWriteTOC(Gfile * const file, ParaArray const * const tocList)
       gfileSetA(file, gcTypeU1, "<br />\n",  NULL);
    }
 
-   // Clean up
-   paraArrayDestroy(tocList);
-
    greturn result;
 }

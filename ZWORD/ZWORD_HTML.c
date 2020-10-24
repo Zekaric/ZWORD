@@ -442,19 +442,23 @@ static Gb _FileWriteKeyValue(Gfile * const file, Para const * const para)
 
    stempArray = gsCreateSplit(para->str, L'\t');
 
-   result &= gfileSetA(file, gcTypeU1, "<dt>", NULL);
+   result &= gfileSetA(file, gcTypeU1, "<dt class=\"zword\">", NULL);
    
    stemp   = _ProcessInline(gsArrayGetAt(stempArray, 0), para);
    result &= gfileSetS(file, gcTypeU1, stemp, NULL);
    gsDestroy(stemp);
 
-   result &= gfileSetA(file, gcTypeU1, "</dt>\n<dd>", NULL);
+   result &= gfileSetA(file, gcTypeU1, "</dt>\n<dd class=\"zword\">", NULL);
 
    stemp   = _ProcessInline(gsArrayGetAt(stempArray, 1), para);
    result &= gfileSetS(file, gcTypeU1, stemp, NULL);
    gsDestroy(stemp);
 
    result &= gfileSetA(file, gcTypeU1, "</dd>\n", NULL);
+
+   // Clean up
+   gsArrayForEach(stempArray, gsDestroyFunc);
+   gsArrayDestroy(stempArray);
 
    greturn result;
 }
@@ -846,9 +850,6 @@ static Gb _FileWriteTOC(Gfile * const file, ParaArray const * const tocList)
 
       gsDestroy(stemp);
    }
-
-   // Clean up
-   paraArrayDestroy(tocList);
 
    greturn result;
 }

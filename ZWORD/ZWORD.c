@@ -172,7 +172,7 @@ static Gs *_ParaListGetTitle(ParaArray const * const paraList)
       if (para->type == paraTypeTITLE_1 ||
           para->type == paraTypeTITLE_TOC_1)
       {
-         greturn para->str;
+         greturn gsCreateFrom(para->str);
       }
    }
 
@@ -299,9 +299,10 @@ static int _Process(Gs const * const command, Gpath const * const path)
          // We have a special paragraph
          markup = gsCreateFromSub(stemp, 0, position);
          gsEraseSub(stemp, 0, position);
-         gsTrimU2(stemp, WHITESPACE_U2);
+         gsTrimU2(  stemp, WHITESPACE_U2);
 
-         if      (gsIsEqualU2(markup, L"/"))
+         if      (gsIsEqualU2(markup, L"/") ||
+                  gsIsEqualU2(markup, L"//"))
          {
             para->type = paraTypeCOMMENT;
             para->str  = stemp;
@@ -340,123 +341,126 @@ static int _Process(Gs const * const command, Gpath const * const path)
          // List Lines.
          else if (gsIsEqualU2(markup, L"-"))
          {
-            para->type     = paraTypeITEM;
-            para->str      = stemp;
+            para->type = paraTypeITEM;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L":["))
          {
-            para->type     = paraTypeSCOPE_LIST_BULLET;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_LIST_BULLET;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"=["))
          {
-            para->type     = paraTypeSCOPE_LIST_KEY_VALUE;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_LIST_KEY_VALUE;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"#["))
          {
-            para->type     = paraTypeSCOPE_LIST_NUMBER;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_LIST_NUMBER;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"-["))
          {
-            para->type     = paraTypeSCOPE_ITEM;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_ITEM;
+            para->str  = stemp;
          }
          // Table Lines.
          else if (gsIsEqualU2(markup, L"t["))
          {
-            para->type     = paraTypeSCOPE_TABLE;
+            para->type = paraTypeSCOPE_TABLE;
+            para->str  = stemp;
+
          }
          else if (gsIsEqualU2(markup, L"t-"))
          {
-            para->type     = paraTypeTABLE_ROW;
+            para->type = paraTypeTABLE_ROW;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"th"))
          {
-            para->type     = paraTypeTABLE_COLUMN_HEADER;
-            para->str      = stemp;
+            para->type = paraTypeTABLE_COLUMN_HEADER;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"th["))
          {
-            para->type     = paraTypeSCOPE_TABLE_COLUMN_HEADER;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_TABLE_COLUMN_HEADER;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"thx"))
          {
-            para->type     = paraTypeTABLE_COLUMN_HEADER_NO_BREAK;
-            para->str      = stemp;
+            para->type = paraTypeTABLE_COLUMN_HEADER_NO_BREAK;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"thx["))
          {
-            para->type     = paraTypeSCOPE_TABLE_COLUMN_HEADER_NO_BREAK;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_TABLE_COLUMN_HEADER_NO_BREAK;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"th*"))
          {
-            para->type     = paraTypeTABLE_COLUMN_HEADER_FILL;
-            para->str      = stemp;
+            para->type = paraTypeTABLE_COLUMN_HEADER_FILL;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"th*["))
          {
-            para->type     = paraTypeSCOPE_TABLE_COLUMN_HEADER_FILL;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_TABLE_COLUMN_HEADER_FILL;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"tc"))
          {
-            para->type     = paraTypeTABLE_COLUMN;
-            para->str      = stemp;
+            para->type = paraTypeTABLE_COLUMN;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"tc["))
          {
-            para->type     = paraTypeSCOPE_TABLE_COLUMN;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_TABLE_COLUMN;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"tcx"))
          {
-            para->type     = paraTypeTABLE_COLUMN_NO_BREAK;
-            para->str      = stemp;
+            para->type = paraTypeTABLE_COLUMN_NO_BREAK;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"tcx["))
          {
-            para->type     = paraTypeSCOPE_TABLE_COLUMN_NO_BREAK;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_TABLE_COLUMN_NO_BREAK;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"tc*"))
          {
-            para->type     = paraTypeTABLE_COLUMN_FILL;
-            para->str      = stemp;
+            para->type = paraTypeTABLE_COLUMN_FILL;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"tc*["))
          {
-            para->type     = paraTypeSCOPE_TABLE_COLUMN_FILL;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_TABLE_COLUMN_FILL;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"tc1"))
          {
-            para->type     = paraTypeTABLE_COLUMN_NUMBER;
-            para->str      = stemp;
+            para->type = paraTypeTABLE_COLUMN_NUMBER;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"tc1["))
          {
-            para->type     = paraTypeSCOPE_TABLE_COLUMN_NUMBER;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_TABLE_COLUMN_NUMBER;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"tc1*"))
          {
-            para->type     = paraTypeTABLE_COLUMN_NUMBER_FILL;
-            para->str      = stemp;
+            para->type = paraTypeTABLE_COLUMN_NUMBER_FILL;
+            para->str  = stemp;
          }
          else if (gsIsEqualU2(markup, L"tc1*["))
          {
-            para->type     = paraTypeSCOPE_TABLE_COLUMN_NUMBER_FILL;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_TABLE_COLUMN_NUMBER_FILL;
+            para->str  = stemp;
          }
          // Formated Lines.
          else if (gsIsEqualU2(markup, L"."))
          {
-            para->type     = paraTypeFORMATED;
-            para->str      = gsTrimU2(stemp, WHITESPACE_U2);
+            para->type = paraTypeFORMATED;
+            para->str  = gsTrimU2(stemp, WHITESPACE_U2);
          }
          else if (gsIsEqualU2(markup, L".["))
          {
@@ -486,18 +490,20 @@ static int _Process(Gs const * const command, Gpath const * const path)
          }
          else if (gsIsEqualU2(markup, L"]"))
          {
-            para->type     = paraTypeSCOPE_STOP;
-            para->str      = stemp;
+            para->type = paraTypeSCOPE_STOP;
+            para->str  = stemp;
          }
          // TOC
          else if (gsIsEqualU2(markup, L"toc"))
          {
             para->type = paraTypeTABLE_OF_CONTENTS;
+            para->str  = stemp;
          }
          // page
          else if (gsIsEqualU2(markup, L"==="))
          {
             para->type = paraTypePAGE_BREAK;
+            para->str  = stemp;
          }
 
          para->chapterStr = _ChapterGetString(chapter);
@@ -517,6 +523,7 @@ static int _Process(Gs const * const command, Gpath const * const path)
       func = GetFunctionsHTML();
       _Write(&func, path, paraList);
    }
+#if 0
    if (gsIsEqualU2(command, L"all") ||
        gsIsEqualU2(command, L"md"))
    {
@@ -529,7 +536,6 @@ static int _Process(Gs const * const command, Gpath const * const path)
       func = GetFunctionsRTF();
       _Write(&func, path, paraList);
    }
-#if 0
    if (gsIsEqualU2(command, L"all") ||
        gsIsEqualU2(command, L"ZLYT"))
    {
@@ -546,8 +552,9 @@ static int _Process(Gs const * const command, Gpath const * const path)
    {
       para = paraArrayGetAt(paraList, index);
 
-      gmemDestroy(para);
+      gsDestroy(para->chapterStr);
    }
+   paraArrayForEach(paraList, gmemDestroy);
    paraArrayDestroy(paraList);
 
    greturn result;
@@ -563,6 +570,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
    Para           *para;
    ParaType        scopeType[20];
    Gindex          scopeLevel;
+   Gi              indentLevel;
    Gb              isTableHeaderSeparatorWritten[20];
    ParaTypeArray  *tableHeaders[20];
    Gs             *stemp;
@@ -570,7 +578,8 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
 
    genter;
 
-   scopeLevel = -1;
+   scopeLevel  = -1;
+   indentLevel =  0;
    
    forCount (index, 20)
    {
@@ -599,14 +608,14 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
       switch (para->type)
       {
       case paraTypeREGULAR:
-         debugPrintMsg(L"paragraph>>>>>>>>>>>");
+         debugPrintMsg(L"paragraph>>>>>>>>>>>\n");
          _Write_ScopePopToOpenScope(func, file, &scopeLevel, scopeType);
 
          func->FileWriteParagraph(file, para);
          break;
 
       case paraTypeCOMMENT:
-         debugPrintMsg(L"comment>>>>>>>>>>>>>");
+         debugPrintMsg(L"comment>>>>>>>>>>>>>\n");
          // Comments should be allowed anywhere.  And they may not even be written out.
          func->FileWriteComment(file, para);
          break;
@@ -629,7 +638,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          case paraTypeTITLE_3:
          case paraTypeTITLE_4:
          case paraTypeTITLE_5:
-            debugPrintMsg(L"title>>>>>>>>>>>>>>> %d", para->type - paraTypeTITLE_1 + 1);
+            debugPrintMsg(L"title>>>>>>>>>>>>>>> %d\n", para->type - paraTypeTITLE_1 + 1);
             break;
 
          case paraTypeTITLE_TOC_1:
@@ -637,7 +646,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          case paraTypeTITLE_TOC_3:
          case paraTypeTITLE_TOC_4:
          case paraTypeTITLE_TOC_5:
-            debugPrintMsg(L"title>>>>>>>>>>>>>>> %d TOC", para->type - paraTypeTITLE_1 + 1);
+            debugPrintMsg(L"title>>>>>>>>>>>>>>> %d TOC\n", para->type - paraTypeTITLE_TOC_1 + 1);
             break;
          }
 
@@ -662,47 +671,47 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          switch (para->type)
          {
          case paraTypeSCOPE_ITEM:
-            debugPrintMsg(L"item>>>>>>>>>>>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"item>>>>>>>>>>>>>>>> %d\n", scopeLevel + 1);
             break;
 
          case paraTypeSCOPE_LIST_BULLET:
-            debugPrintMsg(L"list bullet>>>>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"list bullet>>>>>>>>> %d\n", scopeLevel + 1);
             break;
 
          case paraTypeSCOPE_LIST_KEY_VALUE:
-            debugPrintMsg(L"list key value>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"list key value>>>>>> %d\n", scopeLevel + 1);
             break;
 
          case paraTypeSCOPE_LIST_NUMBER:
-            debugPrintMsg(L"list number>>>>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"list number>>>>>>>>> %d\n", scopeLevel + 1);
             break;
 
          case paraTypeSCOPE_TABLE:
-            debugPrintMsg(L"table>>>>>>>>>>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"table>>>>>>>>>>>>>>> %d\n", scopeLevel + 1);
             break;
 
          case paraTypeSCOPE_TABLE_COLUMN_HEADER:
-            debugPrintMsg(L"table col h>>>>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"table col h>>>>>>>>> %d\n", scopeLevel + 1);
             break;
 
          case paraTypeSCOPE_TABLE_COLUMN_HEADER_NO_BREAK:
-            debugPrintMsg(L"table col h nb>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"table col h nb>>>>>> %d\n", scopeLevel + 1);
             break;
 
          case paraTypeSCOPE_TABLE_COLUMN_HEADER_FILL:
-            debugPrintMsg(L"table col h f>>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"table col h f>>>>>>> %d\n", scopeLevel + 1);
             break;
 
          case paraTypeSCOPE_TABLE_COLUMN:
-            debugPrintMsg(L"table col>>>>>>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"table col>>>>>>>>>>> %d\n", scopeLevel + 1);
             break;
 
          case paraTypeSCOPE_TABLE_COLUMN_NO_BREAK:
-            debugPrintMsg(L"table col nb>>>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"table col nb>>>>>>>> %d\n", scopeLevel + 1);
             break;
 
          case paraTypeSCOPE_TABLE_COLUMN_FILL:
-            debugPrintMsg(L"table col f>>>>>>>>> %d", scopeLevel + 1);
+            debugPrintMsg(L"table col f>>>>>>>>> %d\n", scopeLevel + 1);
             break;
          }
 
@@ -732,19 +741,21 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          break;
 
       case paraTypeSCOPE_STOP:
-         debugPrintMsg(L"scope pop>>>>>>>>>>> %d", scopeLevel);
+         debugPrintMsg(L"scope pop>>>>>>>>>>> %d\n", scopeLevel);
          returnFalseIf(scopeLevel < 0);
 
          func->FileWriteScopeStop(
-            file,
-            para->type,
-            scopeType[scopeLevel - 1]);
+            file, 
+            scopeType[scopeLevel], 
+            (scopeLevel > 0) ?
+               scopeType[scopeLevel - 1] :
+               paraTypeNONE);
 
          scopeLevel--;
          break;
 
       case paraTypeITEM:
-         debugPrintMsg(L"item 1 line>>>>>>>>> %d", scopeLevel);
+         debugPrintMsg(L"item 1 line>>>>>>>>> %d\n", scopeLevel);
          _Write_ScopePopToListScope(func, file, &scopeLevel, scopeType);
 
          returnFalseIf(
@@ -765,7 +776,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          break;
 
       case paraTypeTABLE_ROW:
-         debugPrintMsg(L"table row>>>>>>>>>>> %d", scopeLevel);
+         debugPrintMsg(L"table row>>>>>>>>>>> %d\n", scopeLevel);
          if (scopeType[scopeLevel] == paraTypeSCOPE_TABLE)
          {
             scopeType[scopeLevel++] = para->type;
@@ -795,27 +806,27 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          switch (para->type)
          {
          case paraTypeTABLE_COLUMN_HEADER:
-            debugPrintMsg(L"table col h 1>>>>>>> %d", scopeLevel);
+            debugPrintMsg(L"table col h 1>>>>>>> %d\n", scopeLevel);
             break;
 
          case paraTypeTABLE_COLUMN_HEADER_NO_BREAK:
-            debugPrintMsg(L"table col h nb 1>>>> %d", scopeLevel);
+            debugPrintMsg(L"table col h nb 1>>>> %d\n", scopeLevel);
             break;
 
          case paraTypeTABLE_COLUMN_HEADER_FILL:
-            debugPrintMsg(L"table col h f 1>>>>> %d", scopeLevel);
+            debugPrintMsg(L"table col h f 1>>>>> %d\n", scopeLevel);
             break;
 
          case paraTypeTABLE_COLUMN:
-            debugPrintMsg(L"table col 1>>>>>>>>> %d", scopeLevel);
+            debugPrintMsg(L"table col 1>>>>>>>>> %d\n", scopeLevel);
             break;
 
          case paraTypeTABLE_COLUMN_NO_BREAK:
-            debugPrintMsg(L"table col nb 1>>>>>> %d", scopeLevel);
+            debugPrintMsg(L"table col nb 1>>>>>> %d\n", scopeLevel);
             break;
 
          case paraTypeTABLE_COLUMN_FILL:
-            debugPrintMsg(L"table col f 1>>>>>>> %d", scopeLevel);
+            debugPrintMsg(L"table col f 1>>>>>>> %d\n", scopeLevel);
             break;
          }
          
@@ -836,11 +847,11 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          switch (para->type)
          {
          case paraTypeFORMATED:
-            debugPrintMsg(L"mono 1>>>>>>>>>>>>>> %d", scopeLevel);
+            debugPrintMsg(L"mono 1>>>>>>>>>>>>>> %d\n", scopeLevel);
             break;
 
          case paraTypeSCOPE_FORMATED:
-            debugPrintMsg(L"mono>>>>>>>>>>>>>>>> %d", scopeLevel);
+            debugPrintMsg(L"mono>>>>>>>>>>>>>>>> %d\n", scopeLevel);
             break;
          }
          _Write_ScopePopToOpenScope(func, file, &scopeLevel, scopeType);
@@ -851,20 +862,20 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          break;
 
       case paraTypeTABLE_OF_CONTENTS:
-         debugPrintMsg(L"toc>>>>>>>>>>>>>>>>> %d", scopeLevel);
+         debugPrintMsg(L"toc>>>>>>>>>>>>>>>>> %d\n", scopeLevel);
          _Write_ScopePopAll(func, file, &scopeLevel, scopeType);
 
          // Get the table of contents.
          tocList = _ParaListGetToc(paraList);
 
-         func->FileWriteTOC(file, paraList);
+         func->FileWriteTOC(file, tocList);
 
          // Clean up
          paraArrayDestroy(tocList);
          break;
 
       case paraTypePAGE_BREAK:
-         debugPrintMsg(L"new page>>>>>>>>>>>> %d", scopeLevel);
+         debugPrintMsg(L"new page>>>>>>>>>>>> %d\n", scopeLevel);
          func->FileWritePageBreak(file);
          break;
       }
@@ -874,6 +885,11 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
 
    // Clean up.
    gfileClose(file);
+
+   forCount (index, 20)
+   {
+      paraTypeArrayDestroy(tableHeaders[index]);
+   }
 
    greturn gbTRUE;
 }

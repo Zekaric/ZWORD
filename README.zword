@@ -32,7 +32,7 @@ hh	|chapter| - Why?
 
 hh	|chapter| - Goals
 
-=[
+:[
 -	Simple markup that is easily remembered.
 -	Fast to write the markup format and still have it readable.
 -	Simple converted to other targets.  
