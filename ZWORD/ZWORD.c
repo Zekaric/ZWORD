@@ -31,11 +31,11 @@ static Gs   *_ParaListGetTitle(           ParaArray const * const paraList);
 static int   _Process(                    Gs const * const command, Gpath const * const path);
 
 static Gb    _Write(                      WriteFunctions * const func, Gpath const * const path, ParaArray const * const paraList);
-static void  _Write_ScopePopAll(          WriteFunctions * const func, Gfile * const file, Gindex * const scopeLevel, ParaType * const scopeType);
-static void  _Write_ScopePopToOpenScope(  WriteFunctions * const func, Gfile * const file, Gindex * const scopeLevel, ParaType * const scopeType);
-static void  _Write_ScopePopToListScope(  WriteFunctions * const func, Gfile * const file, Gindex * const scopeLevel, ParaType * const scopeType);
-static void  _Write_ScopePopToTableRow(   WriteFunctions * const func, Gfile * const file, Gindex * const scopeLevel, ParaType * const scopeType);
-static void  _Write_ScopePopTable(        WriteFunctions * const func, Gfile * const file, Gindex * const scopeLevel, ParaType * const scopeType);
+static void  _Write_ScopePopAll(          WriteFunctions * const func, Gfile * const file, Gindex * const indentLevel, Gindex * const scopeLevel, ParaType * const scopeType);
+static void  _Write_ScopePopToOpenScope(  WriteFunctions * const func, Gfile * const file, Gindex * const indentLevel, Gindex * const scopeLevel, ParaType * const scopeType);
+static void  _Write_ScopePopToListScope(  WriteFunctions * const func, Gfile * const file, Gindex * const indentLevel, Gindex * const scopeLevel, ParaType * const scopeType);
+static void  _Write_ScopePopToTableRow(   WriteFunctions * const func, Gfile * const file, Gindex * const indentLevel, Gindex * const scopeLevel, ParaType * const scopeType);
+static void  _Write_ScopePopTable(        WriteFunctions * const func, Gfile * const file, Gindex * const indentLevel, Gindex * const scopeLevel, ParaType * const scopeType);
 
 /******************************************************************************
 global:
@@ -523,7 +523,6 @@ static int _Process(Gs const * const command, Gpath const * const path)
       func = GetFunctionsHTML();
       _Write(&func, path, paraList);
    }
-#if 0
    if (gsIsEqualU2(command, L"all") ||
        gsIsEqualU2(command, L"md"))
    {
@@ -536,6 +535,7 @@ static int _Process(Gs const * const command, Gpath const * const path)
       func = GetFunctionsRTF();
       _Write(&func, path, paraList);
    }
+#if 0
    if (gsIsEqualU2(command, L"all") ||
        gsIsEqualU2(command, L"ZLYT"))
    {
@@ -569,8 +569,8 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
    Gindex          index;
    Para           *para;
    ParaType        scopeType[20];
-   Gindex          scopeLevel;
-   Gi              indentLevel;
+   Gindex          scopeLevel,
+                   indentLevel;
    Gb              isTableHeaderSeparatorWritten[20];
    ParaTypeArray  *tableHeaders[20];
    Gs             *stemp;
@@ -579,7 +579,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
    genter;
 
    scopeLevel  = -1;
-   indentLevel =  0;
+   indentLevel = -1;
    
    forCount (index, 20)
    {
@@ -609,7 +609,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
       {
       case paraTypeREGULAR:
          debugPrintMsg(L"paragraph>>>>>>>>>>>\n");
-         _Write_ScopePopToOpenScope(func, file, &scopeLevel, scopeType);
+         _Write_ScopePopToOpenScope(func, file, &indentLevel, &scopeLevel, scopeType);
 
          func->FileWriteParagraph(file, para);
          break;
@@ -651,7 +651,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          }
 
          // Titles will never appear in a list or table.  Force any open list or table to close closed.
-         _Write_ScopePopAll(func, file, &scopeLevel, scopeType);
+         _Write_ScopePopAll(func, file, &indentLevel, &scopeLevel, scopeType);
 
          func->FileWriteTitle(file, para);
          break;
@@ -676,6 +676,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
 
          case paraTypeSCOPE_LIST_BULLET:
             debugPrintMsg(L"list bullet>>>>>>>>> %d\n", scopeLevel + 1);
+            indentLevel++;
             break;
 
          case paraTypeSCOPE_LIST_KEY_VALUE:
@@ -684,6 +685,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
 
          case paraTypeSCOPE_LIST_NUMBER:
             debugPrintMsg(L"list number>>>>>>>>> %d\n", scopeLevel + 1);
+            indentLevel++;
             break;
 
          case paraTypeSCOPE_TABLE:
@@ -715,7 +717,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
             break;
          }
 
-         _Write_ScopePopToOpenScope(func, file, &scopeLevel, scopeType);
+         _Write_ScopePopToOpenScope(func, file, &indentLevel, &scopeLevel, scopeType);
 
          scopeLevel++;
          greturnFalseIf(scopeLevel >= 20);
@@ -744,6 +746,12 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          debugPrintMsg(L"scope pop>>>>>>>>>>> %d\n", scopeLevel);
          returnFalseIf(scopeLevel < 0);
 
+         if (scopeType[scopeLevel] == paraTypeSCOPE_LIST_BULLET ||
+             scopeType[scopeLevel] == paraTypeSCOPE_LIST_NUMBER)
+         {
+            indentLevel--;
+         }
+
          func->FileWriteScopeStop(
             file, 
             scopeType[scopeLevel], 
@@ -756,7 +764,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
 
       case paraTypeITEM:
          debugPrintMsg(L"item 1 line>>>>>>>>> %d\n", scopeLevel);
-         _Write_ScopePopToListScope(func, file, &scopeLevel, scopeType);
+         _Write_ScopePopToListScope(func, file, &indentLevel, &scopeLevel, scopeType);
 
          returnFalseIf(
             !(scopeType[scopeLevel] == paraTypeSCOPE_LIST_BULLET    ||
@@ -769,7 +777,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          }
          else
          {
-            func->FileWriteScopeStart(file, para->type, scopeLevel + 1, scopeType[scopeLevel]);
+            func->FileWriteScopeStart(file, para->type, indentLevel, scopeType[scopeLevel]);
             func->FileWriteString(    file, para);
             func->FileWriteScopeStop( file, para->type, scopeType[scopeLevel]);
          }
@@ -783,7 +791,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
          }
          else
          {
-            _Write_ScopePopToTableRow(func, file, &scopeLevel, scopeType);
+            _Write_ScopePopToTableRow(func, file, &indentLevel, &scopeLevel, scopeType);
             func->FileWriteScopeStop(file, para->type, paraTypeNONE);
          }
 
@@ -854,7 +862,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
             debugPrintMsg(L"mono>>>>>>>>>>>>>>>> %d\n", scopeLevel);
             break;
          }
-         _Write_ScopePopToOpenScope(func, file, &scopeLevel, scopeType);
+         _Write_ScopePopToOpenScope(func, file, &indentLevel, &scopeLevel, scopeType);
 
          func->FileWriteScopeStart(     file, para->type, scopeLevel, scopeType[scopeLevel]);
          func->FileWriteStringUnaltered(file, para);
@@ -863,7 +871,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
 
       case paraTypeTABLE_OF_CONTENTS:
          debugPrintMsg(L"toc>>>>>>>>>>>>>>>>> %d\n", scopeLevel);
-         _Write_ScopePopAll(func, file, &scopeLevel, scopeType);
+         _Write_ScopePopAll(func, file, &indentLevel, &scopeLevel, scopeType);
 
          // Get the table of contents.
          tocList = _ParaListGetToc(paraList);
@@ -898,7 +906,7 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
 func: _Write_ScopePopAll
 ******************************************************************************/
 static void _Write_ScopePopAll(WriteFunctions * const func, Gfile * const file, 
-   Gindex * const scopeLevel, ParaType * const scopeType)
+   Gindex * const indentLevel, Gindex * const scopeLevel, ParaType * const scopeType)
 {
    genter;
 
@@ -906,6 +914,12 @@ static void _Write_ScopePopAll(WriteFunctions * const func, Gfile * const file,
    {
       // No more scopes.
       breakIf(*scopeLevel == -1);
+
+      if (scopeType[*scopeLevel] == paraTypeSCOPE_LIST_BULLET ||
+          scopeType[*scopeLevel] == paraTypeSCOPE_LIST_NUMBER)
+      {
+         *indentLevel = *indentLevel - 1;
+      }
 
       // Pop the scope.
       func->FileWriteScopeStop(
@@ -924,7 +938,7 @@ static void _Write_ScopePopAll(WriteFunctions * const func, Gfile * const file,
 func: _Write_ScopePopToOpenScope
 ******************************************************************************/
 static void _Write_ScopePopToOpenScope(WriteFunctions * const func, Gfile * const file, 
-   Gindex * const scopeLevel, ParaType * const scopeType)
+   Gindex * const indentLevel, Gindex * const scopeLevel, ParaType * const scopeType)
 {
    genter;
 
@@ -947,6 +961,12 @@ static void _Write_ScopePopToOpenScope(WriteFunctions * const func, Gfile * cons
          break;
       }
 
+      if (scopeType[*scopeLevel] == paraTypeSCOPE_LIST_BULLET ||
+          scopeType[*scopeLevel] == paraTypeSCOPE_LIST_NUMBER)
+      {
+         *indentLevel = *indentLevel - 1;
+      }
+
       // We are nto in a scope that can accept anything.
       func->FileWriteScopeStop(
          file,
@@ -964,9 +984,12 @@ static void _Write_ScopePopToOpenScope(WriteFunctions * const func, Gfile * cons
 func: _Write_ScopePopToListScope
 ******************************************************************************/
 static void _Write_ScopePopToListScope(WriteFunctions * const func, 
-   Gfile * const file, Gindex * const scopeLevel, ParaType * const scopeType)
+   Gfile * const file, Gindex * const indentLevel, Gindex * const scopeLevel, 
+   ParaType * const scopeType)
 {
    genter;
+
+   indentLevel;
 
    loop
    {
@@ -998,7 +1021,8 @@ static void _Write_ScopePopToListScope(WriteFunctions * const func,
 func: _Write_ScopePopToTableRow
 ******************************************************************************/
 static void _Write_ScopePopToTableRow(WriteFunctions * const func, 
-   Gfile * const file, Gindex * const scopeLevel, ParaType * const scopeType)
+   Gfile * const file, Gindex * const indentLevel, Gindex * const scopeLevel, 
+   ParaType * const scopeType)
 {
    genter;
 
@@ -1011,6 +1035,12 @@ static void _Write_ScopePopToTableRow(WriteFunctions * const func,
       if (scopeType[*scopeLevel] == paraTypeTABLE_ROW)
       {
          break;
+      }
+
+      if (scopeType[*scopeLevel] == paraTypeSCOPE_LIST_BULLET ||
+          scopeType[*scopeLevel] == paraTypeSCOPE_LIST_NUMBER)
+      {
+         *indentLevel = *indentLevel - 1;
       }
 
       // We are nto in a scope that can accept anything.
@@ -1030,7 +1060,7 @@ static void _Write_ScopePopToTableRow(WriteFunctions * const func,
 func: _Write_ScopePopToTable
 ******************************************************************************/
 static void _Write_ScopePopTable(WriteFunctions * const func, Gfile * const file, 
-   Gindex * const scopeLevel, ParaType * const scopeType)
+   Gindex * const indentLevel, Gindex * const scopeLevel, ParaType * const scopeType)
 {
    genter;
 
@@ -1043,6 +1073,12 @@ static void _Write_ScopePopTable(WriteFunctions * const func, Gfile * const file
       if (scopeType[*scopeLevel] == paraTypeSCOPE_TABLE)
       {
          break;
+      }
+
+      if (scopeType[*scopeLevel] == paraTypeSCOPE_LIST_BULLET ||
+          scopeType[*scopeLevel] == paraTypeSCOPE_LIST_NUMBER)
+      {
+         *indentLevel = *indentLevel - 1;
       }
 
       // We are nto in a scope that can accept anything.

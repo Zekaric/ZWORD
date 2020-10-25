@@ -43,8 +43,8 @@ p.zword_toc4      { font-size: 1.0rem;                                          
 p.zword_toc5      { font-size: 1.0rem;                                                            margin-left: 4.0rem; }
 pre.zword         { font-size: 1.0rem; margin: 1.0rem; margin-left: 3.0rem; margin-right: 3.0rem; border: solid 1px; border-radius: 0.5rem; padding: 0.5rem; background-color: whitesmoke; }
 
-ul.zword,                   ol.zword,                  { font-size: 1.0rem; margin-bottom: 0.5rem; margin-left: 3.5rem; }
-ul.zword ul.zword,          ol.zword ol.zword,         { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: 1.5rem; }
+ul.zword,                   ol.zword                   { font-size: 1.0rem; margin-bottom: 0.5rem; margin-left: 3.5rem; }
+ul.zword ul.zword,          ol.zword ol.zword          { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: 1.5rem; }
 ul.zword ul.zword ul.zword, ol.zword ol.zword ol.zword { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: 1.5rem; }
 
 dl.zword          { font-size: 1.0rem; margin-bottom: 0.5rem; margin-left: 3.5rem; }
