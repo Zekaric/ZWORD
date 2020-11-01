@@ -71,6 +71,59 @@ typedef enum
    paraTypeCOUNT
 } ParaType;
 
+typedef enum
+{
+   paraStyleNONE,
+
+   paraStyleFORMATTED,
+   paraStyleKEY_VALUE,
+   paraStyleREGULAR,
+   paraStyleTITLE_1,
+   paraStyleTITLE_2,
+   paraStyleTITLE_3,
+   paraStyleTITLE_4,
+   paraStyleTITLE_5,
+   paraStyleTITLE_1_TOC,
+   paraStyleTITLE_2_TOC,
+   paraStyleTITLE_3_TOC,
+   paraStyleTITLE_4_TOC,
+   paraStyleTITLE_5_TOC,
+   paraStyleTOC_1,
+   paraStyleTOC_2,
+   paraStyleTOC_3,
+   paraStyleTOC_4,
+   paraStyleTOC_5,
+   paraStyleLIST_BULLET_1,
+   paraStyleLIST_BULLET_2,
+   paraStyleLIST_BULLET_3,
+   paraStyleLIST_BULLET_4,
+   paraStyleLIST_BULLET_5,
+   paraStyleLIST_BULLET_6,
+   paraStyleLIST_BULLET_7,
+   paraStyleLIST_BULLET_8,
+   paraStyleLIST_BULLET_9,
+   paraStyleLIST_NUMBER_1,
+   paraStyleLIST_NUMBER_2,
+   paraStyleLIST_NUMBER_3,
+   paraStyleLIST_NUMBER_4,
+   paraStyleLIST_NUMBER_5,
+   paraStyleLIST_NUMBER_6,
+   paraStyleLIST_NUMBER_7,
+   paraStyleLIST_NUMBER_8,
+   paraStyleLIST_NUMBER_9,
+
+   paraStyleCOUNT
+} ParaStyle;
+
+typedef enum
+{
+   paraFontStyleSANS,
+   paraFontStyleSERIF,
+   paraFontStyleMONO,
+
+   paraFontStyleCOUNT
+} ParaFontStyle;
+
 /******************************************************************************
 type:
 ******************************************************************************/
@@ -194,13 +247,42 @@ typedef struct
    Gb              (*FileWriteTOC)(                   Gfile       * const file, ParaArray     const * const paraList);
 } WriteFunctions;
 
+typedef struct
+{
+   Gr              width_MM,
+                   height_MM,
+                   marginL_MM,
+                   marginR_MM,
+                   marginT_MM,
+                   marginB_MM;
+} Paper;
+
+typedef struct
+{
+   ParaFontStyle   fontStyle;
+   Gb              fontIsBold, 
+                   fontIsItalic;
+   Gr              fontSize_Point,
+                   indentL_MM, 
+                   indentR_MM,
+                   borderLSize_MM,
+                   borderRSize_MM,
+                   borderTSize_MM,
+                   borderBSize_MM,
+                   tabStop_MM;
+   Gindex          background;
+} PaperPara;
+
 /******************************************************************************
 prototype:
 ******************************************************************************/
-Gs            *GetChapterString(void);
+Gs            *GetChapterString( void);
 
-WriteFunctions GetFunctionsHTML(void);
-WriteFunctions GetFunctionsMD(  void);
-WriteFunctions GetFunctionsRTF( void);
+WriteFunctions GetFunctionsHTML( void);
+WriteFunctions GetFunctionsMD(   void);
+WriteFunctions GetFunctionsRTF(  void);
+
+void           PaperLoad(        Gs const * const filePaper);
+void           PaperStart(       void);
 
 #endif

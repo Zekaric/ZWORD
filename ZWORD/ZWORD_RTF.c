@@ -13,55 +13,11 @@ include:
 local:
 constant:
 ******************************************************************************/
-#define RTF_STYLE_00 "\\s0"  "\\sb36"  "\\sa36"  "\\widctlpar"                                                 "\\li432"  "\\lin432"              "\\ri432"  "\\rin432"  "\\faauto" "\\sl0" "\\slmult1"                                             "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_01 "\\s1"  "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn"                              "\\li0"    "\\lin0"                "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                      "\\brdrb" "\\brdrhair" "\\f1" "\\b0" "\\fs60" "\\strike0" "\\ulnone"
-#define RTF_STYLE_02 "\\s2"  "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn"                              "\\li144"  "\\lin144"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs52" "\\strike0" "\\ulnone"
-#define RTF_STYLE_03 "\\s3"  "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn"                              "\\li288"  "\\lin288"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs46" "\\strike0" "\\ulnone"
-#define RTF_STYLE_04 "\\s4"  "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn"                              "\\li432"  "\\lin432"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs40" "\\strike0" "\\ulnone"
-#define RTF_STYLE_05 "\\s5"  "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn"                              "\\li576"  "\\lin576"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs36" "\\strike0" "\\ulnone"
-#define RTF_STYLE_06 "\\s6"  "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn"                              "\\li720"  "\\lin720"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs32" "\\strike0" "\\ulnone"
-#define RTF_STYLE_07 "\\s7"  "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn"                              "\\li864"  "\\lin864"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs28" "\\strike0" "\\ulnone"
-#define RTF_STYLE_08 "\\s8"  "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn"                              "\\li1008" "\\lin1008"             "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs24" "\\strike0" "\\ulnone"
-#define RTF_STYLE_09 "\\s9"  "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn"                              "\\li1152" "\\lin1152"             "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_10 "\\s10" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li432"  "\\lin432"  "\\fi288"   "\\ri432"  "\\rin432"  "\\faauto" "\\sl0" "\\slmult1"                                             "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_11 "\\s11" "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn" "\\level0" "\\outlinelevel0" "\\li0"    "\\lin0"                "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                      "\\brdrb" "\\brdrhair" "\\f1" "\\b0" "\\fs60" "\\strike0" "\\ulnone"
-#define RTF_STYLE_12 "\\s12" "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn" "\\level1" "\\outlinelevel1" "\\li144"  "\\lin144"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs52" "\\strike0" "\\ulnone"
-#define RTF_STYLE_13 "\\s13" "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn" "\\level2" "\\outlinelevel2" "\\li288"  "\\lin288"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs46" "\\strike0" "\\ulnone"
-#define RTF_STYLE_14 "\\s14" "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn" "\\level3" "\\outlinelevel3" "\\li432"  "\\lin432"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs40" "\\strike0" "\\ulnone"
-#define RTF_STYLE_15 "\\s15" "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn" "\\level4" "\\outlinelevel4" "\\li576"  "\\lin576"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs36" "\\strike0" "\\ulnone"
-#define RTF_STYLE_16 "\\s16" "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn" "\\level5" "\\outlinelevel5" "\\li720"  "\\lin720"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs32" "\\strike0" "\\ulnone"
-#define RTF_STYLE_17 "\\s17" "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn" "\\level6" "\\outlinelevel6" "\\li864"  "\\lin864"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs28" "\\strike0" "\\ulnone"
-#define RTF_STYLE_18 "\\s18" "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn" "\\level7" "\\outlinelevel7" "\\li1008" "\\lin1008"             "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs24" "\\strike0" "\\ulnone"
-#define RTF_STYLE_19 "\\s19" "\\sb144" "\\sa144" "\\widctlpar" "\\keep" "\\keepn" "\\level8" "\\outlinelevel8" "\\li1152" "\\lin1152"             "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1"                                             "\\f1" "\\b0" "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_20 "\\s20" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2880" "\\lin2880" "\\fi-2448" "\\ri432"  "\\rin432"  "\\faauto" "\\sl0" "\\slmult1" "\\tx2880"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_21 "\\s21" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li432"  "\\lin432"              "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx1440"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_22 "\\s22" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li576"  "\\lin576"              "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx1584"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_23 "\\s23" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li720"  "\\lin720"              "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx1728"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_24 "\\s24" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li1728" "\\lin1728"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx1872"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_25 "\\s25" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li1872" "\\lin1872"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx2016"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_26 "\\s26" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2016" "\\lin2016"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx2160"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_27 "\\s27" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2160" "\\lin2160"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx2304"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_28 "\\s28" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2304" "\\lin2304"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx2448"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_29 "\\s29" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2448" "\\lin2448"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx2592"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_30 "\\s30" "\\sb36"  "\\sa36"  "\\widctlpar"                                                 "\\li432"  "\\lin432"              "\\ri432"  "\\rin432"  "\\faauto" "\\sl0" "\\slmult1" "\\nowrap" "\\box" "\\brdrhair" "\\cbpat16" "\\f2"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_31 "\\s31" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li432"  "\\lin432"              "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx1440"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_32 "\\s32" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li576"  "\\lin576"              "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx1584"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_33 "\\s33" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li720"  "\\lin720"              "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx1728"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_34 "\\s34" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li1728" "\\lin1728"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx1872"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_35 "\\s35" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li1872" "\\lin1872"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx2016"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_36 "\\s36" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2016" "\\lin2016"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx2160"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_37 "\\s37" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2160" "\\lin2160"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx2304"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_38 "\\s38" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2304" "\\lin2304"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx2448"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_39 "\\s39" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2448" "\\lin2448"             "\\ri1296" "\\rin1296" "\\faauto" "\\sl0" "\\slmult1" "\\tx2592"                                  "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_41 "\\s41" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li432"  "\\lin432"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"               "\\f0" "\\b0" "\\fs20" "\\strike0" "\\ul1"
-#define RTF_STYLE_42 "\\s42" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li576"  "\\lin576"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"               "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_43 "\\s43" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li720"  "\\lin720"              "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"               "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_44 "\\s44" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li1728" "\\lin1728"             "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"               "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_45 "\\s45" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li1872" "\\lin1872"             "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"               "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_46 "\\s46" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2016" "\\lin2016"             "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"               "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_47 "\\s47" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2160" "\\lin2160"             "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"               "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_48 "\\s48" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2304" "\\lin2304"             "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"               "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
-#define RTF_STYLE_49 "\\s49" "\\sb0"   "\\sa0"   "\\widctlpar"                                                 "\\li2448" "\\lin2448"             "\\ri0"    "\\rin0"    "\\faauto" "\\sl0" "\\slmult1" "\\tqr" "\\tldot" "\\tx10080"               "\\f0"        "\\fs20" "\\strike0" "\\ulnone"
+
+/******************************************************************************
+prototype:
+******************************************************************************/
+static Char     _style[ParaStyleCOUNT][1024];
 
 /******************************************************************************
 prototype:
@@ -82,6 +38,8 @@ static Gb       _FileWriteStringUnaltered(      Gfile       * const file,  Para 
 static Gb       _FileWriteTableHeaderSeparator( Gfile       * const file,  ParaTypeArray const * const headerList);
 static Gb       _FileWriteTitle(                Gfile       * const file,  Para          const * const para);
 static Gb       _FileWriteTOC(                  Gfile       * const file,  ParaArray     const * const tocList);
+
+static void     _Start(                         void);
 
 /******************************************************************************
 global:
@@ -107,6 +65,9 @@ WriteFunctions GetFunctionsRTF(void)
    func.FileWriteStringUnaltered = _FileWriteStringUnaltered;
    func.FileWriteTitle           = _FileWriteTitle;
    func.FileWriteTOC             = _FileWriteTOC;
+
+   // Load in styling.
+   _Start();
 
    return func;
 }
@@ -843,4 +804,333 @@ static Gb _FileWriteTOC(Gfile * const file, ParaArray const * const tocList)
    }
 
    greturn result;
+}
+
+/******************************************************************************
+func: _Start
+******************************************************************************/
+static void _Start(void)
+{
+   Gindex     index;
+   ParaStyle *style;
+   Char       indent[80],
+              styleId[8];
+
+   genter;
+
+   forCount (index, ParaStyleCOUNT)
+   {
+      sprintf_s(styleId, 8, "\\s%d", index);
+      sprintf_s(
+         indent, 
+         80, 
+         "\\li%d\\lin%d\\ri%d\\rin%d",
+         (int) PaperGetParaIndentL(index), (int) PaperGetParaIndentL(index),
+         (int) PaperGetParaIndentR(index), (int) PaperGetParaIndentR(index));
+
+      switch (index)
+      {
+      case paraStyleFORMATTED:
+         sprintf_s(
+            _style[index],
+            1024,
+            "%s\\sb36\\sa36\\widctlpar%s\\faauto\\sl0\\slmult1\\nowrap\\box\\brdrhair\\cbpat16\\f2\\fs20\\strike0\\ulnone",
+            styleId, 
+            indent);
+         break;
+
+      case paraStyleKEY_VALUE:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s20\\sb0\\sa0\\widctlpar\\li%d\\lin%d\\fi%d\\ri%d\\rin%d\\faauto\\sl0\\slmult1\\tx%d\\f0\\fs20\\strike0\\ulnone",
+            styleId, 
+            (int) (PaperGetParaIndentL(index) + PaperGetParaTabStop(index)), (int) (PaperGetParaIndentL(index) + PaperGetParaTabStop(index)),
+            (int) -PaperGetParaTabStop(index),
+            (int) PaperGetParaIndentR(index),                                (int) PaperGetParaIndentR(index),
+            (int) PaperGetParaTabStop(index));
+         break;
+
+      case paraStyleREGULAR:
+// Novel Style "\\s10\\sb0\\sa0\\widctlpar\\li432\\lin432\\fi288\\ri432\\rin432\\faauto\\sl0\\slmult1\\f0\\fs20\\strike0\\ulnone
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s0\\sb36\\sa36\\widctlpar%s\\faauto\\sl0\\slmult1\\f0\\fs20\\strike0\\ulnone",
+            styleId, 
+            indent);
+         break;
+
+
+      case paraStyleTITLE_1:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s1\\sb144\\sa144\\widctlpar\\keep\\keepn%s\\faauto\\sl0\\slmult1\\brdrb\\brdrhair\\f1\\b0\\fs60\\strike0\\ulnone"
+            styleId, 
+            indent);
+         break;
+
+      case paraStyleTITLE_2:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s2\\sb144\\sa144\\widctlpar\\keep\\keepn%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs52\\strike0\\ulnone",
+            styleId, 
+            indent);
+         break;
+
+      case paraStyleTITLE_3:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s3\\sb144\\sa144\\widctlpar\\keep\\keepn%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs46\\strike0\\ulnone",
+            styleId, 
+            indent);
+         break;
+
+      case paraStyleTITLE_4:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s4\\sb144\\sa144\\widctlpar\\keep\\keepn%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs40\\strike0\\ulnone",
+            styleId, 
+            indent);
+         break;
+
+      case paraStyleTITLE_5:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s5\\sb144\\sa144\\widctlpar\\keep\\keepn%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs36\\strike0\\ulnone",
+            styleId, 
+            indent);
+         break;
+
+      case paraStyleTITLE_1_TOC:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s11\\sb144\\sa144\\widctlpar\\keep\\keepn\\level0\\outlinelevel0%s\\faauto\\sl0\\slmult1\\brdrb\\brdrhair\\f1\\b0\\fs60\\strike0\\ulnone",
+            styleId, 
+            indent);
+         break;
+
+      case paraStyleTITLE_2_TOC:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s12\\sb144\\sa144\\widctlpar\\keep\\keepn\\level1\\outlinelevel1%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs52\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleTITLE_3_TOC:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s13\\sb144\\sa144\\widctlpar\\keep\\keepn\\level2\\outlinelevel2%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs46\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleTITLE_4_TOC:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s14\\sb144\\sa144\\widctlpar\\keep\\keepn\\level3\\outlinelevel3%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs40\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleTITLE_5_TOC:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s15\\sb144\\sa144\\widctlpar\\keep\\keepn\\level4\\outlinelevel4%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs36\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleTOC_1:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s41\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080\\f0\\b0\\fs20\\strike0\\ul1",
+            indent);
+         break;
+
+      case paraStyleTOC_2:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s42\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleTOC_3:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s43\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleTOC_4:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s44\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleTOC_5:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s45\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_BULLET_1:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s21\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1440\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_BULLET_2:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s22\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1584\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_BULLET_3:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s23\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1728\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_BULLET_4:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s24\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1872\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_BULLET_5:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s25\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2016\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_BULLET_6:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s26\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2160\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_BULLET_7:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s27\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2304\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_BULLET_8:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s28\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2448\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_BULLET_9:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s29\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2592\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_NUMBER_1:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s31\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1440\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_NUMBER_2:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s32\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1584\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_NUMBER_3:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s33\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1728\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_NUMBER_4:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s34\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1872\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_NUMBER_5:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s35\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2016\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_NUMBER_6:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s36\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2160\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_NUMBER_7:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s37\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2304\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_NUMBER_8:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s38\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2448\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+
+      case paraStyleLIST_NUMBER_9:
+         sprintf_s(
+            _style[index],
+            1024,
+            "\\s39\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2592\\f0\\fs20\\strike0\\ulnone",
+            indent);
+         break;
+      }
+   }
 }

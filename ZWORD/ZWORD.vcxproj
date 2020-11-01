@@ -173,6 +173,7 @@
     <ClCompile Include="ZWORD.c" />
     <ClCompile Include="ZWORD_HTML.c" />
     <ClCompile Include="ZWORD_MD.c" />
+    <ClCompile Include="ZWORD_Paper.c" />
     <ClCompile Include="ZWORD_RTF.c" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +183,9 @@
     <ProjectReference Include="..\..\GRL\GRL\GRL.vcxproj">
       <Project>{7ef814f4-8eb2-413a-9282-f637abdd588a}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="zword.paper" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

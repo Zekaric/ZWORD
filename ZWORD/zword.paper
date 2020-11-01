@@ -1,0 +1,179 @@
+// The fonts for the types of fonts.
+=font
+// Type     Font name.
+-sans       Arial
+-serif      Times New Roman
+-mono       Lucidia Console
+=font
+
+// Paper definition
+=paper
+// size     [units:"inch"|"mm"] [width] [height]
+-size       inch 8.5 11.0
+// margin   [units:"inch"|"mm"] [left] [right] [top] [bottom]
+-margin     inch 0.5 0.5 0.5 0.5
+=paper
+
+// Paragraph styles.
+=para
+// font     [units:"point"|"inch"|"mm"] [size] [attribute:"plain"|"bold"|"bold-italic"|"italic"] [family:"sans"|"serif"|"mono"]
+-font       point 8 plain sans
+// indent   [units:"inch"|"mm"] [left] [right]
+-indent     inch 1.00 1.00
+=para
+
+=paraKeyValue
+-font       point 8 plain sans
+-indent     inch 1.00 1.00
+// Tab Stops [units:"inch"|"mm"] [left side tab stop]+
+-tabStop    inch 4.00
+=paraKeyValue
+
+=paraCode
+-font       point 8 plain mono 
+-indent     inch 1.00 1.00
+// border   [units:"point"|"inch"|"mm"] [left line width] [right] [top] [bottom]
+-border     point 0.5 0.5 0.5 0.5
+// colorB   [index of background color] 
+-colorB     15
+=paraCode
+
+=paraTitle1
+-font       point 21 plain sans
+-indent     inch 0.00 0.00
+-border     point 0.0 0.0 0.0 0.5 
+=paraTitle1
+=paraTitle2
+-font       point 19 plain sans
+-indent     inch 0.25 0.00
+=paraTitle2
+=paraTitle3
+-font       point 16 plain sans
+-indent     inch 0.50 0.00
+=paraTitle3
+=paraTitle4
+-font       point 13 plain sans
+-indent     inch 0.75 0.00
+=paraTitle4
+=paraTitle5
+-font       point 10 plain sans
+-indent     inch 1.00 0.00
+=paraTitle5
+
+=paraTitle1Toc
+-font       point 21 plain sans
+-indent     inch 0.00 0.00
+-border     point 0.0 0.0 0.0 0.5 
+=paraTitle1Toc
+=paraTitle2Toc
+-font       point 19 plain sans
+-indent     inch 0.25 0.00
+=paraTitle2Toc
+=paraTitle3Toc
+-font       point 16 plain sans
+-indent     inch 0.50 0.00
+=paraTitle3Toc
+=paraTitle4Toc
+-font       point 13 plain sans
+-indent     inch 0.75 0.00
+=paraTitle4Toc
+=paraTitle5Toc
+-font       point 10 plain sans
+-indent     inch 1.00 0.00
+=paraTitle5Toc
+
+=paraToc1
+-font       point 10 bold sans
+-indent     inch 1.00 0.00
+-border     point 0.0 0.0 0.0 0.5 
+=paraToc1
+=paraToc2
+-font       point 8 plain sans
+-indent     inch 1.25 0.00
+=paraToc2
+=paraToc3
+-font       point 8 plain sans
+-indent     inch 1.50 0.00
+=paraToc3
+=paraToc4
+-font       point 8 plain sans
+-indent     inch 1.75 0.00
+=paraToc4
+=paraToc5
+-font       point 8 plain sans
+-indent     inch 2.00 0.00
+=paraToc5
+
+=paraListBullet1
+-font       point 8 plain sans
+-indent     inch 1.00 1.00
+=paraListBullet1
+=paraListBullet2
+-font       point 8 plain sans
+-indent     inch 1.25 1.00
+=paraListBullet2
+=paraListBullet3
+-font       point 8 plain sans
+-indent     inch 1.50 1.00
+=paraListBullet3
+=paraListBullet4
+-font       point 8 plain sans
+-indent     inch 1.75 1.00
+=paraListBullet4
+=paraListBullet5
+-font       point 8 plain sans
+-indent     inch 2.00 1.00
+=paraListBullet5
+=paraListBullet6
+-font       point 8 plain sans
+-indent     inch 2.25 1.00
+=paraListBullet6
+=paraListBullet7
+-font       point 8 plain sans
+-indent     inch 2.50 1.00
+=paraListBullet7
+=paraListBullet8
+-font       point 8 plain sans
+-indent     inch 2.75 1.00
+=paraListBullet8
+=paraListBullet9
+-font       point 8 plain sans
+-indent     inch 3.00 1.00
+=paraListBullet9
+
+=paraListNumber1
+-font       point 8 plain sans
+-indent     inch 1.00 1.00
+=paraListNumber1
+=paraListNumber2
+-font       point 8 plain sans
+-indent     inch 1.25 1.00
+=paraListNumber2
+=paraListNumber3
+-font       point 8 plain sans
+-indent     inch 1.50 1.00
+=paraListNumber3
+=paraListNumber4
+-font       point 8 plain sans
+-indent     inch 1.75 1.00
+=paraListNumber4
+=paraListNumber5
+-font       point 8 plain sans
+-indent     inch 2.00 1.00
+=paraListNumber5
+=paraListNumber6
+-font       point 8 plain sans
+-indent     inch 2.25 1.00
+=paraListNumber6
+=paraListNumber7
+-font       point 8 plain sans
+-indent     inch 2.50 1.00
+=paraListNumber7
+=paraListNumber8
+-font       point 8 plain sans
+-indent     inch 2.75 1.00
+=paraListNumber8
+=paraListNumber9
+-font       point 8 plain sans
+-indent     inch 3.00 1.00
+=paraListNumber9

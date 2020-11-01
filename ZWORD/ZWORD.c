@@ -47,7 +47,8 @@ func: main
 int main(int acount, char **alist)
 {
    Gs    *command,
-         *file;
+         *file,
+         *filePaper;
    Gpath *path;
    Gi4    result;
 
@@ -65,27 +66,41 @@ int main(int acount, char **alist)
    if (acount <= 1)
    {
       gconSetA(
-         "zword [command] [file]\n"
+         "zword [command] [file] [paperFile]\n"
          "\n"
-         "[command] = \n"
+         "[command]  =\n"
          "   \"all\"        convert file to all the formats.\n"
-         "   \"confluence\" convert file to HTML format.\n"
+         //"   \"confluence\" convert file to HTML format.\n"
          "   \"html\"       convert file to HTML format.\n"
          "   \"md\"         convert file to MD markup.\n"
          // future "   \"PDF\"  convert file to PDF format.\n"
          "   \"rtf\"        convert file to RTF format.\n"
-         "   \"zlyt\"       convert file to Z:LYT markup.\n"
+         //"   \"zlyt\"       convert file to Z:LYT markup.\n"
          "\n"
-         "[file]    =\n"
+         "[file]     =\n"
          "   Fully qualified file path.  Including .zword extension.\n"
-         "\n");
+         "\n"
+         "[paperFile] =\n"
+         "   Fully qualified file path.  Including extension.  File contains what the document\n"
+         "   will look like on paper.");
 
       return 0;
    }
 
    // Get the command and the file.
-   command = gsCreateFromA(alist[1]);
-   file    = gsCreateFromA(alist[2]);
+   command   = gsCreateFromA(alist[1]);
+   file      = gsCreateFromA(alist[2]);
+   
+   // Initialize a default paper.
+   PaperStart();
+
+   // Load in a paper if one is set.
+   filePaper = NULL;
+   if (acount == 4)
+   {
+      filePaper = gsCreateFromA(alist[3]);
+      PaperLoad(filePaper);
+   }
 
    // Convert the file string to a path.
    path = gpathCreateFrom(file);

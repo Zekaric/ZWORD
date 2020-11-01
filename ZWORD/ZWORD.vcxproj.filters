@@ -27,10 +27,16 @@
     <ClCompile Include="ZWORD_RTF.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZWORD_Paper.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZWORD.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="zword.paper" />
   </ItemGroup>
 </Project>
