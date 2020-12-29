@@ -49,7 +49,7 @@ h	|chapter| - Usage
 -	all	Convert the zword file to all supported formats.
 -	html	Convert the zword file to an html file.
 -	md	Convert the zword file to a markdown file.
--	rtf	Convert the zword file to an RTF file.  A zwordRTF.def file is required.
+-	rtf	Convert the zword file to an RTF file.  A paperFile file is required.  Currently does not do tables.
 ]
 
 h	|chapter| - Format
@@ -64,8 +64,8 @@ hh	|chapter| - File level markup.
 
 =[
 -	|b Markup b|	|b Description b|
--	h, hh, hhh, hhhh, hhhhh, hhhhhh	Title lines.  "h" is the most significant title. "hh" less significant.  etc.  There title lines will be included in a table of contents if "toc" markup is used.  Single line of text only.
--	H, HH, HHH, HHHH, HHHHH, HHHHHH	Title lines.  Exactly like "h" except these titles will not be included in the table of contents.
+-	h, hh, hhh, hhhh, hhhhh	Title lines.  "h" is the most significant title. "hh" less significant.  etc.  There title lines will be included in a table of contents if "toc" markup is used.  Single line of text only.
+-	H, HH, HHH, HHHH, HHHHH	Title lines.  Exactly like "h" except these titles will not be included in the table of contents.
 -	toc	Insert a table of contents.  Nothing follows this tag.
 -	[white space]	Any white space (space or tab), will denote the paragraph is just a regular text paragraph.  Do not split the paragraph over multiple lines.  A paragraph should just be on one line up to the new line.  Set your text editor to wrap text.  You can add empty lines to spread the markup for readability.  Empty lines are ignored.
 -	/, //	Comment line.  Line is ignored.

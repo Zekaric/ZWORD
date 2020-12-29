@@ -75,9 +75,9 @@ typedef enum
 {
    paraStyleNONE,
 
+   paraStyleREGULAR,
    paraStyleFORMATTED,
    paraStyleKEY_VALUE,
-   paraStyleREGULAR,
    paraStyleTITLE_1,
    paraStyleTITLE_2,
    paraStyleTITLE_3,
@@ -265,6 +265,7 @@ typedef struct
    Gr              fontSize_Point,
                    indentL_MM, 
                    indentR_MM,
+                   indentL_MM_FirstLine,
                    borderLSize_MM,
                    borderRSize_MM,
                    borderTSize_MM,
@@ -282,6 +283,9 @@ WriteFunctions GetFunctionsHTML( void);
 WriteFunctions GetFunctionsMD(   void);
 WriteFunctions GetFunctionsRTF(  void);
 
+Paper         *PaperGet(         void);
+Gs            *PaperFontGet(     ParaFontStyle style);
+PaperPara     *PaperParaGet(     ParaStyle style);
 void           PaperLoad(        Gs const * const filePaper);
 void           PaperStart(       void);
 

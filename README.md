@@ -90,10 +90,10 @@ Note, not all markup may have a meaning in the target format that you will ask t
 ****Markup****<br>
     **Description**
 
-**h, hh, hhh, hhhh, hhhhh, hhhhhh**<br>
+**h, hh, hhh, hhhh, hhhhh**<br>
     Title lines.  "h" is the most significant title. "hh" less significant.  etc.  There title lines will be included in a table of contents if "toc" markup is used.  Single line of text only.
 
-**H, HH, HHH, HHHH, HHHHH, HHHHHH**<br>
+**H, HH, HHH, HHHH, HHHHH**<br>
     Title lines.  Exactly like "h" except these titles will not be included in the table of contents.
 
 **toc**<br>

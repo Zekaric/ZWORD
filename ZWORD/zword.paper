@@ -24,9 +24,10 @@
 
 =paraKeyValue
 -font       point 8 plain sans
--indent     inch 1.00 1.00
+-indent     inch 3.00 1.00
+-indent1    inch -2.00
 // Tab Stops [units:"inch"|"mm"] [left side tab stop]+
--tabStop    inch 4.00
+-tabStop    inch 3.00
 =paraKeyValue
 
 =paraCode

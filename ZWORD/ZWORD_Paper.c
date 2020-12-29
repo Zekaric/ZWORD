@@ -40,7 +40,31 @@ global:
 function:
 ******************************************************************************/
 /******************************************************************************
-func: paperLoad
+func: paperGet
+******************************************************************************/
+Paper *PaperGet(void)
+{
+   return &_paper;
+}
+
+/******************************************************************************
+func: paperFontGet
+******************************************************************************/
+Gs *PaperFontGet(ParaFontStyle style)
+{
+   return _paperFont[style];
+}
+
+/******************************************************************************
+func: PaperParaGet
+******************************************************************************/
+PaperPara *PaperParaGet(ParaStyle style)
+{
+   return &_paperPara[style];
+}
+
+/******************************************************************************
+func: PaperLoad
 ******************************************************************************/
 void PaperLoad(Gs const * const filePaper)
 {
@@ -401,6 +425,22 @@ static void _ReadPara(Gs * const prefValue, ParaStyle const style)
          // Get the left, right, top, and bottom margins of the paper.
          _paperPara[style].indentL_MM = gsGetR(gsArrayGetAt(sarrayTemp, 1)) * conversion;
          _paperPara[style].indentR_MM = gsGetR(gsArrayGetAt(sarrayTemp, 2)) * conversion;
+
+         gsArrayDestroy(sarrayTemp);
+      }
+      else if (gsIsEqualA(key, "indent1"))
+      {
+         sarrayTemp = gsCreateSplit(value, space);
+
+         // Get the units.
+         conversion = 1.0;
+         if (gsIsEqualA(gsArrayGetAt(sarrayTemp, 0), "inch"))
+         {
+            conversion = GrMM_PER_INCH;
+         }
+
+         // Get the first line indent value.
+         _paperPara[style].indentL_MM_FirstLine = gsGetR(gsArrayGetAt(sarrayTemp, 1)) * conversion;
 
          gsArrayDestroy(sarrayTemp);
       }

@@ -17,7 +17,8 @@ constant:
 /******************************************************************************
 prototype:
 ******************************************************************************/
-static Char     _style[ParaStyleCOUNT][1024];
+static Char     _font[paraFontStyleCOUNT][1024];
+static Char     _style[paraStyleCOUNT][1024];
 
 /******************************************************************************
 prototype:
@@ -388,75 +389,67 @@ func: _FileWriteFormatHeader
 ******************************************************************************/
 static Gb _FileWriteFormatHeader(Gfile * const file, Gs const * const title)
 {
-   Gb result;
+   Gb     result;
+   Gs    *stemp;
+   Paper *paper;
 
    genter;
 
    title;
 
-   // Write the header
-   result = gfileSetA(
-      file,
-      gcTypeU1,
+   paper = PaperGet();
+
+   stemp = gsCreate();
+
+   gsAppendA(stemp,
       "{\\rtf1\n"
       "\\fbidis"
       "\\deff0\\adeff0"
       "\\deflang1033\n"
-      "{\\fonttbl"
-      "{\\f0" "\\froman"  "\\fcharset0" "\\fprq2 Times New Roman;}"  // Body text font
-      "{\\f1" "\\fswiss"  "\\fcharset0" "\\fprq2 Arial;}"            // Title text font
-      "{\\f2" "\\fmodern" "\\fcharset0" "\\fprq1 Lucidia Console;}"  // Code text font
+      "{\\fonttbl");
+   gsAppendA(stemp, _font[paraFontStyleSANS]);
+   gsAppendA(stemp, _font[paraFontStyleSERIF]);
+   gsAppendA(stemp, _font[paraFontStyleMONO]);
+   gsAppendA(stemp,
       "}"
-      "{\\stylesheet"
-      "{" RTF_STYLE_00               "\\snext0"  " Paragraph Technical;}"
-      "{" RTF_STYLE_01 "\\sbasedon0" "\\snext0"  " Title 1;}"
-      "{" RTF_STYLE_02 "\\sbasedon0" "\\snext0"  " Title 2;}"
-      "{" RTF_STYLE_03 "\\sbasedon0" "\\snext0"  " Title 3;}"
-      "{" RTF_STYLE_04 "\\sbasedon0" "\\snext0"  " Title 4;}"
-      "{" RTF_STYLE_05 "\\sbasedon0" "\\snext0"  " Title 5;}"
-      "{" RTF_STYLE_06 "\\sbasedon0" "\\snext0"  " Title 6;}"
-      "{" RTF_STYLE_07 "\\sbasedon0" "\\snext0"  " Title 7;}"
-      "{" RTF_STYLE_08 "\\sbasedon0" "\\snext0"  " Title 8;}"
-      "{" RTF_STYLE_09 "\\sbasedon0" "\\snext0"  " Title 9;}"
-      "{" RTF_STYLE_10 "\\sbasedon0" "\\snext0"  " Paragraph Novel;}"
-      "{" RTF_STYLE_11 "\\sbasedon0" "\\snext0"  " Title 1 TOC;}"
-      "{" RTF_STYLE_12 "\\sbasedon0" "\\snext0"  " Title 2 TOC;}"
-      "{" RTF_STYLE_13 "\\sbasedon0" "\\snext0"  " Title 3 TOC;}"
-      "{" RTF_STYLE_14 "\\sbasedon0" "\\snext0"  " Title 4 TOC;}"
-      "{" RTF_STYLE_15 "\\sbasedon0" "\\snext0"  " Title 5 TOC;}"
-      "{" RTF_STYLE_16 "\\sbasedon0" "\\snext0"  " Title 6 TOC;}"
-      "{" RTF_STYLE_17 "\\sbasedon0" "\\snext0"  " Title 7 TOC;}"
-      "{" RTF_STYLE_18 "\\sbasedon0" "\\snext0"  " Title 8 TOC;}"
-      "{" RTF_STYLE_19 "\\sbasedon0" "\\snext0"  " Title 9 TOC;}"
-      "{" RTF_STYLE_20 "\\sbasedon0" "\\snext0"  " Paragraph Glossary;}"
-      "{" RTF_STYLE_21 "\\sbasedon0" "\\snext21" " List Bullet;}"
-      "{" RTF_STYLE_22 "\\sbasedon0" "\\snext22" " List Bullet;}"
-      "{" RTF_STYLE_23 "\\sbasedon0" "\\snext23" " List Bullet;}"
-      "{" RTF_STYLE_24 "\\sbasedon0" "\\snext24" " List Bullet;}"
-      "{" RTF_STYLE_25 "\\sbasedon0" "\\snext25" " List Bullet;}"
-      "{" RTF_STYLE_26 "\\sbasedon0" "\\snext26" " List Bullet;}"
-      "{" RTF_STYLE_27 "\\sbasedon0" "\\snext27" " List Bullet;}"
-      "{" RTF_STYLE_28 "\\sbasedon0" "\\snext28" " List Bullet;}"
-      "{" RTF_STYLE_29 "\\sbasedon0" "\\snext29" " List Bullet;}"
-      "{" RTF_STYLE_30 "\\sbasedon0" "\\snext0"  " Paragraph Code;}"
-      "{" RTF_STYLE_31 "\\sbasedon0" "\\snext31" " List Number;}"
-      "{" RTF_STYLE_32 "\\sbasedon0" "\\snext32" " List Number;}"
-      "{" RTF_STYLE_33 "\\sbasedon0" "\\snext33" " List Number;}"
-      "{" RTF_STYLE_34 "\\sbasedon0" "\\snext34" " List Number;}"
-      "{" RTF_STYLE_35 "\\sbasedon0" "\\snext35" " List Number;}"
-      "{" RTF_STYLE_36 "\\sbasedon0" "\\snext36" " List Number;}"
-      "{" RTF_STYLE_37 "\\sbasedon0" "\\snext37" " List Number;}"
-      "{" RTF_STYLE_38 "\\sbasedon0" "\\snext38" " List Number;}"
-      "{" RTF_STYLE_39 "\\sbasedon0" "\\snext39" " List Number;}"
-      "{" RTF_STYLE_41 "\\sbasedon0" "\\snext41" " TOC 1;}"
-      "{" RTF_STYLE_42 "\\sbasedon0" "\\snext42" " TOC 2;}"
-      "{" RTF_STYLE_43 "\\sbasedon0" "\\snext43" " TOC 3;}"
-      "{" RTF_STYLE_44 "\\sbasedon0" "\\snext44" " TOC 4;}"
-      "{" RTF_STYLE_45 "\\sbasedon0" "\\snext45" " TOC 5;}"
-      "{" RTF_STYLE_46 "\\sbasedon0" "\\snext46" " TOC 6;}"
-      "{" RTF_STYLE_47 "\\sbasedon0" "\\snext47" " TOC 7;}"
-      "{" RTF_STYLE_48 "\\sbasedon0" "\\snext48" " TOC 8;}"
-      "{" RTF_STYLE_49 "\\sbasedon0" "\\snext49" " TOC 9;}"
+      "{\\stylesheet");
+   gsAppendFormatted(stemp, L"{[DATA]"        L"\\snext[NEXT] Paragraph Technical;}", L"[DATA]", gsFormattedTypeA, _style[paraStyleREGULAR]      , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Title 1;}"            , L"[DATA]", gsFormattedTypeA, _style[paraStyleTITLE_1]      , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Title 2;}"            , L"[DATA]", gsFormattedTypeA, _style[paraStyleTITLE_2]      , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Title 3;}"            , L"[DATA]", gsFormattedTypeA, _style[paraStyleTITLE_3]      , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Title 4;}"            , L"[DATA]", gsFormattedTypeA, _style[paraStyleTITLE_4]      , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Title 5;}"            , L"[DATA]", gsFormattedTypeA, _style[paraStyleTITLE_5]      , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Title 1 TOC;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleTITLE_1_TOC]  , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Title 2 TOC;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleTITLE_2_TOC]  , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Title 3 TOC;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleTITLE_3_TOC]  , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Title 4 TOC;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleTITLE_4_TOC]  , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Title 5 TOC;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleTITLE_5_TOC]  , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Paragraph Glossary;}" , L"[DATA]", gsFormattedTypeA, _style[paraStyleKEY_VALUE]    , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleKEY_VALUE    , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Bullet;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_BULLET_1], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_BULLET_1, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Bullet;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_BULLET_2], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_BULLET_2, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Bullet;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_BULLET_3], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_BULLET_3, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Bullet;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_BULLET_4], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_BULLET_4, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Bullet;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_BULLET_5], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_BULLET_5, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Bullet;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_BULLET_6], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_BULLET_6, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Bullet;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_BULLET_7], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_BULLET_7, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Bullet;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_BULLET_8], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_BULLET_8, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Bullet;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_BULLET_9], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_BULLET_9, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] Paragraph Code;}"     , L"[DATA]", gsFormattedTypeA, _style[paraStyleFORMATTED]    , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleREGULAR      , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Number;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_NUMBER_1], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_NUMBER_1, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Number;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_NUMBER_2], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_NUMBER_2, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Number;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_NUMBER_3], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_NUMBER_3, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Number;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_NUMBER_4], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_NUMBER_4, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Number;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_NUMBER_5], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_NUMBER_5, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Number;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_NUMBER_6], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_NUMBER_6, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Number;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_NUMBER_7], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_NUMBER_7, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Number;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_NUMBER_8], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_NUMBER_8, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] List Number;}"        , L"[DATA]", gsFormattedTypeA, _style[paraStyleLIST_NUMBER_9], L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleLIST_NUMBER_9, NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] TOC 1;}"              , L"[DATA]", gsFormattedTypeA, _style[paraStyleTOC_1]        , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleTOC_1        , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] TOC 2;}"              , L"[DATA]", gsFormattedTypeA, _style[paraStyleTOC_2]        , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleTOC_2        , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] TOC 3;}"              , L"[DATA]", gsFormattedTypeA, _style[paraStyleTOC_3]        , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleTOC_3        , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] TOC 4;}"              , L"[DATA]", gsFormattedTypeA, _style[paraStyleTOC_4]        , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleTOC_4        , NULL);
+   gsAppendFormatted(stemp, L"{[DATA]\\sbasedon0\\snext[NEXT] TOC 5;}"              , L"[DATA]", gsFormattedTypeA, _style[paraStyleTOC_5]        , L"[NEXT]", gsFormattedTypeI, (Gi) paraStyleTOC_5        , NULL);
+   gsAppendA(stemp,
       "}"
       "{\\colortbl;"
       "\\red0"   "\\green0"   "\\blue0;"     //  0
@@ -487,11 +480,24 @@ static Gb _FileWriteFormatHeader(Gfile * const file, Gs const * const title)
       "\\nobrkwrptbl\\expshrtn\\snaptogridincell\\asianbrkrule\\noultrlspc\\useltbaln\\splytwnine"
       "\\ftnlytwnine\\lytcalctblwd\\lnbrkrule\\nouicompat\\nofeaturethrottle1\\nojkernpunct\n"
       "\\pgbrdrhead\\pgbrdrfoot\n"
-      "\\sectd\\sectlinegrid360"
-      "\\pgwsxn12240\\pghsxn15480\\marglsxn720\\margrsxn720\\margtsxn720\\margbsxn720\\guttersxn0" // letter .5" margin
-      "\\headery708\\footery708"
-      "\\ltrsect",
+      "\\sectd\\sectlinegrid360");
+   gsAppendFormatted(
+      stemp,
+      L"\\pgwsxn[PAPER_W]\\pghsxn[PAPER_H]\\marglsxn[MARGIN_L]\\margrsxn[MARGIN_R]\\margtsxn[MARGIN_T]\\margbsxn[MARGIN_B]\\guttersxn0",
+      L"[PAPER_W]",  gsFormattedTypeI, (Gi) (paper->width_MM   * GrTWIP_PER_MM),
+      L"[PAPER_H]",  gsFormattedTypeI, (Gi) (paper->height_MM  * GrTWIP_PER_MM),
+      L"[MARGIN_L]", gsFormattedTypeI, (Gi) (paper->marginL_MM * GrTWIP_PER_MM),
+      L"[MARGIN_R]", gsFormattedTypeI, (Gi) (paper->marginR_MM * GrTWIP_PER_MM),
+      L"[MARGIN_T]", gsFormattedTypeI, (Gi) (paper->marginT_MM * GrTWIP_PER_MM),
+      L"[MARGIN_B]", gsFormattedTypeI, (Gi) (paper->marginB_MM * GrTWIP_PER_MM),
       NULL);
+   gsAppendA(stemp,
+      "\\headery708\\footery708"
+      "\\ltrsect");
+
+   result = gfileSetS(file, gcTypeU1, stemp, NULL);
+
+   gsDestroy(stemp);
 
    greturn result;
 }
@@ -522,7 +528,9 @@ static Gb _FileWriteParagraph(Gfile * const file, Para const * const para)
 
    result = gbTRUE;
 
-   result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_00 "\\ilvl0\n", NULL);
+   stemp = gsCreateFromFormatted(L"\\pard\\plain [STYLE]\\ilvl0\n", L"[STYLE]", gsFormattedTypeA, _style[paraStyleREGULAR], NULL);
+   result &= gfileSetS(file, gcTypeU1, stemp, NULL);
+   gsDestroy(stemp);
 
    stemp   = _ProcessInline(para->str, para);
    result &= gfileSetS(file, gcTypeU1, stemp, NULL);
@@ -545,7 +553,9 @@ static Gb _FileWriteKeyValue(Gfile * const file, Para const * const para)
 
    result = gbTRUE;
 
-   result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_20 "\\ilvl0\n", NULL);
+   stemp   = gsCreateFromFormatted(L"\\pard\\plain [STYLE]\\ilvl0\n", L"[STYLE]", gsFormattedTypeA, _style[paraStyleKEY_VALUE], NULL);
+   result &= gfileSetS(file, gcTypeU1, stemp, NULL);
+   gsDestroy(stemp);
 
    stemp   = _ProcessInline(para->str, para);
    result &= gfileSetS(file, gcTypeU1, stemp, NULL);
@@ -562,7 +572,8 @@ func: _FileWriteScopeStart
 static Gb _FileWriteScopeStart(Gfile * const file, ParaType const type,
    Gindex const indentLevel, ParaType const parentType)
 {
-   Gb result;
+   Gb  result;
+   Gs *stemp;
 
    genter;
 
@@ -572,40 +583,24 @@ static Gb _FileWriteScopeStart(Gfile * const file, ParaType const type,
    {
    case paraTypeFORMATED:
    case paraTypeSCOPE_FORMATED:
-      result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_30 "\\ilvl0\n ", NULL);
+      stemp   = gsCreateFromFormatted(L"\\pard\\plain [STYLE]\\ilvl0\n ", L"[STYLE]", gsFormattedTypeA, _style[paraStyleFORMATTED], NULL);
+      result &= gfileSetS(file, gcTypeU1, stemp, NULL);
+      gsDestroy(stemp);
       break;
 
    case paraTypeITEM:
    case paraTypeSCOPE_ITEM:
-      if (parentType == paraTypeSCOPE_LIST_BULLET)
+      if      (parentType == paraTypeSCOPE_LIST_BULLET)
       {
-         switch (indentLevel)
-         {
-         case 0: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_21 "\\ilvl0\n\\bullet  ", NULL); break;
-         case 1: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_22 "\\ilvl0\n\\bullet  ", NULL); break;
-         case 2: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_23 "\\ilvl0\n\\bullet  ", NULL); break;
-         case 3: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_24 "\\ilvl0\n\\bullet  ", NULL); break;
-         case 4: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_25 "\\ilvl0\n\\bullet  ", NULL); break;
-         case 5: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_26 "\\ilvl0\n\\bullet  ", NULL); break;
-         case 6: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_27 "\\ilvl0\n\\bullet  ", NULL); break;
-         case 7: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_28 "\\ilvl0\n\\bullet  ", NULL); break;
-         case 8: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_29 "\\ilvl0\n\\bullet  ", NULL); break;
-         }
+         stemp = gsCreateFromFormatted(L"\\pard\\plain [STYLE]\\ilvl0\n\\bullet  ", L"[STYLE]", gsFormattedTypeA, _style[paraStyleLIST_BULLET_1 + indentLevel], NULL);
+         result &= gfileSetS(file, gcTypeU1, stemp, NULL);
+         gsDestroy(stemp);
       }
       else if (parentType == paraTypeSCOPE_LIST_NUMBER)
       {
-         switch (indentLevel)
-         {
-         case 0: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_21 "\\ilvl0\n# ", NULL); break;
-         case 1: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_22 "\\ilvl0\n# ", NULL); break;
-         case 2: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_23 "\\ilvl0\n# ", NULL); break;
-         case 3: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_24 "\\ilvl0\n# ", NULL); break;
-         case 4: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_25 "\\ilvl0\n# ", NULL); break;
-         case 5: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_26 "\\ilvl0\n# ", NULL); break;
-         case 6: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_27 "\\ilvl0\n# ", NULL); break;
-         case 7: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_28 "\\ilvl0\n# ", NULL); break;
-         case 8: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_29 "\\ilvl0\n# ", NULL); break;
-         }
+         stemp = gsCreateFromFormatted(L"\\pard\\plain [STYLE]\\ilvl0\n\\bullet  ", L"[STYLE]", gsFormattedTypeA, _style[paraStyleLIST_NUMBER_1 + indentLevel], NULL);
+         result &= gfileSetS(file, gcTypeU1, stemp, NULL);
+         gsDestroy(stemp);
       }
       break;
 
@@ -744,19 +739,9 @@ static Gb _FileWriteTitle(Gfile * const file, Para const * const para)
 
    result = gbTRUE;
 
-   switch (para->type)
-   {
-   case paraTypeTITLE_1:     result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_01 "\\ilvl0\n", NULL); break;
-   case paraTypeTITLE_TOC_1: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_11 "\\ilvl0\n", NULL); break;
-   case paraTypeTITLE_2:     result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_02 "\\ilvl0\n", NULL); break;
-   case paraTypeTITLE_TOC_2: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_12 "\\ilvl0\n", NULL); break;
-   case paraTypeTITLE_3:     result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_03 "\\ilvl0\n", NULL); break; 
-   case paraTypeTITLE_TOC_3: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_13 "\\ilvl0\n", NULL); break;
-   case paraTypeTITLE_4:     result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_04 "\\ilvl0\n", NULL); break;                                                        
-   case paraTypeTITLE_TOC_4: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_14 "\\ilvl0\n", NULL); break;
-   case paraTypeTITLE_5:     result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_05 "\\ilvl0\n", NULL); break;
-   case paraTypeTITLE_TOC_5: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_15 "\\ilvl0\n", NULL); break;
-   }
+   stemp = gsCreateFromFormatted(L"\\pard\\plain [STYLE]\\ilvl0\n", L"[STYLE]", gsFormattedTypeA, _style[para->type], NULL);
+   result &= gfileSetS(file, gcTypeU1, stemp, NULL);
+   gsDestroy(stemp);
 
    stemp   = _ProcessInline(para->str, para);
    result &= gfileSetS(file, gcTypeU1, stemp, NULL);
@@ -787,14 +772,9 @@ static Gb _FileWriteTOC(Gfile * const file, ParaArray const * const tocList)
       // Get the title.
       para = paraArrayGetAt(tocList, index);
 
-      switch (para->type)
-      {
-      case paraTypeTITLE_TOC_1: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_41 "\\ilvl0\n",  NULL); break;
-      case paraTypeTITLE_TOC_2: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_42 "\\ilvl0\n",  NULL); break;
-      case paraTypeTITLE_TOC_3: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_43 "\\ilvl0\n",  NULL); break;
-      case paraTypeTITLE_TOC_4: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_44 "\\ilvl0\n",  NULL); break;
-      case paraTypeTITLE_TOC_5: result &= gfileSetA(file, gcTypeU1, "\\pard\\plain " RTF_STYLE_45 "\\ilvl0\n",  NULL); break;
-      }
+      stemp = gsCreateFromFormatted(L"\\pard\\plain [STYLE]\\ilvl0\n", L"[STYLE]", gsFormattedTypeA, _style[paraStyleTOC_1 + para->type - paraTypeTITLE_TOC_1], NULL);
+      gfileSetS(file, gcTypeU1, stemp, NULL);
+      gsDestroy(stemp);
 
       stemp = _ProcessInline(para->str, para);
       gfileSetS(file, gcTypeU1, stemp, NULL);
@@ -812,21 +792,41 @@ func: _Start
 static void _Start(void)
 {
    Gindex     index;
-   ParaStyle *style;
+   PaperPara *para;
    Char       indent[80],
-              styleId[8];
+              styleId[8],
+              font[80];
 
    genter;
 
-   forCount (index, ParaStyleCOUNT)
+   sprintf_s(_font[paraFontStyleSERIF], 1024, "{\\f0\\froman\\fcharset0\\fprq2 %S;}",  gsGet(PaperFontGet(paraFontStyleSERIF)));
+   sprintf_s(_font[paraFontStyleSANS],  1024, "{\\f1\\fswiss\\fcharset0\\fprq2 %S;}",  gsGet(PaperFontGet(paraFontStyleSANS)));
+   sprintf_s(_font[paraFontStyleMONO],  1024, "{\\f2\\fmodern\\fcharset0\\fprq1 %S;}", gsGet(PaperFontGet(paraFontStyleMONO)));
+
+   forCount (index, paraStyleCOUNT)
    {
+      para = PaperParaGet(index);
+
       sprintf_s(styleId, 8, "\\s%d", index);
       sprintf_s(
          indent, 
          80, 
-         "\\li%d\\lin%d\\ri%d\\rin%d",
-         (int) PaperGetParaIndentL(index), (int) PaperGetParaIndentL(index),
-         (int) PaperGetParaIndentR(index), (int) PaperGetParaIndentR(index));
+         "\\li%d"
+         "\\lin%d"
+         "\\ri%d"
+         "\\rin%d",
+         (int) (para->indentL_MM * GrTWIP_PER_MM), 
+         (int) (para->indentL_MM * GrTWIP_PER_MM),
+         (int) (para->indentR_MM * GrTWIP_PER_MM),
+         (int) (para->indentR_MM * GrTWIP_PER_MM));
+      
+      sprintf_s(
+         font,
+         80,
+         "\\f%d"
+         "\\fs%d",
+         para->fontStyle,
+         (int) (para->fontSize_Point * GrHALF_POINT_PER_POINT));
 
       switch (index)
       {
@@ -834,21 +834,28 @@ static void _Start(void)
          sprintf_s(
             _style[index],
             1024,
-            "%s\\sb36\\sa36\\widctlpar%s\\faauto\\sl0\\slmult1\\nowrap\\box\\brdrhair\\cbpat16\\f2\\fs20\\strike0\\ulnone",
+            "%s\\sb36\\sa36\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\nowrap\\box\\brdrhair\\cbpat16"
+            "%s\\strike0\\ulnone",
             styleId, 
-            indent);
+            indent,
+            font);
          break;
 
       case paraStyleKEY_VALUE:
          sprintf_s(
             _style[index],
             1024,
-            "\\s20\\sb0\\sa0\\widctlpar\\li%d\\lin%d\\fi%d\\ri%d\\rin%d\\faauto\\sl0\\slmult1\\tx%d\\f0\\fs20\\strike0\\ulnone",
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s"
+            "\\fi%d\\faauto\\sl0\\slmult1"
+            "\\tx%d"
+            "%s\\strike0\\ulnone",
             styleId, 
-            (int) (PaperGetParaIndentL(index) + PaperGetParaTabStop(index)), (int) (PaperGetParaIndentL(index) + PaperGetParaTabStop(index)),
-            (int) -PaperGetParaTabStop(index),
-            (int) PaperGetParaIndentR(index),                                (int) PaperGetParaIndentR(index),
-            (int) PaperGetParaTabStop(index));
+            indent,
+            (int) (para->indentL_MM_FirstLine * GrTWIP_PER_MM),
+            (int) (para->tabStop_MM           * GrTWIP_PER_MM),
+            font);
          break;
 
       case paraStyleREGULAR:
@@ -856,9 +863,12 @@ static void _Start(void)
          sprintf_s(
             _style[index],
             1024,
-            "\\s0\\sb36\\sa36\\widctlpar%s\\faauto\\sl0\\slmult1\\f0\\fs20\\strike0\\ulnone",
+            "%s\\sb36\\sa36\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1"
+            "%s\\strike0\\ulnone",
             styleId, 
-            indent);
+            indent,
+            font);
          break;
 
 
@@ -866,270 +876,396 @@ static void _Start(void)
          sprintf_s(
             _style[index],
             1024,
-            "\\s1\\sb144\\sa144\\widctlpar\\keep\\keepn%s\\faauto\\sl0\\slmult1\\brdrb\\brdrhair\\f1\\b0\\fs60\\strike0\\ulnone"
+            "%s\\sb144\\sa144\\widctlpar\\keep\\keepn"
+            "%s\\faauto\\sl0\\slmult1\\brdrb\\brdrhair"
+            "%s\\b0\\strike0\\ulnone",
             styleId, 
-            indent);
+            indent,
+            font);
          break;
 
       case paraStyleTITLE_2:
          sprintf_s(
             _style[index],
             1024,
-            "\\s2\\sb144\\sa144\\widctlpar\\keep\\keepn%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs52\\strike0\\ulnone",
+            "%s\\sb144\\sa144\\widctlpar\\keep\\keepn"
+            "%s\\faauto\\sl0\\slmult1"
+            "%s\\b0\\strike0\\ulnone",
             styleId, 
-            indent);
+            indent,
+            font);
          break;
 
       case paraStyleTITLE_3:
          sprintf_s(
             _style[index],
             1024,
-            "\\s3\\sb144\\sa144\\widctlpar\\keep\\keepn%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs46\\strike0\\ulnone",
+            "%s\\sb144\\sa144\\widctlpar\\keep\\keepn"
+            "%s\\faauto\\sl0\\slmult1"
+            "%s\\b0\\strike0\\ulnone",
             styleId, 
-            indent);
+            indent,
+            font);
          break;
 
       case paraStyleTITLE_4:
          sprintf_s(
             _style[index],
             1024,
-            "\\s4\\sb144\\sa144\\widctlpar\\keep\\keepn%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs40\\strike0\\ulnone",
+            "%s\\sb144\\sa144\\widctlpar\\keep\\keepn"
+            "%s\\faauto\\sl0\\slmult1"
+            "%s\\b0\\strike0\\ulnone",
             styleId, 
-            indent);
+            indent,
+            font);
          break;
 
       case paraStyleTITLE_5:
          sprintf_s(
             _style[index],
             1024,
-            "\\s5\\sb144\\sa144\\widctlpar\\keep\\keepn%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs36\\strike0\\ulnone",
+            "%s\\sb144\\sa144\\widctlpar\\keep\\keepn"
+            "%s\\faauto\\sl0\\slmult1"
+            "%s\\b0\\strike0\\ulnone",
             styleId, 
-            indent);
+            indent,
+            font);
          break;
 
       case paraStyleTITLE_1_TOC:
          sprintf_s(
             _style[index],
             1024,
-            "\\s11\\sb144\\sa144\\widctlpar\\keep\\keepn\\level0\\outlinelevel0%s\\faauto\\sl0\\slmult1\\brdrb\\brdrhair\\f1\\b0\\fs60\\strike0\\ulnone",
+            "%s\\sb144\\sa144\\widctlpar\\keep\\keepn\\level0\\outlinelevel0"
+            "%s\\faauto\\sl0\\slmult1\\brdrb\\brdrhair"
+            "%s\\b0\\strike0\\ulnone",
             styleId, 
-            indent);
+            indent,
+            font);
          break;
 
       case paraStyleTITLE_2_TOC:
          sprintf_s(
             _style[index],
             1024,
-            "\\s12\\sb144\\sa144\\widctlpar\\keep\\keepn\\level1\\outlinelevel1%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs52\\strike0\\ulnone",
-            indent);
+            "%s\\sb144\\sa144\\widctlpar\\keep\\keepn\\level1\\outlinelevel1"
+            "%s\\faauto\\sl0\\slmult1"
+            "%s\\b0\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleTITLE_3_TOC:
          sprintf_s(
             _style[index],
             1024,
-            "\\s13\\sb144\\sa144\\widctlpar\\keep\\keepn\\level2\\outlinelevel2%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs46\\strike0\\ulnone",
-            indent);
+            "%s\\sb144\\sa144\\widctlpar\\keep\\keepn\\level2\\outlinelevel2"
+            "%s\\faauto\\sl0\\slmult1"
+            "%s\\b0\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleTITLE_4_TOC:
          sprintf_s(
             _style[index],
             1024,
-            "\\s14\\sb144\\sa144\\widctlpar\\keep\\keepn\\level3\\outlinelevel3%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs40\\strike0\\ulnone",
-            indent);
+            "%s\\sb144\\sa144\\widctlpar\\keep\\keepn\\level3\\outlinelevel3"
+            "%s\\faauto\\sl0\\slmult1"
+            "%s\\b0\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleTITLE_5_TOC:
          sprintf_s(
             _style[index],
             1024,
-            "\\s15\\sb144\\sa144\\widctlpar\\keep\\keepn\\level4\\outlinelevel4%s\\faauto\\sl0\\slmult1\\f1\\b0\\fs36\\strike0\\ulnone",
-            indent);
+            "%s\\sb144\\sa144\\widctlpar\\keep\\keepn\\level4\\outlinelevel4"
+            "%s\\faauto\\sl0\\slmult1"
+            "%s\\b0\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleTOC_1:
          sprintf_s(
             _style[index],
             1024,
-            "\\s41\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080\\f0\\b0\\fs20\\strike0\\ul1",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080"
+            "%s\\b0\\strike0\\ul1",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleTOC_2:
          sprintf_s(
             _style[index],
             1024,
-            "\\s42\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleTOC_3:
          sprintf_s(
             _style[index],
             1024,
-            "\\s43\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleTOC_4:
          sprintf_s(
             _style[index],
             1024,
-            "\\s44\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleTOC_5:
          sprintf_s(
             _style[index],
             1024,
-            "\\s45\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tqr\\tldot\\tx10080"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_BULLET_1:
          sprintf_s(
             _style[index],
             1024,
-            "\\s21\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1440\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx1440"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_BULLET_2:
          sprintf_s(
             _style[index],
             1024,
-            "\\s22\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1584\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx1584"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_BULLET_3:
          sprintf_s(
             _style[index],
             1024,
-            "\\s23\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1728\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx1728"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_BULLET_4:
          sprintf_s(
             _style[index],
             1024,
-            "\\s24\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1872\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx1872"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_BULLET_5:
          sprintf_s(
             _style[index],
             1024,
-            "\\s25\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2016\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx2016"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_BULLET_6:
          sprintf_s(
             _style[index],
             1024,
-            "\\s26\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2160\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx2160"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_BULLET_7:
          sprintf_s(
             _style[index],
             1024,
-            "\\s27\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2304\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx2304"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_BULLET_8:
          sprintf_s(
             _style[index],
             1024,
-            "\\s28\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2448\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx2448"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_BULLET_9:
          sprintf_s(
             _style[index],
             1024,
-            "\\s29\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2592\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx2592"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_NUMBER_1:
          sprintf_s(
             _style[index],
             1024,
-            "\\s31\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1440\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx1440"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_NUMBER_2:
          sprintf_s(
             _style[index],
             1024,
-            "\\s32\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1584\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx1584"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_NUMBER_3:
          sprintf_s(
             _style[index],
             1024,
-            "\\s33\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1728\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx1728"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_NUMBER_4:
          sprintf_s(
             _style[index],
             1024,
-            "\\s34\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx1872\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx1872"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_NUMBER_5:
          sprintf_s(
             _style[index],
             1024,
-            "\\s35\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2016\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx2016"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_NUMBER_6:
          sprintf_s(
             _style[index],
             1024,
-            "\\s36\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2160\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx2160"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_NUMBER_7:
          sprintf_s(
             _style[index],
             1024,
-            "\\s37\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2304\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx2304"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_NUMBER_8:
          sprintf_s(
             _style[index],
             1024,
-            "\\s38\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2448\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx2448"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
 
       case paraStyleLIST_NUMBER_9:
          sprintf_s(
             _style[index],
             1024,
-            "\\s39\\sb0\\sa0\\widctlpar%s\\faauto\\sl0\\slmult1\\tx2592\\f0\\fs20\\strike0\\ulnone",
-            indent);
+            "%s\\sb0\\sa0\\widctlpar"
+            "%s\\faauto\\sl0\\slmult1\\tx2592"
+            "%s\\strike0\\ulnone",
+            styleId,
+            indent,
+            font);
          break;
       }
    }

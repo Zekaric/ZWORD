@@ -74,7 +74,7 @@ int main(int acount, char **alist)
          "   \"html\"       convert file to HTML format.\n"
          "   \"md\"         convert file to MD markup.\n"
          // future "   \"PDF\"  convert file to PDF format.\n"
-         "   \"rtf\"        convert file to RTF format.\n"
+         "   \"rtf\"        convert file to RTF format.  (Currently does not do tables.)\n"
          //"   \"zlyt\"       convert file to Z:LYT markup.\n"
          "\n"
          "[file]     =\n"
