@@ -293,6 +293,8 @@ static Gs *_ProcessInline(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"|*psi|",                   L"&psi;",               NULL);
    gsFindAndReplaceU2(str, L"|*omega|",                 L"&omega;",             NULL);
 
+   gsFindAndReplaceU2(str, L"|_|",                      L"&nbsp;",              NULL);
+
    gsFindAndReplaceU2(str, L"|' ",                      L"<sup>",               NULL);
    gsFindAndReplaceU2(str, L" '|",                      L"</sup>",              NULL);
    gsFindAndReplaceU2(str, L"|, ",                      L"<sub>",               NULL);

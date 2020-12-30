@@ -8,6 +8,8 @@ description:
 Entry point for the WORD program
 
 WORD : W)ords O)rganized R)udimentary D)ocumentation
+
+zword all D:\pzgithub\ZWORD\README.zword D:\pzgithub\ZWORD\ZWORD\zword.paper
 ******************************************************************************/
 
 /******************************************************************************
@@ -125,6 +127,8 @@ int main(int acount, char **alist)
    }
 
    // Clean up.
+   PaperStop();
+
    gsDestroy(command);
    gsDestroy(file);
    gpathDestroy(path);

@@ -41,19 +41,20 @@ WriteFunctions GetFunctionsMD(void)
 {
    WriteFunctions func;
 
-   func.FileOpen                 = _FileOpen;
-   func.FileWriteComment         = _FileWriteComment;
-   func.FileWriteFormatFooter    = _FileWriteFormatFooter;
-   func.FileWriteFormatHeader    = _FileWriteFormatHeader;
-   func.FileWriteKeyValue        = _FileWriteKeyValue;
-   func.FileWritePageBreak       = _FileWritePageBreak;
-   func.FileWriteParagraph       = _FileWriteParagraph;
-   func.FileWriteScopeStart      = _FileWriteScopeStart;
-   func.FileWriteScopeStop       = _FileWriteScopeStop;
-   func.FileWriteString          = _FileWriteString;
-   func.FileWriteStringUnaltered = _FileWriteStringUnaltered;
-   func.FileWriteTitle           = _FileWriteTitle;
-   func.FileWriteTOC             = _FileWriteTOC;
+   func.FileOpen                      = _FileOpen;
+   func.FileWriteComment              = _FileWriteComment;
+   func.FileWriteFormatFooter         = _FileWriteFormatFooter;
+   func.FileWriteFormatHeader         = _FileWriteFormatHeader;
+   func.FileWriteKeyValue             = _FileWriteKeyValue;
+   func.FileWritePageBreak            = _FileWritePageBreak;
+   func.FileWriteParagraph            = _FileWriteParagraph;
+   func.FileWriteScopeStart           = _FileWriteScopeStart;
+   func.FileWriteScopeStop            = _FileWriteScopeStop;
+   func.FileWriteString               = _FileWriteString;
+   func.FileWriteStringUnaltered      = _FileWriteStringUnaltered;
+   func.FileWriteTableHeaderSeparator = _FileWriteTableHeaderSeparator;
+   func.FileWriteTitle                = _FileWriteTitle;
+   func.FileWriteTOC                  = _FileWriteTOC;
 
    return func;
 }
@@ -295,6 +296,8 @@ static Gs *_ProcessInline(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"`",                        L"&#96;",               NULL);
    gsFindAndReplaceU2(str, L"~",                        L"&#126;",              NULL);
    
+   gsFindAndReplaceU2(str, L"|_|",                      L" ",                   NULL);
+
    gsFindAndReplaceU2(str, L"|' ",                      L"<sup>",               NULL);
    gsFindAndReplaceU2(str, L" '|",                      L"</sup>",              NULL);
    gsFindAndReplaceU2(str, L"|, ",                      L"<sub>",               NULL);
@@ -522,7 +525,6 @@ static Gb _FileWriteScopeStart(Gfile * const file, ParaType const type,
       break;
 
    case paraTypeTABLE_ROW:
-      result &= gfileSetA(file, gcTypeU1, "|\n", NULL);
       break;
    }
 
@@ -561,6 +563,8 @@ static Gb _FileWriteScopeStop(Gfile * const file, ParaType const type, ParaType 
    case paraTypeSCOPE_LIST_BULLET:
    case paraTypeSCOPE_LIST_KEY_VALUE:
    case paraTypeSCOPE_LIST_NUMBER:
+      break;
+
    case paraTypeTABLE_COLUMN_HEADER:
    case paraTypeSCOPE_TABLE_COLUMN_HEADER:
    case paraTypeTABLE_COLUMN_HEADER_NO_BREAK:
@@ -577,7 +581,11 @@ static Gb _FileWriteScopeStop(Gfile * const file, ParaType const type, ParaType 
    case paraTypeSCOPE_TABLE_COLUMN_NUMBER:
    case paraTypeTABLE_COLUMN_NUMBER_FILL:
    case paraTypeSCOPE_TABLE_COLUMN_NUMBER_FILL:
+      result &= gfileSetA(file, gcTypeU1, " ", NULL);
+      break;
+
    case paraTypeTABLE_ROW:
+      result &= gfileSetA(file, gcTypeU1, "|\n", NULL);
       break;
    }
 

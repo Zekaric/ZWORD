@@ -53,19 +53,20 @@ WriteFunctions GetFunctionsRTF(void)
 {
    WriteFunctions func;
 
-   func.FileOpen                 = _FileOpen;
-   func.FileWriteComment         = _FileWriteComment;
-   func.FileWriteFormatFooter    = _FileWriteFormatFooter;
-   func.FileWriteFormatHeader    = _FileWriteFormatHeader;
-   func.FileWriteKeyValue        = _FileWriteKeyValue;
-   func.FileWritePageBreak       = _FileWritePageBreak;
-   func.FileWriteParagraph       = _FileWriteParagraph;
-   func.FileWriteScopeStart      = _FileWriteScopeStart;
-   func.FileWriteScopeStop       = _FileWriteScopeStop;
-   func.FileWriteString          = _FileWriteString;
-   func.FileWriteStringUnaltered = _FileWriteStringUnaltered;
-   func.FileWriteTitle           = _FileWriteTitle;
-   func.FileWriteTOC             = _FileWriteTOC;
+   func.FileOpen                      = _FileOpen;
+   func.FileWriteComment              = _FileWriteComment;
+   func.FileWriteFormatFooter         = _FileWriteFormatFooter;
+   func.FileWriteFormatHeader         = _FileWriteFormatHeader;
+   func.FileWriteKeyValue             = _FileWriteKeyValue;
+   func.FileWritePageBreak            = _FileWritePageBreak;
+   func.FileWriteParagraph            = _FileWriteParagraph;
+   func.FileWriteScopeStart           = _FileWriteScopeStart;
+   func.FileWriteScopeStop            = _FileWriteScopeStop;
+   func.FileWriteString               = _FileWriteString;
+   func.FileWriteStringUnaltered      = _FileWriteStringUnaltered;
+   func.FileWriteTableHeaderSeparator = _FileWriteTableHeaderSeparator;
+   func.FileWriteTitle                = _FileWriteTitle;
+   func.FileWriteTOC                  = _FileWriteTOC;
 
    // Load in styling.
    _Start();
@@ -305,6 +306,8 @@ static Gs *_ProcessInline(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"|*chi|",                   L"\\u967X",              NULL);
    gsFindAndReplaceU2(str, L"|*psi|",                   L"\\u968X",              NULL);
    gsFindAndReplaceU2(str, L"|*omega|",                 L"\\u969X",              NULL);
+
+   gsFindAndReplaceU2(str, L"|_|",                      L" ",                    NULL);
 
    gsFindAndReplaceU2(str, L"|' ",                      L"\\super ",             NULL);
    gsFindAndReplaceU2(str, L" '|",                      L"\\nosupersub ",        NULL);
@@ -725,6 +728,19 @@ static Gb _FileWriteStringUnaltered(Gfile * const file, Para const * const para)
    result = gfileSetS(file, gcTypeU1, para->str, NULL);
 
    greturn result;
+}
+
+/******************************************************************************
+func: _FileWriteTableHeaderSeparator
+******************************************************************************/
+static Gb _FileWriteTableHeaderSeparator(Gfile * const file, ParaTypeArray const * const headerList)
+{
+   genter;
+
+   file;
+   headerList;
+
+   greturn gbTRUE;
 }
 
 /******************************************************************************

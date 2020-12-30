@@ -213,6 +213,16 @@ void PaperStart(void)
 }
 
 /******************************************************************************
+func: paperStop
+******************************************************************************/
+void PaperStop(void)
+{
+   gsDestroy(_paperFont[paraFontStyleMONO]);
+   gsDestroy(_paperFont[paraFontStyleSANS]);
+   gsDestroy(_paperFont[paraFontStyleSERIF]);
+}
+
+/******************************************************************************
 local:
 function:
 ******************************************************************************/

@@ -288,5 +288,6 @@ Gs            *PaperFontGet(     ParaFontStyle style);
 PaperPara     *PaperParaGet(     ParaStyle style);
 void           PaperLoad(        Gs const * const filePaper);
 void           PaperStart(       void);
+void           PaperStop(        void);
 
 #endif
