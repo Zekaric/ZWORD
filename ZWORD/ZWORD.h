@@ -179,6 +179,7 @@ typedef struct
 
 typedef struct
 {
+   Gindex          line;
    ParaType        type;
    Gs             *chapterStr;
    Gs             *str;
