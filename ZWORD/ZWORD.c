@@ -539,11 +539,11 @@ static int _Process(Gs const * const command, Gpath const * const path)
                if (para->str)
                {
                   gsAppendA(para->str, "\n");
-                  gsAppend( para->str, gsTrimU2(stemp, WHITESPACE_U2));
+                  gsAppend( para->str, gsTrimRightU2(stemp, WHITESPACE_U2));
                }
                else
                {
-                  para->str = gsTrimU2(stemp, WHITESPACE_U2);
+                  para->str = gsTrimRightU2(stemp, WHITESPACE_U2);
                }
             }
          }

@@ -70,7 +70,7 @@ Why not plain text?  Plain text is good but it lacks a certain presentation.  Pl
     Convert the zword file to a markdown file.
 
 **rtf**<br>
-    Convert the zword file to an RTF file.  A zwordRTF.def file is required.
+    Convert the zword file to an RTF file.  A paperFile file is required.  Currently does not do tables.
 
 
 # 3 - Format
@@ -172,25 +172,25 @@ Note, not all markup may have a meaning in the target format that you will ask t
 **&#124;chapter&#124;**<br>
     Chapter number.  "3.1.4.1.5.9"
 
-**&#124;b ... b&#124;**<br>
+**&#124;b &#124;...&#124; b&#124;**<br>
     **Bold** the contents. Space is important.
 
-**&#124;i ... i&#124;**<br>
+**&#124;i &#124;...&#124; i&#124;**<br>
     *Italicize* the contents. Space is important.
 
-**&#124;u ... u&#124;**<br>
+**&#124;u &#124;...&#124; u&#124;**<br>
     <u>Underline</u> the contents. Space is important.
 
-**&#124;s ... s&#124;**<br>
+**&#124;s &#124;...&#124; s&#124;**<br>
     ~~Strike~~ through the contents. Space is important.
 
-**&#124;' ... '&#124;**<br>
+**&#124;' &#124;...&#124; '&#124;**<br>
     <sup>Superscript</sup> the contents. Space is important.
 
-**&#124;, ... ,&#124;**<br>
+**&#124;, &#124;...&#124; ,&#124;**<br>
     <sub>Subscript</sub> the contents. Space is important.
 
-**&#124;. ... .&#124;**<br>
+**&#124;. &#124;...&#124; .&#124;**<br>
     `monospace` the contents. Space is important.
 
 **&#124;img &#124;...&#124; img&#124;**<br>
@@ -208,9 +208,15 @@ Note, not all markup may have a meaning in the target format that you will ask t
 **&#124;line  &#124;**<br>
     Break the line.  Leave two spaces.  Start on the next line.
 
-**\ &#124; , &#124; \ **<br>
-    Escape for a \` No space between &#124; and \.
+**&#124;_&#124;**<br>
+    Non breaking space.
+
+**" &#124; "**<br>
+    Escape for a |.  No space between "s and |.  Only required if the use of the | could be misinterpreted as one of these inline markup sequences.
+
+**" _ "**<br>
+    Empty character.  No space between "s and _.
 
 **&#124;&#42;...&#124;**<br>
-    Insert a symbol.  No space between &#42; and the following words.  One of...<br /><br />**Legal:** copyright, registered tm, tm,<br /><br />&copy;&reg;&trade;<br /><br />**Currency:** bitcoin, cent, dollar, euro, franc, lira, lira turkey, peso, pound, ruble, rupee, rupee india, won, yen<br /><br />&#x20BF;&cent;$&euro;&#x20A3;&#x20A4;&#x20BA;&#x20B1;&pound;&#x20BD;&#x20A8;&#x20B9;&#x20A9;&yen;<br /><br />**Punctuation:** ..., 1/4, 1/2, 3/4, ampersand, at, bullet, dagger s, dagger d, hash, inv!, inv?, quote angle d l, quote angle d r, quote angle s l, quote angle s r, quote d, quote d l, quote d r, quote d low, quote s, quote s l, quote s r, quote s low, para, prime d, prime s<br /><br />&hellip;&frac14;&frac12;&frac34;&amp;@&bull;&dagger;&Dagger;#&iexcl;&iquest;&laquo;&raquo;&lsaquo;&rsaquo;"&ldquo;&rdquo;&bdquo;'&lsquo;&rsquo;&sbquo;&para;&Prime;&prime;<br /><br />**Game:** arrow d, arrow l, arrow r, arrow u, arrow lr, arrow ud, arrow \d, arrow /d, arrow \u, arrow /u, arrow d l, arrow d lr, arrow d r, arrow redo, arrow undo, card suit c, card suit d, card suit h, card suit s, chess b k, chess b q, chess b r, chess b b, chess b h, chess b p, chess w k, chess w q, chess w r, chess w b, chess w h, chess w p, die 1, die 2, die 3, die 4, die 5, die 6, ball baseball, ball soccer<br /><br />&darr;&larr;&rarr;&uarr;&harr;&#x2195;&#x2198;&#x2199;&#x2196;&#x2197;&lArr;&hArr;&rArr;&#x21B7;&#x21B6;&clubs;&diams;&hearts;&spades;&#x265A;&#x265B;&#x265C;&#x265D;&#x265E;&#x265F;&#x2654;&#x2655;&#x2656;&#x2657;&#x2658;&#x2659;&#x2680;&#x2681;&#x2682;&#x2683;&#x2684;&#x2685;&#x26BE;&#x26BD;<br /><br />**Symbols:** checkbox off, checkbox on, circle 0%, circle 25%, circle 50%, circle 75%, circle 100%, correct, biohazard, dot, dot filled, envelope, gender f, gender m, gender mf, incorrect, plane, poison, radioactive, Rx, recycle, scissor, snowflake, star 5, star 5 filled, sun<br /><br />&#x2610;&#x2611;&#x25CB;&#x25D4;&#x25D1;&#x25D5;&#x25CF;&#x2713;&#x2623;&#x26AA;&#x26AB;&#x2709;&#x2640;&#x2642;&#x26A5;&#x2717;&#x2708;&#x2620;&#x2622;&#x211E;&#x267B;&#x2702;&#x2744;&#x2606;&#x2605;&#x2600;<br /><br />**Math:** +/-, angle, contains, degree, dot, empty set, equal almost, equal approx, equal greater than, equal less than, equal same, equal not, for all, infinity, integral, intersection, is in, is not in, math phi, math pi, minus, nabla, partial diff, product, proportional to, root, sum, there exists, therefore, union<br /><br />&plusmn;&ang;&ni;&deg;&#x26AA;&empty;&asymp;&cong;&ge;&le;&equiv;&ne;&forall;&infin;&int;&cap;&isin;&notin;&straightphi;&piv;&minus;&nabla;&part;&prod;&prop;&radic;&sum;&exist;&there4;&cup;<br /><br />**Greek:** alpha cap, beta cap, gamma cap, delta cap, epsilon cap, zeta cap, eta cap, theta cap, iota cap, kappa cap, lambda cap, mu cap, nu cap, xi cap, omicron cap, pi cap, rho cap, signma cap, tau cap, upsilon cap, phi cap, chi cap, psi cap, omega cap, alpha, beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa, lambda, mu, nu, xi, omicron, pi, rho, signma, tau, upsilon, phi, chi, psi, omega<br /><br />&Alpha;&Beta;&Gamma;&Delta;&Epsilon;&Zeta;&Eta;&Theta;&Iota;&Kappa;&Lambda;&Mu;&Nu;&Xi;&Omicron;&Pi;&Rho;&Sigma;&Tau;&Upsilon;&Phi;&Chi;&Psi;&Omega;&alpha;&beta;&gamma;&delta;&Epsilon;&zeta;&eta;&theta;&iota;&kappa;&lambda;&mu;&nu;&xi;&Omicron;&pi;&rho;&sigma;&tau;&Upsilon;&phi;&chi;&psi;&omega;
+    Insert a symbol.  No space between &#42; and the following words.  One of...<br /><br />**Legal:** copyright, registered tm, tm,<br /><br />&copy;&reg;&trade;<br /><br />**Currency:** bitcoin, cent, dollar, euro, franc, lira, lira turkey, peso, pound, ruble, rupee, rupee india, won, yen<br /><br />&#x20BF;&cent;$&euro;&#x20A3;&#x20A4;&#x20BA;&#x20B1;&pound;&#x20BD;&#x20A8;&#x20B9;&#x20A9;&yen;<br /><br />**Punctuation:** ..., 1/4, 1/2, 3/4, ampersand, at, bullet, dagger s, dagger d, hash, inv!, inv?, quote angle d l, quote angle d r, quote angle s l, quote angle s r, quote d, quote d l, quote d r, quote d low, quote s, quote s l, quote s r, quote s low, para, prime d, prime s<br /><br />&hellip;&frac14;&frac12;&frac34;&amp;@&bull;&dagger;&Dagger;#&iexcl;&iquest;&laquo;&raquo;&lsaquo;&rsaquo;"&ldquo;&rdquo;&bdquo;'&lsquo;&rsquo;&sbquo;&para;&Prime;&prime;<br /><br />**Game:** arrow d, arrow l, arrow r, arrow u, arrow lr, arrow ud, arrow \d, arrow /d, arrow \u, arrow /u, arrow d l, arrow d lr, arrow d r, arrow redo, arrow undo, card suit c, card suit d, card suit h, card suit s, chess b k, chess b q, chess b r, chess b b, chess b h, chess b p, chess w k, chess w q, chess w r, chess w b, chess w h, chess w p, die 1, die 2, die 3, die 4, die 5, die 6, ball baseball, ball soccer<br /><br />&darr;&larr;&rarr;&uarr;&harr;&#x2195;&#x2198;&#x2199;&#x2196;&#x2197;&lArr;&hArr;&rArr;&#x21B7;&#x21B6;&clubs;&diams;&hearts;&spades;&#x265A;&#x265B;&#x265C;|&#42;chess b**&#x265E;&#x265F;&#x2654;&#x2655;&#x2656;|&#42;chess w**&#x2658;&#x2659;&#x2680;&#x2681;&#x2682;&#x2683;&#x2684;&#x2685;&#x26BE;&#x26BD;<br /><br />**Symbols:** checkbox off, checkbox on, circle 0%, circle 25%, circle 50%, circle 75%, circle 100%, correct, biohazard, dot, dot filled, envelope, gender f, gender m, gender mf, incorrect, plane, poison, radioactive, Rx, recycle, scissor, snowflake, star 5, star 5 filled, sun<br /><br />&#x2610;&#x2611;&#x25CB;&#x25D4;&#x25D1;&#x25D5;&#x25CF;&#x2713;&#x2623;&#x26AA;&#x26AB;&#x2709;&#x2640;&#x2642;&#x26A5;&#x2717;&#x2708;&#x2620;&#x2622;&#x211E;&#x267B;&#x2702;&#x2744;&#x2606;&#x2605;&#x2600;<br /><br />**Math:** +/-, angle, contains, degree, dot, empty set, equal almost, equal approx, equal greater than, equal less than, equal same, equal not, for all, infinity, integral, intersection, is in, is not in, math phi, math pi, minus, nabla, partial diff, product, proportional to, root, sum, there exists, therefore, union<br /><br />&plusmn;&ang;&ni;&deg;&#x26AA;&empty;&asymp;&cong;&ge;&le;&equiv;&ne;&forall;&infin;&int;&cap;&isin;&notin;&straightphi;&piv;&minus;&nabla;&part;&prod;&prop;&radic;&sum;&exist;&there4;&cup;<br /><br />**Greek:** alpha cap, beta cap, gamma cap, delta cap, epsilon cap, zeta cap, eta cap, theta cap, iota cap, kappa cap, lambda cap, mu cap, nu cap, xi cap, omicron cap, pi cap, rho cap, signma cap, tau cap, upsilon cap, phi cap, chi cap, psi cap, omega cap, alpha, beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa, lambda, mu, nu, xi, omicron, pi, rho, signma, tau, upsilon, phi, chi, psi, omega<br /><br />&Alpha;&Beta;&Gamma;&Delta;&Epsilon;&Zeta;&Eta;&Theta;&Iota;&Kappa;&Lambda;&Mu;&Nu;&Xi;&Omicron;&Pi;&Rho;&Sigma;&Tau;&Upsilon;&Phi;&Chi;&Psi;&Omega;&alpha;&beta;&gamma;&delta;&Epsilon;&zeta;&eta;&theta;&iota;&kappa;&lambda;&mu;&nu;&xi;&Omicron;&pi;&rho;&sigma;&tau;&Upsilon;&phi;&chi;&psi;&omega;
 

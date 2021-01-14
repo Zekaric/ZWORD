@@ -307,27 +307,27 @@ static Gs *_ProcessInline(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"|*psi|",                   L"\\u968X",              NULL);
    gsFindAndReplaceU2(str, L"|*omega|",                 L"\\u969X",              NULL);
 
+
+   gsFindAndReplaceU2(str, L"|b |",                     L"\\b ",                 NULL);
+   gsFindAndReplaceU2(str, L"| b|",                     L"\\b0 ",                NULL);
+   gsFindAndReplaceU2(str, L"|i |",                     L"\\i ",                 NULL);
+   gsFindAndReplaceU2(str, L"| i|",                     L"\\i0 ",                NULL);
+   gsFindAndReplaceU2(str, L"|u |",                     L"\\ul1 ",               NULL);
+   gsFindAndReplaceU2(str, L"| u|",                     L"\\ul0 ",               NULL);
+   gsFindAndReplaceU2(str, L"|s |",                     L"\\strike ",            NULL);
+   gsFindAndReplaceU2(str, L"| s|",                     L"\\strike0 ",           NULL);
+   gsFindAndReplaceU2(str, L"|' |",                     L"\\super ",             NULL);
+   gsFindAndReplaceU2(str, L"| '|",                     L"\\nosupersub ",        NULL);
+   gsFindAndReplaceU2(str, L"|, |",                     L"\\sub ",               NULL);
+   gsFindAndReplaceU2(str, L"| ,|",                     L"\\nosupersub ",        NULL);
+   gsFindAndReplaceU2(str, L"|. |",                     L"\\f2 ",                NULL);
+   gsFindAndReplaceU2(str, L"| .|",                     L"\\f0 ",                NULL);
    gsFindAndReplaceU2(str, L"|_|",                      L" ",                    NULL);
-
-   gsFindAndReplaceU2(str, L"|' ",                      L"\\super ",             NULL);
-   gsFindAndReplaceU2(str, L" '|",                      L"\\nosupersub ",        NULL);
-   gsFindAndReplaceU2(str, L"|, ",                      L"\\sub ",               NULL);
-   gsFindAndReplaceU2(str, L" ,|",                      L"\\nosupersub ",        NULL);
-   gsFindAndReplaceU2(str, L"|. ",                      L"\\f2 ",                NULL);
-   gsFindAndReplaceU2(str, L" .|",                      L"\\f0 ",                NULL);
-   gsFindAndReplaceU2(str, L"|b ",                      L"\\b ",                 NULL);
-   gsFindAndReplaceU2(str, L" b|",                      L"\\b0 ",                NULL);
-   gsFindAndReplaceU2(str, L"|i ",                      L"\\i ",                 NULL);
-   gsFindAndReplaceU2(str, L" i|",                      L"\\i0 ",                NULL);
-   gsFindAndReplaceU2(str, L"|u ",                      L"\\ul1 ",               NULL);
-   gsFindAndReplaceU2(str, L" u|",                      L"\\ul0 ",               NULL);
-   gsFindAndReplaceU2(str, L"|s ",                      L"\\strike ",            NULL);
-   gsFindAndReplaceU2(str, L" s|",                      L"\\strike0 ",           NULL);
-   gsFindAndReplaceU2(str, L"|\"",                      L"\\ldblquote ",         NULL);
-   gsFindAndReplaceU2(str, L"\"|",                      L"\\rdblquote ",         NULL);
-
-   gsFindAndReplaceU2(str, L"\\|",                      L"|",                    NULL);
-   gsFindAndReplaceU2(str, L"|\\",                      L"|",                    NULL);
+   gsFindAndReplaceU2(str, L"|\" |",                    L"\\ldblquote ",         NULL);
+   gsFindAndReplaceU2(str, L"| \"|",                    L"\\rdblquote ",         NULL);
+   
+   gsFindAndReplaceU2(str, L"\"|\"",                    L"|",                    NULL);
+   gsFindAndReplaceU2(str, L"\"_\"",                    L"",                     NULL);
 
    gsFindAndReplaceU2(str, L"'",                        L"\\rquote ",            NULL);
    gsFindAndReplaceU2(str, L"`",                        L"\\lquote ",            NULL);
