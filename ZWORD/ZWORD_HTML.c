@@ -314,6 +314,12 @@ static Gs *_ProcessInline(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"\"|\"",                    L"|",                   NULL);
    gsFindAndReplaceU2(str, L"\"_\"",                    L"",                    NULL);
 
+   gsFindAndReplaceU2(str, L"|<|",                      L"&lt;",                NULL);
+   gsFindAndReplaceU2(str, L"|>|",                      L"&gt;",                NULL);
+   gsFindAndReplaceU2(str, L"|\'|",                     L"&apos;",              NULL);
+   gsFindAndReplaceU2(str, L"|\"|",                     L"&quot;",              NULL);
+   gsFindAndReplaceU2(str, L"|&|",                      L"&amp;",               NULL);
+
    greturn str;
 }
 
