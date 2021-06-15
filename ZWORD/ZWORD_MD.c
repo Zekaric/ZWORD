@@ -76,6 +76,8 @@ static Gs *_ProcessInline(Gs * const inStr, Para const * const para)
 
    str = gsCreateFrom(inStr);
 
+   VariableReplace(str);
+
    gsFindAndReplaceU2(str, L"<",                        L"&#60;",               NULL);
    gsFindAndReplaceU2(str, L">",                        L"&#62;",               NULL);
 

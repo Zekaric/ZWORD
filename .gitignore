@@ -8,3 +8,6 @@
 /ZDoccer/*.user
 /ZWORD/Debug64
 Release64
+/Release32
+/ZWORD/Debug32
+/ZWORD/Release32

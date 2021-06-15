@@ -68,6 +68,8 @@ typedef enum
 
    paraTypePAGE_BREAK,
 
+   paraTypeVARIABLE,
+
    paraTypeCOUNT
 } ParaType;
 
@@ -290,5 +292,7 @@ PaperPara     *PaperParaGet(     ParaStyle style);
 void           PaperLoad(        Gs const * const filePaper);
 void           PaperStart(       void);
 void           PaperStop(        void);
+
+void           VariableReplace(  Gs * const value);
 
 #endif

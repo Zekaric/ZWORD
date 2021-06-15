@@ -162,6 +162,9 @@ Note, not all markup may have a meaning in the target format that you will ask t
 **===**<br>
     Insert a page break.  Nothing follows this tag.
 
+**v**<br>
+    Variable.  The variable Key is first followed by a tab, and the rest of the line is the Value for the variable.  To use this variable inline surround the key with &#124; characters.  Care must be taken to ensure you are not redefining an existing code or adding recursion.  Meaning a variable should not include itself in the value or a variable that will eventually include this variable again.
+
 
 ## 3.2 - Inline level markup
 

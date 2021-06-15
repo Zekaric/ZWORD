@@ -19,9 +19,65 @@ include:
 
 /******************************************************************************
 local:
+type:
+******************************************************************************/
+typedef struct
+{
+   Gs    *key;
+   Gs    *value;
+} Variable;
+
+/******************************************************************************
+Variable containers.
+******************************************************************************/
+// Same as G_Array ////////////////////////////////////////////////////////////
+typedef struct 
+{
+   GCONTAINER_VAR;
+
+   Gcount                   countTotal;
+   Gbit                     isVectorSizing   : 1,
+                            isSorted         : 1,
+                            isNullEnding     : 1;
+   GrlCompareFunc           compareFunc;
+   Variable                 **p;
+} VariableArray;
+
+#define variableArrayAdd(                ARRAY,        VALUE)                             g_ArrayAdd(                (G_Array *) ARRAY,        (Gp *) VALUE) 
+#define variableArrayAddAt(              ARRAY, INDEX, VALUE)                             g_ArrayAddAt(              (G_Array *) ARRAY, INDEX, (Gp *) VALUE) 
+#define variableArrayAddBegin(           ARRAY,        VALUE)                             g_ArrayAddBegin(           (G_Array *) ARRAY,        (Gp *) VALUE) 
+#define variableArrayAddEnd(             ARRAY,        VALUE)                             g_ArrayAddEnd(             (G_Array *) ARRAY,        (Gp *) VALUE) 
+#define variableArrayClear(              ARRAY, COUNT, INDEX)                             g_ArrayClear(              (G_Array *) ARRAY, COUNT, INDEX) 
+#define variableArrayCopy(               ARRAY, COUNT, INDEXSRC, INDEXDST)                g_ArrayCopy(               (G_Array *) ARRAY, COUNT, INDEXSRC, INDEXDST) 
+#define variableArrayCopyFrom(           ARRAYDST, INDEXDST, ARRAYSRC, COUNT, INDEXSRC)   g_ArrayCopyFrom(           (G_Array *) ARRAYDST, INDEXDST, (G_Array *) ARRAYSRC, COUNT, INDEXSRC) 
+#define variableArrayCreate(                  )                   (VariableArray *)       g_ArrayCreate(                                VariableArray, Variable *, gbTRUE, NULL, gbTRUE, gbFALSE)
+#define variableArrayCreateContent(      ARRAY)                                           g_ArrayCreateContent(      (G_Array *) ARRAY, VariableArray, Variable *, gbTRUE, NULL, gbTRUE, gbFALSE)
+#define variableArrayDestroy(            ARRAY)                                           g_ArrayDestroy(            (G_Array *) ARRAY) 
+#define variableArrayDestroyContent(     ARRAY)                                           g_ArrayDestroyContent(     (G_Array *) ARRAY) 
+#define variableArrayErase(              ARRAY, VALUE)                                    g_ArrayErase(              (G_Array *) ARRAY, (Gp *) VALUE) 
+#define variableArrayEraseAt(            ARRAY, COUNT, INDEX)                             g_ArrayEraseAt(            (G_Array *) ARRAY, COUNT, INDEX) 
+#define variableArrayEraseBegin(         ARRAY)                                           g_ArrayEraseBegin(         (G_Array *) ARRAY) 
+#define variableArrayEraseEnd(           ARRAY)                                           g_ArrayEraseEnd(           (G_Array *) ARRAY) 
+#define variableArrayFind(               ARRAY, VALUE)                                    g_ArrayFind(               (G_Array *) ARRAY, (Gp *) VALUE) 
+#define variableArrayFlush(              ARRAY)                                           g_ArrayFlush(              (G_Array *) ARRAY) 
+#define variableArrayForEach(            ARRAY, FUNC)                                     g_ArrayForEach(            (G_Array *) ARRAY, FUNC) 
+#define variableArrayGet(                ARRAY)                  ((Variable **)           g_ArrayGet(                (G_Array *) ARRAY))
+#define variableArrayGetAt(              ARRAY, INDEX)           ((Variable *)            g_ArrayGetAt(              (G_Array *) ARRAY, INDEX))
+#define variableArrayGetBegin(           ARRAY)                  ((Variable *)            g_ArrayGetBegin(           (G_Array *) ARRAY))
+#define variableArrayGetCount(           ARRAY)                                           g_ArrayGetCount(           (G_Array *) ARRAY) 
+#define variableArrayGetEnd(             ARRAY)                  ((Variable *)            g_ArrayGetEnd(             (G_Array *) ARRAY))
+#define variableArrayGetSize(            ARRAY)                                           g_ArrayGetSize(            (G_Array *) ARRAY) 
+#define variableArraySetCount(           ARRAY, COUNT)                                    g_ArraySetCount(           (G_Array *) ARRAY, COUNT) 
+#define variableArraySort(               ARRAY)                                           g_ArraySort(               (G_Array *) ARRAY) 
+#define variableArraySwap(               ARRAY, INDEXA, INDEXB)                           g_ArraySwap(               (G_Array *) ARRAY, INDEXA, INDEXB) 
+#define variableArrayUpdateAt(           ARRAY, INDEX, VALUE)                             g_ArrayUpdateAt(           (G_Array *) ARRAY, INDEX, (Gp *) VALUE) 
+
+/******************************************************************************
+local:
 variable:
 ******************************************************************************/
-static Gs *_chapterString = NULL;
+static Gs            *_chapterString   = NULL;
+static VariableArray *_varList         = NULL;
 
 /******************************************************************************
 prototype:
@@ -37,6 +93,8 @@ static int   _Process(           Gs const * const command, Gpath const * const p
                                  
 static Gb    _Write(             WriteFunctions * const func, Gpath const * const path, ParaArray const * const paraList);
 static void  _WriteError(        Para const * const para, Gc2 const * const type);
+
+static Gb    _VariableSet(       Gs *key, Gs *value);
 
 /******************************************************************************
 global:
@@ -91,7 +149,8 @@ int main(int acount, char **alist)
    // Get the command and the file.
    command   = gsCreateFromA(alist[1]);
    file      = gsCreateFromA(alist[2]);
-   
+   _varList  = variableArrayCreate();
+
    // Initialize a default paper.
    PaperStart();
 
@@ -127,6 +186,8 @@ int main(int acount, char **alist)
 
    // Clean up.
    PaperStop();
+
+   variableArrayDestroy(_varList);
 
    gsDestroy(command);
    gsDestroy(file);
@@ -563,6 +624,25 @@ static int _Process(Gs const * const command, Gpath const * const path)
          {
             para->type = paraTypePAGE_BREAK;
             para->str  = stemp;
+         }
+         // Variable definition
+         else if (gsIsEqualU2(markup, L"v"))
+         {
+            GsArray  *stempArray;
+            Gs       *skey,
+                     *svalue;
+
+            stempArray = gsCreateSplit(stemp, L'\t');
+            
+            skey   = gsArrayGetAt(stempArray, 0);
+            svalue = gsArrayGetAt(stempArray, 1);
+
+            gsAddBegin(skey, L"|");
+            gsAddEnd(  skey, L"|");
+         
+            _VariableSet(skey, svalue);
+
+            gsArrayDestroy(stempArray);
          }
 
          para->chapterStr = _ChapterGetString(chapter);
@@ -1055,4 +1135,54 @@ static void _WriteError(Para const * const para, Gc2 const * const type)
    gsDestroy(stemp);
 
    greturn;
+}
+
+/******************************************************************************
+func: variableSet
+******************************************************************************/
+Gb _VariableSet(Gs *key, Gs *value)
+{
+   Variable *v;
+
+   genter;
+
+   greturnFalseIf(!key || !value);
+
+   v = memCreateType(Variable);
+   greturnFalseIf(!v);
+
+   v->key   = key;
+   v->value = value;
+
+   variableArrayAddBegin(_varList, v);
+
+   greturn gbTRUE;
+}
+
+/******************************************************************************
+func: variableReplace
+******************************************************************************/
+void VariableReplace(Gs * const value)
+{
+   Gindex    index;
+   Gcount    count;
+   Variable *var;
+
+   genter;
+
+   loop
+   {
+      count = 0;
+
+      forCount(index, variableArrayGetCount(_varList))
+      {
+         var = variableArrayGetAt(_varList, index);
+
+         gsFindAndReplace(value, var->key, var->value, &count);
+
+         breakIf(count);
+      }
+
+      breakIf(!count);
+   }
 }
