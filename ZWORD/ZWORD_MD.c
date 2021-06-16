@@ -78,9 +78,6 @@ static Gs *_ProcessInline(Gs * const inStr, Para const * const para)
 
    VariableReplace(str);
 
-   gsFindAndReplaceU2(str, L"<",                        L"&#60;",               NULL);
-   gsFindAndReplaceU2(str, L">",                        L"&#62;",               NULL);
-
    gsFindAndReplaceU2(str, L"|chapter|",                gsGet(para->chapterStr),NULL);
 
    // Styling
@@ -294,11 +291,6 @@ static Gs *_ProcessInline(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"|*psi|",                   L"&psi;",               NULL);
    gsFindAndReplaceU2(str, L"|*omega|",                 L"&omega;",             NULL);
 
-   gsFindAndReplaceU2(str, L"*",                        L"&#42;",               NULL);
-   gsFindAndReplaceU2(str, L"`",                        L"&#96;",               NULL);
-   gsFindAndReplaceU2(str, L"~",                        L"&#126;",              NULL);
-   
-
    gsFindAndReplaceU2(str, L"|' |",                     L"<sup>",               NULL);
    gsFindAndReplaceU2(str, L"| '|",                     L"</sup>",              NULL);
    gsFindAndReplaceU2(str, L"|, |",                     L"<sub>",               NULL);
@@ -325,6 +317,13 @@ static Gs *_ProcessInline(Gs * const inStr, Para const * const para)
    gsFindAndReplaceU2(str, L"|\'|",                     L"&apos;",              NULL);
    gsFindAndReplaceU2(str, L"|\"|",                     L"&quot;",              NULL);
    gsFindAndReplaceU2(str, L"|&|",                      L"&amp;",               NULL);
+
+   gsFindAndReplaceU2(str, L"*",                        L"&#42;",               NULL);
+   gsFindAndReplaceU2(str, L"`",                        L"&#96;",               NULL);
+   gsFindAndReplaceU2(str, L"~",                        L"&#126;",              NULL);
+   gsFindAndReplaceU2(str, L"<",                        L"&#60;",               NULL);
+   gsFindAndReplaceU2(str, L">",                        L"&#62;",               NULL);
+
 
    greturn str;
 }
