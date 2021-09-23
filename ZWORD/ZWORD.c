@@ -1072,9 +1072,9 @@ static Gb _Write(WriteFunctions * const func, Gpath const * const path, ParaArra
             greturn gbFALSE;
          }
 
-         func->FileWriteScopeStart(     file, para->type, scopeLevel, scopeType[scopeLevel]);
-         func->FileWriteStringUnaltered(file, para);
-         func->FileWriteScopeStop(      file, para->type, paraTypeNONE);
+         func->FileWriteScopeStart( file, para->type, scopeLevel, scopeType[scopeLevel]);
+         func->FileWriteString(     file, para);
+         func->FileWriteScopeStop(  file, para->type, paraTypeNONE);
          break;
 
       case paraTypeTABLE_OF_CONTENTS:

@@ -527,7 +527,7 @@ static Gb _FileWriteScopeStart(Gfile * const file, ParaType const type,
    {
    case paraTypeFORMATED:
    case paraTypeSCOPE_FORMATED:
-      result &= gfileSetA(file, gcTypeU1, "<pre class=\"zword\">\n", NULL);
+      result &= gfileSetA(file, gcTypeU1, "<p class=\"zwordPre\">", NULL);
       break;
 
    case paraTypeITEM:
@@ -623,7 +623,7 @@ static Gb _FileWriteScopeStop(Gfile * const file, ParaType const type, ParaType 
    {
    case paraTypeFORMATED:
    case paraTypeSCOPE_FORMATED:
-      result &= gfileSetA(file, gcTypeU1, "\n</pre>\n", NULL);
+      result &= gfileSetA(file, gcTypeU1, "\n</p>\n", NULL);
       break;
 
    case paraTypeITEM:
