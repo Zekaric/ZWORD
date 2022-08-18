@@ -20,32 +20,68 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-body.zword        { margin: 0.0em; }
-table.zword       { margin-left: 2.0rem; margin-right: 2.0rem; }
-tr.shade          { background-color: whitesmoke; }
-td.zword          { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: left; }
-td.zword_num      { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: right; font-family: monospace;}
-td.zword_fill     { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: left;                          width: 100%; }
-td.zword_num_fill { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: right; font-family: monospace; width: 100%; }
-th.zword          { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: left;                                       border-bottom: solid 1px; }
-th.zword_fill     { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: left;                          width: 100%; border-bottom: solid 1px; }
-h1.zword          { font-size: 2.0rem; margin: 0.5rem; margin-top: 2.0rem;                                             border-bottom:    solid 0.25rem; }
-h2.zword          { font-size: 1.5rem;                 margin-top: 1.5rem; margin-bottom: 0.5rem; margin-left: 1.0rem; }
-h3.zword          { font-size: 1.0rem;                 margin-top: 1.0rem; margin-bottom: 0.5rem; margin-left: 2.0rem; }
-h4.zword          { font-size: 1.0rem;                 margin-top: 1.0rem; margin-bottom: 0.5rem; margin-left: 2.0rem; }
-h5.zword          { font-size: 1.0rem;                 margin-top: 1.0rem; margin-bottom: 0.5rem; margin-left: 2.0rem; }
-h6.zword          { font-size: 1.0rem;                 margin-top: 1.0rem; margin-bottom: 0.5rem; margin-left: 2.0rem; }
-p.zword           { font-size: 1.0rem;                                     margin-bottom: 0.5rem; margin-left: 2.0rem; }
-p.zword_toc1      { font-size: 1.0rem;                                                            margin-left: 2.0rem; font-weight: bold; }
-p.zword_toc2      { font-size: 1.0rem;                                                            margin-left: 2.5rem; }
-p.zword_toc3      { font-size: 1.0rem;                                                            margin-left: 3.0rem; }
-p.zword_toc4      { font-size: 1.0rem;                                                            margin-left: 3.5rem; }
-p.zword_toc5      { font-size: 1.0rem;                                                            margin-left: 4.0rem; }
-pre.zword         { font-size: 1.0rem; margin: 1.0rem; margin-left: 3.0rem; margin-right: 3.0rem; border: solid 1px; border-radius: 0.5rem; padding: 0.5rem; background-color: whitesmoke; }
+:root
+{
+   --regularMargin:      9.0rem;
+   --listMargin:        10.0rem;
+   --listIndent:         1.0rem;
+   --pageMargin:         0.5rem;
+   --paraMargin:         0.9rem;
+   --tableSpacing:       0.5rem;
+   --linkColor:         #555;
+   --linkHoverColor:    #888;
+}
 
-ul.zword,          ol.zword          { font-size: 1.0rem; margin-bottom: 0.5rem; margin-left: 3.5rem; }
-ul.zword ul.zword, ol.zword ol.zword { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: 1.5rem; }
-ul.zword p.zword,  ol.zword p.zword  { font-size: 1.0rem; margin: 0rem; }
-
-dl.zword          { font-size: 1.0rem; margin-bottom: 0.5rem; margin-left: 3.5rem; }
-dd.zword          { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: 5.0rem; }
+body.zword               { margin: 0.0em; }
+h1.zword_first           { font-size: 3.00rem; margin: var(--paraMargin); margin-top: var(--paraMargin);            border-bottom: solid 0.25rem; }
+h1.zword                 { font-size: 2.00rem; margin: var(--paraMargin); margin-top: 2.0rem;                       border-bottom: solid 0.25rem; }
+h2.zword                 { font-size: 1.50rem; margin: var(--paraMargin); margin-top: 1.5rem; margin-left:  1.0rem; }
+h3.zword                 { font-size: 1.25rem; margin: var(--paraMargin);                     margin-left:  2.0rem; }
+h4.zword                 { font-size: 1.00rem; margin: var(--paraMargin);                     margin-left:  3.0rem; }
+h5.zword                 { font-size: 1.00rem; margin: var(--paraMargin);                     margin-left:  4.0rem; }
+h6.zword                 { font-size: 1.00rem; margin: var(--paraMargin);                     margin-left:  5.0rem; }
+p.zwordh7                { font-size: 1.00rem; margin: var(--paraMargin);                     margin-left:  6.0rem; }
+p.zwordh8                { font-size: 1.00rem; margin: var(--paraMargin);                     margin-left:  7.0rem; }
+p.zwordh9                { font-size: 1.00rem; margin: var(--paraMargin);                     margin-left:  8.0rem; }
+p.zword_toc1             { font-size: 1.00rem;                                                margin-left:  3.0rem; font-weight: bold; }
+p.zword_toc2             { font-size: 1.00rem;                                                margin-left:  4.0rem; }
+p.zword_toc3             { font-size: 1.00rem;                                                margin-left:  5.0rem; }
+p.zword_toc4             { font-size: 1.00rem;                                                margin-left:  6.0rem; }
+p.zword_toc5             { font-size: 1.00rem;                                                margin-left:  7.0rem; }
+p.zword_toc6             { font-size: 1.00rem;                                                margin-left:  8.0rem; }
+p.zword_toc7             { font-size: 1.00rem;                                                margin-left:  9.0rem; }
+p.zword_toc8             { font-size: 1.00rem;                                                margin-left: 10.0rem; }
+p.zword_toc9             { font-size: 1.00rem;                                                margin-left: 11.0rem; }
+p.zword                  { font-size: 1.00rem; margin: var(--paraMargin);                     margin-left:  var(--regularMargin); }
+p.zwordPre               { font-size: 1.00rem; margin: var(--paraMargin);                     margin-left:  var(--regularMargin); margin-right: 9.0rem; border: solid 1px; border-radius: 0.5rem; padding: 0.5rem; background-color: whitesmoke; }
+table.zword              {                     margin: var(--paraMargin);                     margin-left:  var(--regularMargin); margin-right: 9.0rem; }
+tr.zword                 { }
+tr.zword_shade           { background-color: whitesmoke; }
+td.zword                 { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: left; }
+td.zword_fill            { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: left; width: 100%; }
+th.zword                 { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: left;              border-bottom: solid 1px; }
+th.zword_fill            { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: left; width: 100%; border-bottom: solid 1px; }
+th.zword_col             { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: left;              border-bottom: solid 1px; }
+th.zword_col_fill        { padding-right: 0.5rem; padding-bottom: 0.1rem; text-align: left; width: 100%; border-bottom: solid 1px; }
+dl.zword          		 { font-size: 1.0rem; margin-bottom: 0.5rem; margin-left: 3.5rem; }
+dd.zword          		 { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: 5.0rem; }
+ul.zword                                                                                  { font-size: 1.0rem; margin-bottom: 0.5rem; margin-left: var(--listMargin); }
+ul.zword ul.zword                                                                         { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ul.zword ul.zword ul.zword                                                                { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ul.zword ul.zword ul.zword ul.zword                                                       { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ul.zword ul.zword ul.zword ul.zword ul.zword                                              { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword                                     { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword                            { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword                   { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword          { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword ul.zword { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ol.zword                                                                                  { font-size: 1.0rem; margin-bottom: 0.5rem; margin-left: var(--listMargin); }
+ol.zword ol.zword                                                                         { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ol.zword ol.zword ol.zword                                                                { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ol.zword ol.zword ol.zword ol.zword                                                       { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ol.zword ol.zword ol.zword ol.zword ol.zword                                              { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword                                     { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword                            { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword                   { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword          { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
+ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword ol.zword { font-size: 1.0rem; margin-bottom: 0.0rem; margin-left: var(--listIndent); }
